@@ -1,0 +1,15 @@
+C:\Projects\c#\Generation\Generation\bin\Debug\net7.0\Generation.exe
+C:\Projects\c#\Generation\Generation\bin\Debug\net7.0\Generation.deps.json
+C:\Projects\c#\Generation\Generation\bin\Debug\net7.0\Generation.runtimeconfig.json
+C:\Projects\c#\Generation\Generation\bin\Debug\net7.0\Generation.dll
+C:\Projects\c#\Generation\Generation\bin\Debug\net7.0\Generation.pdb
+C:\Projects\c#\Generation\Generation\obj\Debug\net7.0\Generation.csproj.AssemblyReference.cache
+C:\Projects\c#\Generation\Generation\obj\Debug\net7.0\Generation.GeneratedMSBuildEditorConfig.editorconfig
+C:\Projects\c#\Generation\Generation\obj\Debug\net7.0\Generation.AssemblyInfoInputs.cache
+C:\Projects\c#\Generation\Generation\obj\Debug\net7.0\Generation.AssemblyInfo.cs
+C:\Projects\c#\Generation\Generation\obj\Debug\net7.0\Generation.csproj.CoreCompileInputs.cache
+C:\Projects\c#\Generation\Generation\obj\Debug\net7.0\Generation.dll
+C:\Projects\c#\Generation\Generation\obj\Debug\net7.0\refint\Generation.dll
+C:\Projects\c#\Generation\Generation\obj\Debug\net7.0\Generation.pdb
+C:\Projects\c#\Generation\Generation\obj\Debug\net7.0\Generation.genruntimeconfig.cache
+C:\Projects\c#\Generation\Generation\obj\Debug\net7.0\ref\Generation.dll
