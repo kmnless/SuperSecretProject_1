@@ -17,9 +17,9 @@ public class BuildingsGenerator
         private int matrixSizeX;
         private int matrixSizeY;
         private int amountOfBases;
-        private int[,] matrix;
-        private HashSet<Tuple<int, int>> placedBases { get; }
-        private HashSet<Tuple<int, int>> placedFlags { get; }
+        public int[,] matrix { get; }
+        public HashSet<Tuple<int, int>> placedBases { get; }
+        public HashSet<Tuple<int, int>> placedFlags { get; }
         private Tuple<int, int> middle;
         public BuildingsGenerator(int sizeX, int sizeY, int amountOfBases, int seed)
         {
@@ -58,6 +58,18 @@ public class BuildingsGenerator
         //        Console.WriteLine();
         //    }
         //}
+
+        public void generateMatrix()
+        {
+            foreach (Tuple<int, int> a in placedBases)
+            {
+                matrix[a.Item1, a.Item2] = 1;
+            }
+            foreach (Tuple<int, int> a in placedFlags)
+            {
+                matrix[a.Item1, a.Item2] = 7;
+            }
+        }
 
         private bool placeBase(int depth = 0)
         {
