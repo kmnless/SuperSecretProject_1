@@ -9,8 +9,8 @@
         private int matrixY;
 
         private HashSet<Tuple<int, int>> points;
-        private Dictionary<Tuple<int,int>,HashSet<Tuple<int,int>>> depend;
-        public RoadGenerator(HashSet<Tuple<int, int>> basesPoses, HashSet<Tuple<int, int>> flagsPoses, int matrixSizeX, int matrixSizeY, int[,] matrix, int iterationCount = 2)
+        private Dictionary<Tuple<int, int>, HashSet<Tuple<int, int>>> depend;
+        public RoadGenerator(HashSet<Tuple<int, int>> basesPoses, HashSet<Tuple<int, int>> flagsPoses, HashSet<Tuple<int, int>> interestPointsPoses, int matrixSizeX, int matrixSizeY, int[,] matrix, int iterationCount = 2)
         {
             depend = new();
             this.matrix = matrix;
@@ -27,6 +27,11 @@
                 depend[pos] = new HashSet<Tuple<int, int>>();
                 points.Add(pos);
             }
+            foreach (Tuple<int, int> pos in interestPointsPoses)
+            {
+                depend[pos] = new HashSet<Tuple<int, int>>();
+                points.Add(pos);
+            }
 
             this.iterationCount = iterationCount;
 
@@ -37,7 +42,7 @@
             string r = "";
             for (int i = 0; i < matrixY; i++)
             {
-                for (int j = 0; j <matrixX; j++)
+                for (int j = 0; j < matrixX; j++)
                 {
                     r += $"{matrix[i, j]}";
                 }
@@ -103,6 +108,7 @@
                 {
                     nextX -= random.Next(0, 2);
                 }
+                //else{nextX -= random.Next(-6, 7) / 6;}
 
                 if (currentY < endY)
                 {
@@ -112,6 +118,7 @@
                 {
                     nextY -= random.Next(0, 2);
                 }
+                //else { nextY -= random.Next(-6, 7) / 6; }
 
                 // Обновление текущих координат
                 currentX = nextX;
@@ -134,7 +141,7 @@
 
                 if (dx != 0 && dy != 0) // Если движение по диагонали
                 {
-                    int randomDirection = random.Next(0, 2); // Рандомный выбор направления округления
+                    int randomDirection = random.Next(0, 4); // Рандомный выбор направления округления
 
                     if (randomDirection == 0)
                     {
@@ -150,13 +157,13 @@
 
             foreach (int[] point in path)
             {
-                int x = point[0];
-                int y = point[1];
+                int y = point[0];
+                int x = point[1];
                 if (x >= 0 && y >= 0 && x < this.matrixX && y < this.matrixY)
                 {
-                    if (matrix[x, y] == 0)
+                    if (matrix[y, x] == 0)
                     {
-                        matrix[x, y] = 2;
+                        matrix[y, x] = 2;
                     }
 
                 }
@@ -165,6 +172,7 @@
             depend[start].Add(end);
             depend[end].Add(start);
         }
+
     }
 
 

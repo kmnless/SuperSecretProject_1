@@ -5,10 +5,26 @@ x = 40;
 y = 40;
 
 BuildingsGenerator bg = new(x, y, 5, (int)DateTime.UtcNow.Ticks);
-bg.placeBases();
-bg.placeNecessaryFlags();
-bg.generateMatrix();
+try { bg.placeBases(); }
+catch (ArgumentException)
+{
+    try
+    {
+        bg.placeBases();
+    }
+    catch
+    {
+        while (true)
+        {
+            Console.WriteLine("AHAHHAHAHHAHAHAHHAHAHAHHAHAHAHHA");
+        }
+    }//ну если с 2 раза не сгенерит то это судьба епта
+}
 
-RoadGenerator roadGenerator = new RoadGenerator(bg.placedBases, bg.placedFlags, x, y, bg.matrix);
+bg.placeNecessaryFlags();
+bg.placeAdditionlFlagsNearPoint(5, bg.middle);
+bg.generateInterestPoints(bg.middle);
+bg.generateMatrix();
+RoadGenerator roadGenerator = new RoadGenerator(bg.placedBases, bg.getUnweightedFlags(), bg.interestPoints, x, y, bg.matrix);
 roadGenerator.connectAllObjectives();
 Console.WriteLine(roadGenerator);
