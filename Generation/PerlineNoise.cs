@@ -97,12 +97,12 @@
         }
         public double[,] GetNoiseArray(int sizeX, int sizeY, double noiseScale = 0.1)
         {
-            double[,] outputArray = new double[sizeX, sizeY];
+            double[,] outputArray = new double[sizeY, sizeX];
             for (int y = 0; y < sizeY; y++)
             {
                 for (int x = 0; x < sizeX; x++)
                 {
-                    outputArray[x, y] = Noise(x * noiseScale, y * noiseScale, 0);
+                    outputArray[y, x] = Noise(y * noiseScale, x * noiseScale, 0);
                 }
             }
             return outputArray;

@@ -2,7 +2,7 @@
 {
     public class RoadGenerator
     {
-        private int[,] matrix;
+        public int[,] matrix { get; }
 
         private int iterationCount;
         private int matrixX;

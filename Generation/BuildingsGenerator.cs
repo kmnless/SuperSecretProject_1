@@ -35,7 +35,7 @@
             matrixSizeX = sizeX;
             matrixSizeY = sizeY;
             this.amountOfBases = amountOfBases;
-            middle = new(matrixSizeX / 2, matrixSizeY / 2);
+            middle = new(matrixSizeY / 2, matrixSizeX / 2);
             matrix = new int[matrixSizeY, matrixSizeX];
             minRadius = 3;
             banRadius = 10;

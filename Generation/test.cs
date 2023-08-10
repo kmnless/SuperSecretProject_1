@@ -1,30 +1,38 @@
 ﻿using Generation;
+using PerlineNoise;
+using System;
+using System.Drawing;
+using System.Drawing.Drawing2D;
 
-int x, y;
-x = 40;
-y = 40;
+const int X = 40;
+const int Y = 80;
+const int BASE_COUNT = 8;
+const int FLAG_COUNT = 3;
+const int RANGE_DENOMINATOR = 20;
 
-BuildingsGenerator bg = new(x, y, 5, (int)DateTime.UtcNow.Ticks);
-try { bg.placeBases(); }
-catch (ArgumentException)
+const float DAMPING = 0.6f;
+const float CONTRAST = 4.0f;
+const float CLIP = 1.0f;
+
+Bitmap bitmap = new(X, Y);
+
+int seed = (int)DateTime.UtcNow.Ticks;
+
+
+
+
+double[,] terrain = Combiner.generatePlayField(X, Y, seed, BASE_COUNT, FLAG_COUNT, Math.Max(Math.Abs(X / RANGE_DENOMINATOR), Math.Abs(Y / RANGE_DENOMINATOR)), DAMPING, CONTRAST, CLIP);
+
+
+for (int i = 0; i < terrain.GetLength(0); ++i) 
 {
-    try
+    for (int j = 0; j < terrain.GetLength(1); ++j) 
     {
-        bg.placeBases();
+        int brightness = (int)((terrain[i, j] + 1.0) * 127.5);
+        Color color = Color.FromArgb(brightness, brightness, brightness);
+        bitmap.SetPixel(j,i, color);
+        //Console.Write(terrain[i, j]);
     }
-    catch
-    {
-        while (true)
-        {
-            Console.WriteLine("AHAHHAHAHHAHAHAHHAHAHAHHAHAHAHHA");
-        }
-    }//ну если с 2 раза не сгенерит то это судьба епта
+    //Console.WriteLine();
 }
-
-bg.placeNecessaryFlags();
-bg.placeAdditionlFlagsNearPoint(5, bg.middle);
-bg.generateInterestPoints(bg.middle);
-bg.generateMatrix();
-RoadGenerator roadGenerator = new RoadGenerator(bg.placedBases, bg.getUnweightedFlags(), bg.interestPoints, x, y, bg.matrix);
-roadGenerator.connectAllObjectives();
-Console.WriteLine(roadGenerator);
+bitmap.Save("out.png");
