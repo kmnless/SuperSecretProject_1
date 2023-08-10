@@ -1,4 +1,4 @@
-﻿using System.Drawing.Drawing2D;
+using System.Drawing.Drawing2D;
 using System;
 using System.Numerics;
 using PerlineNoise;
@@ -7,11 +7,10 @@ namespace Generation
 {
     public class Combiner
     {
-
-        static public double[,] generatePlayField(int sizeX,int sizeY, int seed, int baseCount, int flagAmount, int smoothRange, float smoothCoef, float contrast, float clip) 
+        static public double[,] generatePlayField(int sizeX, int sizeY, int seed, int baseCount, int flagAmount, int middleFlagAmount, int smoothRange, float smoothCoef, float contrast, float clip)
         {
             double[,] output;
-            BuildingsGenerator bg = new(sizeX, sizeY, baseCount, seed);
+            BuildingsGenerator bg = new(sizeX, sizeY, baseCount, seed, middleFlagAmount);
             PerlinNoise perlineNoise = new(seed);
             RoadGenerator roadGenerator;
             
@@ -48,7 +47,6 @@ namespace Generation
                         }
                         array[i, j] *= multiplier;
                     }
-
                 }
             }
         }
@@ -62,7 +60,6 @@ namespace Generation
                 {
                     array[i, j] *= multiplier;
                 }
-
             }
         }
 
@@ -94,16 +91,7 @@ namespace Generation
                 {
                     if (matrix[i, j]>0) { lowerTerrainNear(array, j, i, range, delta); }
                 } 
-                    
             }
-
         }
-
-
-
-
-
-
-
     }
 }
