@@ -7,10 +7,10 @@ namespace Generation
     public class Combiner
     {
 
-        static public double[,] generatePlayField(int sizeX, int sizeY, int seed, int baseCount, int flagAmount, int middleFlagAmount, int smoothRange, float smoothCoef, float contrast, float clip)
+        static public double[,] generatePlayField(int sizeX, int sizeY, int seed, int baseCount, int flagAmount, int middleFlagAmount, int minimalDistance,  int safePlaceRadius, double terrainScale, int smoothRange, float smoothCoef, float contrast, float clip)
         {
             double[,] output;
-            BuildingsGenerator bg = new(sizeX, sizeY, baseCount, seed, middleFlagAmount);
+            BuildingsGenerator bg = new(sizeX, sizeY, baseCount, seed, middleFlagAmount,safePlaceRadius,minimalDistance);
             PerlinNoise perlineNoise = new(seed);
             RoadGenerator roadGenerator;
 
@@ -22,7 +22,7 @@ namespace Generation
 
             roadGenerator = new RoadGenerator(bg.placedBases, bg.getUnweightedFlags(), bg.interestPoints, sizeX, sizeY, bg.matrix, seed);
             roadGenerator.connectAllObjectives();
-            output = perlineNoise.GetNoiseArray(sizeX, sizeY);
+            output = perlineNoise.GetNoiseArray(sizeX, sizeY, terrainScale);
             lowerTerrainNearMatrix(output, roadGenerator.matrix, smoothRange, smoothCoef);
             multiplyArray(output, contrast);
             clipArray(output, -1 * clip, clip);

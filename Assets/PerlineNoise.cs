@@ -97,7 +97,7 @@ namespace PerlineNoise
                         Lerp(u, Grad(p[AB + 1], x, y - 1, z - 1),
                                 Grad(p[BB + 1], x - 1, y - 1, z - 1))));
         }
-        public double[,] GetNoiseArray(int sizeX, int sizeY, double noiseScale = 0.1)
+        public double[,] GetNoiseArray(int sizeX, int sizeY, double noiseScale = 0.01)
         {
             double[,] outputArray = new double[sizeY, sizeX];
             for (int y = 0; y < sizeY; y++)
