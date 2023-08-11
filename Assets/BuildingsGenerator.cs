@@ -33,15 +33,15 @@ namespace Generation
         public HashSet<Tuple<Tuple<int, int>, int>> placedFlags;
 
         public Tuple<int, int> middle { get; }
-        public BuildingsGenerator(int sizeX, int sizeY, int amountOfBases, int seed, int interestPointsCount = 1)
+        public BuildingsGenerator(int sizeX, int sizeY, int amountOfBases, int seed, int interestPointsCount = 1, int safePlaceRadius = 10, int minimalDistance = 3)
         {
             matrixSizeX = sizeX;
             matrixSizeY = sizeY;
             this.amountOfBases = amountOfBases;
             middle = new(matrixSizeY / 2, matrixSizeX / 2);
             matrix = new int[matrixSizeY, matrixSizeX];
-            minRadius = 3;
-            banRadius = 10;
+            minRadius = minimalDistance;
+            banRadius = safePlaceRadius;
             random = new Random(seed);
             placedBases = new();
             placedFlags = new();
