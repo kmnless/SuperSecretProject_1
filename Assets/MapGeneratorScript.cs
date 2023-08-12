@@ -7,20 +7,23 @@ using System.Linq;
 
 public class MapGeneratorScript : MonoBehaviour
 {
-    public Slider playerCountSlider;
-    public Slider flagCountSlider;
-    public Slider outpostCountSlider;
-    public Slider waterlineSlider;
-    public Slider mounainLineSlider;
-    public Slider terrainScaleSlider;
-    public RawImage rawImage;
-    public Texture2D[] textures;
-    public Texture2D roadTexture;
-    public Texture2D flagTexture;
-    public Texture2D baseTexture;
+    [SerializeField] private Slider playerCountSlider;
+    [SerializeField] private Slider flagCountSlider;
+    [SerializeField] private Slider outpostCountSlider;
+    [SerializeField] private Slider waterlineSlider;
+    [SerializeField] private Slider mounainLineSlider;
+    [SerializeField] private Slider terrainScaleSlider;
+    [SerializeField] private RawImage rawImage;
+    [SerializeField] private Texture2D[] textures;
+    [SerializeField] private Texture2D roadTexture;
+    [SerializeField] private Texture2D flagTexture;
+    [SerializeField] private Texture2D baseTexture;
+    [SerializeField] private SceneHandler sceneHandler;
     [SerializeField] private Color highPrioritySimplifiedFlagColor;
     [SerializeField] private Color lowPrioritySimplifiedFlagColor;
     [SerializeField] private Color SimplifiedBaseColor;
+    [SerializeField] private Button playButton;
+
 
     private bool generated=false;
     private Color[] textureColors;
@@ -46,8 +49,7 @@ public class MapGeneratorScript : MonoBehaviour
     [SerializeField] private int MIN_RADIUS_DENOMINATOR = 2;   // MIN RADIUS = BAN RADIUS / MIN_RADIUS_DENOMINATOR :(
     [SerializeField] private int BAN_RADIUS_MULTIPLIER = 24;
     [SerializeField] private double BAN_RADIUS_ROOT_MULTIPLIER = 0.9; // BAN RADIUS = BAN_RADIUS_MULTIPLIER * PLAYER COUNT :)
-    public Tuple<double[,], int[,]> terrain;
-    private int[,] roadsAndBuildings;
+    private Tuple<double[,], int[,]> terrain;
     public int seed;
 
     private void FillTerrain(int height, Texture2D baseTexture, int x, int y)
@@ -145,7 +147,6 @@ public class MapGeneratorScript : MonoBehaviour
             seed = Convert.ToInt32(System.DateTime.Now.TimeOfDay.TotalMilliseconds);
             terrain = Combiner.generatePlayField(X, Y, seed, baseCount, flagCount, middleFlagCount, minRadius, banRadius, terrainScale, Math.Max(Math.Abs(X / RANGE_DENOMINATOR), Math.Abs(Y / RANGE_DENOMINATOR)), DAMPING, CONTRAST, CLIP, ROAD_GENERATION_COPLEXITY_DENOMINATOR);
         }
-        roadsAndBuildings = terrain.Item2;
         Texture2D newTexture = new Texture2D(X, Y);
         newTexture.filterMode = FilterMode.Point;
         //  Debug.Log(X * textureSize);
@@ -165,6 +166,7 @@ public class MapGeneratorScript : MonoBehaviour
         newTexture.Apply();
         rawImage.texture= newTexture;
         generated = true;
+        playButton.interactable = true;
     }
     public void GenerateNewScale()
     {
@@ -193,5 +195,20 @@ public class MapGeneratorScript : MonoBehaviour
             generated = true;
         }
     }
-
+    public void StartGame()
+    {
+        if (generated) 
+        {
+            GlobalVariableHandler.textures = textures;
+            GlobalVariableHandler.flagTexture = flagTexture;
+            GlobalVariableHandler.baseTexture = baseTexture;
+            GlobalVariableHandler.roadTexture = roadTexture;
+            GlobalVariableHandler.buldingsField = terrain.Item2;
+            GlobalVariableHandler.terrainField = terrain.Item1;
+            GlobalVariableHandler.cellSize = textures[0].Size().x;
+            GlobalVariableHandler.playerCount = baseCount;
+            GlobalVariableHandler.fieldSizeX = X; GlobalVariableHandler.fieldSizeY = Y;
+            sceneHandler.ChangeState(Constants.GAME_SCENE_INDEX);
+        } 
+    }
 }

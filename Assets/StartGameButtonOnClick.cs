@@ -6,6 +6,6 @@ public class StartGameButtonOnClick : MonoBehaviour
 
     public void OnClick()
     {
-        sceneHandler.ChangeState("Game");
+        sceneHandler.ChangeState(Constants.GAME_SETTINGS_SCENE_INDEX);
     }
 }
