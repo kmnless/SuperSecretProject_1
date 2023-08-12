@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Generation
 {
@@ -72,6 +73,49 @@ namespace Generation
             }
             ConnectPoints(minDist.Item1, bonePoint);
         }
+
+        private void makeSureAllPointsAreReacheble() 
+        {
+            foreach(Tuple<int, int> pos1 in points)
+            {
+                foreach(Tuple<int,int> pos2 in points)
+                {
+                    if (!depend[pos1].Contains(pos2) && pos1 != pos2 && !canReach(pos1, pos2))
+                    {
+                        ConnectPoints(pos1, pos2);
+                    }
+                }
+            }
+        }
+        
+        private bool canReach(Tuple<int,int> start, Tuple<int,int> end) 
+        {
+            bool[,] visited = new bool[matrixY, matrixX];
+            Queue<Tuple<int, int>> possibleMoves = new Queue<Tuple<int, int>>();
+            possibleMoves.Enqueue(start);
+            visited[start.Item2, end.Item1] = true;
+            while (possibleMoves.Count > 0)
+            {
+                int x = possibleMoves.Peek().Item2;
+                int y = possibleMoves.Peek().Item1;
+                if (y == end.Item1&&x==end.Item2) 
+                {
+                    return true;
+                }
+                possibleMoves.Dequeue();
+                for (int i = y - 1; i < y + 2; i++)
+                {
+                    for (int j = x - 1; j < x + 2; j++)
+                    {
+                        if (i >= 0 && i < matrixY && j >= 0 && j < matrixX && matrix[i, j] != 0 && !visited[i, j])
+                        {
+                            possibleMoves.Enqueue(new(i, j)); visited[i, j] = true;
+                        }
+                    }
+                }
+            }
+            return false;
+        }
         public void connectAllObjectives()
         {
             for (int i = 0; i < iterationCount; ++i)
@@ -81,6 +125,7 @@ namespace Generation
                     connectWithNearest(pos);
                 }
             }
+            makeSureAllPointsAreReacheble();
         }
         private void ConnectPoints(Tuple<int, int> start, Tuple<int, int> end)
         {
