@@ -17,14 +17,15 @@ namespace Generation
         private readonly int minRadius;
         private readonly int banRadius;
         private readonly int interestPointsCount;
+        private readonly int amountOfBaseFlags;
         private Random random;
         private int matrixSizeX;
         private int matrixSizeY;
         private int amountOfBases;
-        private const int LOW_PRIORITY_FLAG_INDEX = 3;
-        private const int HIGH_PRIORITY_FLAG_INDEX = 7;
-        private const int BASE_INDEX = 1;
-        private const int MAX_DEPTH = 5;
+        public const int LOW_PRIORITY_FLAG_INDEX = 3;
+        public const int HIGH_PRIORITY_FLAG_INDEX = 7;
+        public const int BASE_INDEX = 1;
+        public const int MAX_DEPTH = 5;
 
         public int[,] matrix { get; }
         public HashSet<Tuple<int, int>> placedBases { get; }
@@ -33,11 +34,12 @@ namespace Generation
         public HashSet<Tuple<Tuple<int, int>, int>> placedFlags;
 
         public Tuple<int, int> middle { get; }
-        public BuildingsGenerator(int sizeX, int sizeY, int amountOfBases, int seed, int interestPointsCount = 1, int safePlaceRadius = 10, int minimalDistance = 3)
+        public BuildingsGenerator(int sizeX, int sizeY, int amountOfBases, int seed, int amountOfBaseFlags = 1, int safePlaceRadius = 10, int minimalDistance = 3, int interestPointsCount = 1)
         {
             matrixSizeX = sizeX;
             matrixSizeY = sizeY;
             this.amountOfBases = amountOfBases;
+            this.amountOfBaseFlags = amountOfBaseFlags;
             middle = new(matrixSizeY / 2, matrixSizeX / 2);
             matrix = new int[matrixSizeY, matrixSizeX];
             minRadius = minimalDistance;
@@ -125,7 +127,10 @@ namespace Generation
         {
             foreach (Tuple<int, int> bannedPos in placedBases)
             {
-                placeFlagInBanRadius(bannedPos);
+                for (int i = 0; i < amountOfBaseFlags; ++i)
+                {
+                    placeFlagInBanRadius(bannedPos);
+                }
             }
         }
         public void placeAdditionlFlagsNearPoint(int amount, Tuple<int, int> place)

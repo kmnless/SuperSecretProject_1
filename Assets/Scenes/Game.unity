@@ -510,6 +510,7 @@ GameObject:
   - component: {fileID: 157133185}
   - component: {fileID: 157133184}
   - component: {fileID: 157133183}
+  - component: {fileID: 157133186}
   m_Layer: 0
   m_Name: EventSystem
   m_TagString: Untagged
@@ -567,6 +568,20 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &157133186
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 157133182}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 649aa4d89d2503b4f89be84bdb7112ae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  slider: {fileID: 0}
+  textMesh: {fileID: 0}
 --- !u!1 &203847984
 GameObject:
   m_ObjectHideFlags: 0
@@ -1364,12 +1379,24 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1590939250}
   m_Direction: 0
   m_MinValue: 10
-  m_MaxValue: 100
+  m_MaxValue: 500
   m_WholeNumbers: 1
   m_Value: 10
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1977972613}
+        m_TargetAssemblyTypeName: MapGeneratorScript, Assembly-CSharp
+        m_MethodName: GenerateNewScale
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &1156457764
 GameObject:
   m_ObjectHideFlags: 0
@@ -2760,15 +2787,20 @@ MonoBehaviour:
   textures:
   - {fileID: 2800000, guid: b444223423fc71848ae5979d41673e75, type: 3}
   - {fileID: 2800000, guid: 1222ac465961a534399cfa3b0f4cd503, type: 3}
-  - {fileID: 2800000, guid: 85b4e502791211248b58ce9c9409ab51, type: 3}
-  - {fileID: 2800000, guid: 1222ac465961a534399cfa3b0f4cd503, type: 3}
   - {fileID: 2800000, guid: a76aa7a32fa98614f896b1c40f2d9adb, type: 3}
+  roadTexture: {fileID: 2800000, guid: 85b4e502791211248b58ce9c9409ab51, type: 3}
+  flagTexture: {fileID: 2800000, guid: 6cdcb72d9cc0c7a439a8f745d5881bb2, type: 3}
+  baseTexture: {fileID: 10912, guid: 0000000000000000f000000000000000, type: 0}
+  highPrioritySimplifiedFlagColor: {r: 1, g: 0, b: 0.06326771, a: 1}
+  lowPrioritySimplifiedFlagColor: {r: 0, g: 0.22372389, b: 1, a: 1}
+  SimplifiedBaseColor: {r: 1, g: 0.5231712, b: 0, a: 1}
   RANGE_DENOMINATOR: 20
+  ROAD_GENERATION_COPLEXITY_DENOMINATOR: 110
   CELLS_PER_PLAYER: 20
   DAMPING: 0.6
   CONTRAST: 4
   CLIP: 1
-  MIN_RADIUS_DENOMINATOR: 2
+  MIN_RADIUS_DENOMINATOR: 5
   BAN_RADIUS_MULTIPLIER: 24
   BAN_RADIUS_ROOT_MULTIPLIER: 0.9
   seed: -4217

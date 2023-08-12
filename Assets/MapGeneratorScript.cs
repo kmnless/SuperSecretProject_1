@@ -15,8 +15,15 @@ public class MapGeneratorScript : MonoBehaviour
     public Slider terrainScaleSlider;
     public RawImage rawImage;
     public Texture2D[] textures;
+    public Texture2D roadTexture;
+    public Texture2D flagTexture;
+    public Texture2D baseTexture;
+    [SerializeField] private Color highPrioritySimplifiedFlagColor;
+    [SerializeField] private Color lowPrioritySimplifiedFlagColor;
+    [SerializeField] private Color SimplifiedBaseColor;
 
-
+    private bool generated=false;
+    private Color[] textureColors;
     private int X;
     private int Y;
     private int baseCount;
@@ -25,11 +32,13 @@ public class MapGeneratorScript : MonoBehaviour
     private int banRadius;
     private int minRadius;
     private double terrainScale;
-    private int textureSize;
     private int waterline;
     private int mountainLine;
-
+    private const int LOW_PRIORITY_FLAG_INDEX = Generation.BuildingsGenerator.LOW_PRIORITY_FLAG_INDEX;
+    private const int HIGH_PRIORITY_FLAG_INDEX = Generation.BuildingsGenerator.HIGH_PRIORITY_FLAG_INDEX;
+    private const int BASE_INDEX = Generation.BuildingsGenerator.BASE_INDEX;
     [SerializeField] private int RANGE_DENOMINATOR = 20;
+    [SerializeField] private int ROAD_GENERATION_COPLEXITY_DENOMINATOR = 80;
     [SerializeField] private int CELLS_PER_PLAYER = 10;
     [SerializeField] private float DAMPING = 0.6f;
     [SerializeField] private float CONTRAST = 4.0f;
@@ -37,39 +46,84 @@ public class MapGeneratorScript : MonoBehaviour
     [SerializeField] private int MIN_RADIUS_DENOMINATOR = 2;   // MIN RADIUS = BAN RADIUS / MIN_RADIUS_DENOMINATOR :(
     [SerializeField] private int BAN_RADIUS_MULTIPLIER = 24;
     [SerializeField] private double BAN_RADIUS_ROOT_MULTIPLIER = 0.9; // BAN RADIUS = BAN_RADIUS_MULTIPLIER * PLAYER COUNT :)
-    public double[,] terrain;
+    public Tuple<double[,], int[,]> terrain;
+    private int[,] roadsAndBuildings;
     public int seed;
 
-    private void SetTile(int height, Texture2D baseTexture, int x, int y)
+    private void FillTerrain(int height, Texture2D baseTexture, int x, int y)
     {
         if (height <= waterline)
         {
-            MapTexture(baseTexture, textures.First(), x, y);
+            baseTexture.SetPixel(x, y, textureColors.First());
             return;
         }
-        else if (height >= mountainLine)
+        else if (height >= 255 - mountainLine)
         {
-            MapTexture(baseTexture, textures.Last(), x, y);
+            baseTexture.SetPixel(x, y, textureColors.Last());
             return;
         }
         int range = 255 - mountainLine - waterline;
         int singleInterval = range / (textures.Count() - 2);
-        MapTexture(baseTexture, textures[(height - waterline) / singleInterval], x, y);
+        baseTexture.SetPixel(x, y, textureColors[(height - waterline) / singleInterval + 1]);
     }
-    private void MapTexture(Texture2D baseTexture, Texture2D overlayTexture, int x, int y)
+
+    private void FillBuildings(Texture2D texture, int[,] matrix)
     {
-        for(int i = 0; i < overlayTexture.Size().y; ++i) 
+        for(int i = 0; i < matrix.GetLength(0); ++i) 
         {
-            for(int j = 0; j < overlayTexture.Size().x; ++j) 
+            for(int j=0; j < matrix.GetLength(1); ++j)
             {
-                baseTexture.SetPixel(x+j,y+i,overlayTexture.GetPixel(j,i));
+                if (matrix[i, j] == LOW_PRIORITY_FLAG_INDEX)
+                {
+                    texture.SetPixel(j,i,lowPrioritySimplifiedFlagColor);
+                }
+                else if (matrix[i,j]== HIGH_PRIORITY_FLAG_INDEX) 
+                {
+                    texture.SetPixel(j,i,highPrioritySimplifiedFlagColor);
+                }
+                else if (matrix[i,j] == BASE_INDEX) 
+                {
+                    texture.SetPixel(j, i, SimplifiedBaseColor);
+                }
+            }
+        }
+
+    }
+
+
+    private void PlaceRoads(Texture2D texture, int[,] matrix)
+    {
+        for (int i = 0; i < matrix.GetLength(0); ++i)
+        {
+            for (int j = 0; j < matrix.GetLength(1); ++j)
+            {
+                if (matrix[i, j] == LOW_PRIORITY_FLAG_INDEX)
+                {
+                    texture.SetPixel(j, i, lowPrioritySimplifiedFlagColor);
+                }
+                else if (matrix[i, j] == HIGH_PRIORITY_FLAG_INDEX)
+                {
+                    texture.SetPixel(j, i, highPrioritySimplifiedFlagColor);
+                }
+                else if (matrix[i, j] == BASE_INDEX)
+                {
+                    texture.SetPixel(j, i, SimplifiedBaseColor);
+                }
+                else if (matrix[i, j] != 0)
+                {
+                    texture.SetPixel(j, i, roadTexture.GetPixel(0, 0));
+                }
             }
         }
     }
     public void Generate()
     {
         if (textures==null){ throw new ArgumentException("Texture array is empty."); }
-        textureSize = Convert.ToInt32(textures[0].Size().x);
+        textureColors = new Color[textures.Length];
+        for(int i = 0; i < textures.Length; ++i)
+        {
+            textureColors[i] = textures[i].GetPixel(0,0);
+        }
         baseCount = Convert.ToInt32(playerCountSlider.value);
         flagCount = Convert.ToInt32(flagCountSlider.value);
         middleFlagCount = Convert.ToInt32(outpostCountSlider.value);
@@ -80,25 +134,64 @@ public class MapGeneratorScript : MonoBehaviour
         //Debug.Log(terrainScale);
         
         minRadius = banRadius/MIN_RADIUS_DENOMINATOR;
-        terrain = Combiner.generatePlayField(X, Y, seed, baseCount, flagCount, middleFlagCount, minRadius, banRadius, terrainScale, Math.Max(Math.Abs(X / RANGE_DENOMINATOR), Math.Abs(Y / RANGE_DENOMINATOR)), DAMPING, CONTRAST, CLIP);
-
-
-        Texture2D newTexture = new Texture2D(X*textureSize, Y*textureSize);
-        Debug.Log(X * textureSize);
-        for (int y = 0; y < Y*textureSize; y+= textureSize)
+        seed = (int)(System.DateTime.Now.TimeOfDay.TotalMilliseconds);
+        try
         {
-            for (int x = 0; x < X*textureSize; x+=textureSize)
+            terrain = Combiner.generatePlayField(X, Y, seed, baseCount, flagCount, middleFlagCount, minRadius, banRadius, terrainScale, Math.Max(Math.Abs(X / RANGE_DENOMINATOR), Math.Abs(Y / RANGE_DENOMINATOR)), DAMPING, CONTRAST, CLIP, ROAD_GENERATION_COPLEXITY_DENOMINATOR);
+
+        }
+        catch 
+        {
+            seed = Convert.ToInt32(System.DateTime.Now.TimeOfDay.TotalMilliseconds);
+            terrain = Combiner.generatePlayField(X, Y, seed, baseCount, flagCount, middleFlagCount, minRadius, banRadius, terrainScale, Math.Max(Math.Abs(X / RANGE_DENOMINATOR), Math.Abs(Y / RANGE_DENOMINATOR)), DAMPING, CONTRAST, CLIP, ROAD_GENERATION_COPLEXITY_DENOMINATOR);
+        }
+        roadsAndBuildings = terrain.Item2;
+        Texture2D newTexture = new Texture2D(X, Y);
+        newTexture.filterMode = FilterMode.Point;
+        //  Debug.Log(X * textureSize);
+        for (int y = 0; y < Y; y++)
+        {
+            for (int x = 0; x < X; x++)
             {
 
-                int alpha = Convert.ToInt32(255 * ((double)(terrain[y / textureSize, x / textureSize] + 1.0) / 2.0));
+                int alpha = Convert.ToInt32(255 * ((double)(terrain.Item1[y,x] + 1.0) / 2.0));
                 //Debug.Log($"x={x},y={y}, alpha = {alpha}");
-                SetTile(alpha, newTexture, x, y);
+                FillTerrain(alpha, newTexture, x, y);
+                //newTexture.SetPixel(x, y, Color.green);
             }
         }
-
+        PlaceRoads(newTexture, terrain.Item2);
+        //FillBuildings(newTexture, terrain.Item2);
         newTexture.Apply();
         rawImage.texture= newTexture;
+        generated = true;
+    }
+    public void GenerateNewScale()
+    {
+        if (generated)
+        {
+            terrainScale = 1.0 / terrainScaleSlider.value;
+            Texture2D newTexture = new Texture2D(X, Y);
+            newTexture.filterMode = FilterMode.Point;
+            terrain=new(Combiner.lowerPerlinNearMatrix(seed, terrainScale,terrain.Item2, Math.Max(Math.Abs(X / RANGE_DENOMINATOR), Math.Abs(Y / RANGE_DENOMINATOR)), DAMPING, CONTRAST, CLIP),terrain.Item2);
+            //  Debug.Log(X * textureSize);
+            for (int y = 0; y < Y; y++)
+            {
+                for (int x = 0; x < X; x++)
+                {
 
+                    int alpha = Convert.ToInt32(255 * ((double)(terrain.Item1[y, x] + 1.0) / 2.0));
+                    //Debug.Log($"x={x},y={y}, alpha = {alpha}");
+                    FillTerrain(alpha, newTexture, x, y);
+                    //newTexture.SetPixel(x, y, Color.green);
+                }
+            }
+            PlaceRoads(newTexture, terrain.Item2);
+            //FillBuildings(newTexture, terrain.Item2);
+            newTexture.Apply();
+            rawImage.texture = newTexture;
+            generated = true;
+        }
     }
 
 }

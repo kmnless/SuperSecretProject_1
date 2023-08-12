@@ -1,16 +1,23 @@
 ﻿
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Diagnostics.Contracts;
 using PerlineNoise;
+using UnityEngine;
+using static UnityEditor.Rendering.CameraUI;
 
 namespace Generation
 {
     public class Combiner
     {
 
-        static public double[,] generatePlayField(int sizeX, int sizeY, int seed, int baseCount, int flagAmount, int middleFlagAmount, int minimalDistance,  int safePlaceRadius, double terrainScale, int smoothRange, float smoothCoef, float contrast, float clip)
+        static public Tuple<double[,], int[,]> generatePlayField(int sizeX, int sizeY, int seed, int baseCount, int flagAmount, int middleFlagAmount, int minimalDistance,  int safePlaceRadius,
+            double terrainScale, int smoothRange, float smoothCoef, float contrast, float clip, int roadGenerationComplexity=80)
         {
             double[,] output;
-            BuildingsGenerator bg = new(sizeX, sizeY, baseCount, seed, middleFlagAmount,safePlaceRadius,minimalDistance);
+            int additionalInterestPoints = Math.Max(sizeX, sizeY)/roadGenerationComplexity;     
+            BuildingsGenerator bg = new(sizeX, sizeY, baseCount, seed, middleFlagAmount,safePlaceRadius,minimalDistance,additionalInterestPoints);
             PerlinNoise perlineNoise = new(seed);
             RoadGenerator roadGenerator;
 
@@ -19,14 +26,15 @@ namespace Generation
             bg.placeAdditionlFlagsNearPoint(flagAmount, bg.middle);
             bg.generateInterestPoints(bg.middle);
             bg.generateMatrix();
-
-            roadGenerator = new RoadGenerator(bg.placedBases, bg.getUnweightedFlags(), bg.interestPoints, sizeX, sizeY, bg.matrix, seed);
+            
+            roadGenerator = new RoadGenerator(bg.placedBases, bg.getUnweightedFlags(), bg.interestPoints, sizeX, sizeY, bg.matrix, seed,additionalInterestPoints+1);
             roadGenerator.connectAllObjectives();
+            //UnityEngine.Debug.Log(roadGenerator.ToString());
             output = perlineNoise.GetNoiseArray(sizeX, sizeY, terrainScale);
             lowerTerrainNearMatrix(output, roadGenerator.matrix, smoothRange, smoothCoef);
             multiplyArray(output, contrast);
             clipArray(output, -1 * clip, clip);
-            return output;
+            return new (output,roadGenerator.matrix);
         }
 
         static public void lowerTerrainNear(double[,] array, int x, int y, int range = 5, float delta = 0.55f)
@@ -95,6 +103,26 @@ namespace Generation
                 } 
                     
             }
+        }
+        static public double[,] lowerPerlinNearMatrix(int seed,double scale,int[,] matrix, int range = 5, float delta = 0.55f,double contrast=4.0,double clip=1.0)
+        {
+            int i, j;
+            PerlinNoise perlineNoise = new(seed);
+            int sizeX=matrix.GetLength(1);
+            int sizeY=matrix.GetLength(0);
+            double[,] array=perlineNoise.GetNoiseArray(sizeX,sizeY,scale);
+
+            for (i = 0; i < sizeY; ++i)
+            {
+                for (j = 0; j < sizeX; ++j)
+                {
+                    if (matrix[i, j] > 0) { lowerTerrainNear(array, j, i, range, delta); }
+                }
+
+            }
+            multiplyArray(array, contrast);
+            clipArray(array, -1 * clip, clip);
+            return array;
 
         }
 
