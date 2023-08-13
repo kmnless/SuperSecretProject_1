@@ -1,11 +1,7 @@
 ﻿
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Diagnostics.Contracts;
 using PerlineNoise;
-using UnityEngine;
-using static UnityEditor.Rendering.CameraUI;
+
 
 namespace Generation
 {
