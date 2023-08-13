@@ -7,20 +7,24 @@ using System.Linq;
 
 public class MapGeneratorScript : MonoBehaviour
 {
-    public Slider playerCountSlider;
-    public Slider flagCountSlider;
-    public Slider outpostCountSlider;
-    public Slider waterlineSlider;
-    public Slider mounainLineSlider;
-    public Slider terrainScaleSlider;
-    public RawImage rawImage;
-    public Texture2D[] textures;
-    public Texture2D roadTexture;
-    public Texture2D flagTexture;
-    public Texture2D baseTexture;
+    [SerializeField] private Slider playerCountSlider;
+    [SerializeField] private Slider flagCountSlider;
+    [SerializeField] private Slider outpostCountSlider;
+    [SerializeField] private Slider waterlineSlider;
+    [SerializeField] private Slider mounainLineSlider;
+    [SerializeField] private Slider terrainScaleSlider;
+    [SerializeField] private Slider smothnessSlider;
+    [SerializeField] private RawImage rawImage;
+    [SerializeField] private Texture2D[] textures;
+    [SerializeField] private Texture2D roadTexture;
+    [SerializeField] private Texture2D flagTexture;
+    [SerializeField] private Texture2D baseTexture;
+    [SerializeField] private SceneHandler sceneHandler;
     [SerializeField] private Color highPrioritySimplifiedFlagColor;
     [SerializeField] private Color lowPrioritySimplifiedFlagColor;
     [SerializeField] private Color SimplifiedBaseColor;
+    [SerializeField] private Button playButton;
+
 
     private bool generated=false;
     private Color[] textureColors;
@@ -34,9 +38,9 @@ public class MapGeneratorScript : MonoBehaviour
     private double terrainScale;
     private int waterline;
     private int mountainLine;
-    private const int LOW_PRIORITY_FLAG_INDEX = Generation.BuildingsGenerator.LOW_PRIORITY_FLAG_INDEX;
-    private const int HIGH_PRIORITY_FLAG_INDEX = Generation.BuildingsGenerator.HIGH_PRIORITY_FLAG_INDEX;
-    private const int BASE_INDEX = Generation.BuildingsGenerator.BASE_INDEX;
+    private static int LOW_PRIORITY_FLAG_INDEX = Generation.BuildingsGenerator.LOW_PRIORITY_FLAG_INDEX;
+    private static int HIGH_PRIORITY_FLAG_INDEX = Generation.BuildingsGenerator.HIGH_PRIORITY_FLAG_INDEX;
+    private static int BASE_INDEX = Generation.BuildingsGenerator.BASE_INDEX;
     [SerializeField] private int RANGE_DENOMINATOR = 20;
     [SerializeField] private int ROAD_GENERATION_COPLEXITY_DENOMINATOR = 80;
     [SerializeField] private int CELLS_PER_PLAYER = 10;
@@ -46,8 +50,7 @@ public class MapGeneratorScript : MonoBehaviour
     [SerializeField] private int MIN_RADIUS_DENOMINATOR = 2;   // MIN RADIUS = BAN RADIUS / MIN_RADIUS_DENOMINATOR :(
     [SerializeField] private int BAN_RADIUS_MULTIPLIER = 24;
     [SerializeField] private double BAN_RADIUS_ROOT_MULTIPLIER = 0.9; // BAN RADIUS = BAN_RADIUS_MULTIPLIER * PLAYER COUNT :)
-    public Tuple<double[,], int[,]> terrain;
-    private int[,] roadsAndBuildings;
+    private Tuple<double[,], int[,]> terrain;
     public int seed;
 
     private void FillTerrain(int height, Texture2D baseTexture, int x, int y)
@@ -129,10 +132,13 @@ public class MapGeneratorScript : MonoBehaviour
         middleFlagCount = Convert.ToInt32(outpostCountSlider.value);
         X = CELLS_PER_PLAYER * baseCount;
         Y = X;
+        CONTRAST = 1.0f / (smothnessSlider.value / 10);
         banRadius = Convert.ToInt32(BAN_RADIUS_MULTIPLIER*Math.Sqrt(Math.Log(BAN_RADIUS_ROOT_MULTIPLIER*Math.Sqrt(baseCount))));
         terrainScale = 1.0/terrainScaleSlider.value;
+        waterline = Convert.ToInt32(waterlineSlider.value);
+        mountainLine = Convert.ToInt32(mounainLineSlider.value);
         //Debug.Log(terrainScale);
-        
+
         minRadius = banRadius/MIN_RADIUS_DENOMINATOR;
         seed = (int)(System.DateTime.Now.TimeOfDay.TotalMilliseconds);
         try
@@ -145,7 +151,6 @@ public class MapGeneratorScript : MonoBehaviour
             seed = Convert.ToInt32(System.DateTime.Now.TimeOfDay.TotalMilliseconds);
             terrain = Combiner.generatePlayField(X, Y, seed, baseCount, flagCount, middleFlagCount, minRadius, banRadius, terrainScale, Math.Max(Math.Abs(X / RANGE_DENOMINATOR), Math.Abs(Y / RANGE_DENOMINATOR)), DAMPING, CONTRAST, CLIP, ROAD_GENERATION_COPLEXITY_DENOMINATOR);
         }
-        roadsAndBuildings = terrain.Item2;
         Texture2D newTexture = new Texture2D(X, Y);
         newTexture.filterMode = FilterMode.Point;
         //  Debug.Log(X * textureSize);
@@ -165,16 +170,20 @@ public class MapGeneratorScript : MonoBehaviour
         newTexture.Apply();
         rawImage.texture= newTexture;
         generated = true;
+        playButton.interactable = true;
     }
     public void GenerateNewScale()
     {
         if (generated)
         {
+            CONTRAST = 1.0f/ (smothnessSlider.value/ 10);
             terrainScale = 1.0 / terrainScaleSlider.value;
             Texture2D newTexture = new Texture2D(X, Y);
             newTexture.filterMode = FilterMode.Point;
             terrain=new(Combiner.lowerPerlinNearMatrix(seed, terrainScale,terrain.Item2, Math.Max(Math.Abs(X / RANGE_DENOMINATOR), Math.Abs(Y / RANGE_DENOMINATOR)), DAMPING, CONTRAST, CLIP),terrain.Item2);
             //  Debug.Log(X * textureSize);
+            waterline = Convert.ToInt32(waterlineSlider.value);
+            mountainLine = Convert.ToInt32(mounainLineSlider.value);
             for (int y = 0; y < Y; y++)
             {
                 for (int x = 0; x < X; x++)
@@ -193,5 +202,22 @@ public class MapGeneratorScript : MonoBehaviour
             generated = true;
         }
     }
-
+    public void StartGame()
+    {
+        if (generated) 
+        {
+            GlobalVariableHandler.textures = textures;
+            GlobalVariableHandler.flagTexture = flagTexture;
+            GlobalVariableHandler.baseTexture = baseTexture;
+            GlobalVariableHandler.roadTexture = roadTexture;
+            GlobalVariableHandler.buldingsField = terrain.Item2;
+            GlobalVariableHandler.terrainField = terrain.Item1;
+            GlobalVariableHandler.cellSize = textures[0].width;
+            GlobalVariableHandler.playerCount = baseCount;
+            GlobalVariableHandler.fieldSizeX = X; GlobalVariableHandler.fieldSizeY = Y;
+            GlobalVariableHandler.waterline = waterline;
+            GlobalVariableHandler.montainLine = mountainLine;
+            sceneHandler.ChangeState(Constants.GAME_SCENE_INDEX);
+        } 
+    }
 }

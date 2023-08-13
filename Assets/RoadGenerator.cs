@@ -213,7 +213,7 @@ namespace Generation
                 {
                     if (matrix[y, x] == 0)
                     {
-                        matrix[y, x] = 2;
+                        matrix[y, x] = Convert.ToInt32(Constants.Buildings.Road);
                     }
 
                 }

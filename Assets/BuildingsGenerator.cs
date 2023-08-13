@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-
 namespace Generation
 {
     //try
@@ -22,9 +21,10 @@ namespace Generation
         private int matrixSizeX;
         private int matrixSizeY;
         private int amountOfBases;
-        public const int LOW_PRIORITY_FLAG_INDEX = 3;
-        public const int HIGH_PRIORITY_FLAG_INDEX = 7;
-        public const int BASE_INDEX = 1;
+        
+        public static int LOW_PRIORITY_FLAG_INDEX = Convert.ToInt32(Constants.Buildings.Outpost);
+        public static int HIGH_PRIORITY_FLAG_INDEX = Convert.ToInt32(Constants.Buildings.Flag);
+        public static int BASE_INDEX = Convert.ToInt32(Constants.Buildings.Base);
         public const int MAX_DEPTH = 5;
 
         public int[,] matrix { get; }
@@ -129,7 +129,7 @@ namespace Generation
             {
                 for (int i = 0; i < amountOfBaseFlags; ++i)
                 {
-                    placeFlagInBanRadius(bannedPos);
+                    placeFlagInBanRadius(bannedPos,LOW_PRIORITY_FLAG_INDEX);
                 }
             }
         }
@@ -140,7 +140,7 @@ namespace Generation
                 placeFlagInBanRadius(place, HIGH_PRIORITY_FLAG_INDEX);
             }
         }
-        private bool placeFlagInBanRadius(Tuple<int, int> place, int flagIndex = LOW_PRIORITY_FLAG_INDEX, int depth = 0)
+        private bool placeFlagInBanRadius(Tuple<int, int> place, int flagIndex, int depth = 0)
         {
             if (depth > MAX_DEPTH)
             {
