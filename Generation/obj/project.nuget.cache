@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "yrCxuMsiIlxmva6m6ZFMCHTKhN/YHJNOZA9nS2T2uOmP8FQD4RSWdXNBzj+dW1o17HjHFW4GW9kr5wsQrMqQIA==",
+  "dgSpecHash": "heOqM5GOwjDiHVORYDUrvm/tlUbb34/W9UhtsHeu4NJTRfBu5E14TK6KG2aSuUsFbSFtQHgTlXnDvA2N/MmIuQ==",
   "success": true,
-  "projectFilePath": "C:\\Projects\\c#\\Generation\\Generation\\Generation.csproj",
+  "projectFilePath": "C:\\Projects\\c#\\SuperSecretProject_1-service\\SuperSecretProject_1\\Generation\\Generation.csproj",
   "expectedPackageFiles": [],
   "logs": []
 }

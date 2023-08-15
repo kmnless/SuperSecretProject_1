@@ -1,0 +1,15 @@
+C:\Projects\c#\SuperSecretProject_1-service\SuperSecretProject_1\Network\bin\Debug\net7.0\Network.exe
+C:\Projects\c#\SuperSecretProject_1-service\SuperSecretProject_1\Network\bin\Debug\net7.0\Network.deps.json
+C:\Projects\c#\SuperSecretProject_1-service\SuperSecretProject_1\Network\bin\Debug\net7.0\Network.runtimeconfig.json
+C:\Projects\c#\SuperSecretProject_1-service\SuperSecretProject_1\Network\bin\Debug\net7.0\Network.dll
+C:\Projects\c#\SuperSecretProject_1-service\SuperSecretProject_1\Network\bin\Debug\net7.0\Network.pdb
+C:\Projects\c#\SuperSecretProject_1-service\SuperSecretProject_1\Network\obj\Debug\net7.0\Network.csproj.AssemblyReference.cache
+C:\Projects\c#\SuperSecretProject_1-service\SuperSecretProject_1\Network\obj\Debug\net7.0\Network.GeneratedMSBuildEditorConfig.editorconfig
+C:\Projects\c#\SuperSecretProject_1-service\SuperSecretProject_1\Network\obj\Debug\net7.0\Network.AssemblyInfoInputs.cache
+C:\Projects\c#\SuperSecretProject_1-service\SuperSecretProject_1\Network\obj\Debug\net7.0\Network.AssemblyInfo.cs
+C:\Projects\c#\SuperSecretProject_1-service\SuperSecretProject_1\Network\obj\Debug\net7.0\Network.csproj.CoreCompileInputs.cache
+C:\Projects\c#\SuperSecretProject_1-service\SuperSecretProject_1\Network\obj\Debug\net7.0\Network.dll
+C:\Projects\c#\SuperSecretProject_1-service\SuperSecretProject_1\Network\obj\Debug\net7.0\refint\Network.dll
+C:\Projects\c#\SuperSecretProject_1-service\SuperSecretProject_1\Network\obj\Debug\net7.0\Network.pdb
+C:\Projects\c#\SuperSecretProject_1-service\SuperSecretProject_1\Network\obj\Debug\net7.0\Network.genruntimeconfig.cache
+C:\Projects\c#\SuperSecretProject_1-service\SuperSecretProject_1\Network\obj\Debug\net7.0\ref\Network.dll

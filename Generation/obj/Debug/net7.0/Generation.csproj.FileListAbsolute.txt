@@ -13,3 +13,11 @@ C:\Projects\c#\Generation\Generation\obj\Debug\net7.0\refint\Generation.dll
 C:\Projects\c#\Generation\Generation\obj\Debug\net7.0\Generation.pdb
 C:\Projects\c#\Generation\Generation\obj\Debug\net7.0\Generation.genruntimeconfig.cache
 C:\Projects\c#\Generation\Generation\obj\Debug\net7.0\ref\Generation.dll
+C:\Projects\c#\SuperSecretProject_1-service\SuperSecretProject_1\Generation\obj\Debug\net7.0\Generation.csproj.AssemblyReference.cache
+C:\Projects\c#\SuperSecretProject_1-service\SuperSecretProject_1\Generation\obj\Debug\net7.0\Generation.GeneratedMSBuildEditorConfig.editorconfig
+C:\Projects\c#\SuperSecretProject_1-service\SuperSecretProject_1\Generation\obj\Debug\net7.0\Generation.AssemblyInfoInputs.cache
+C:\Projects\c#\SuperSecretProject_1-service\SuperSecretProject_1\Generation\obj\Debug\net7.0\Generation.AssemblyInfo.cs
+C:\Projects\c#\SuperSecretProject_1-service\SuperSecretProject_1\Generation\obj\Debug\net7.0\Generation.csproj.CoreCompileInputs.cache
+C:\Projects\c#\SuperSecretProject_1-service\SuperSecretProject_1\Generation\obj\Debug\net7.0\Generation.dll
+C:\Projects\c#\SuperSecretProject_1-service\SuperSecretProject_1\Generation\obj\Debug\net7.0\refint\Generation.dll
+C:\Projects\c#\SuperSecretProject_1-service\SuperSecretProject_1\Generation\obj\Debug\net7.0\Generation.pdb
