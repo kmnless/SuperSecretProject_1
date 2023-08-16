@@ -2,15 +2,13 @@
 using System.Net.Sockets;
 using System.Text;
 
-// UTF-8 encoding
-
 namespace Network
 {
 
     class Server
     {
         private readonly int maxConnections;
-
+        private object locker = new object();
         private Random r = new Random();
 
         public int hostPort { get; }
@@ -37,60 +35,64 @@ namespace Network
             return port;
         }
 
-        public async Task startServer()
+        public void startServer()
         {
             // setting up server socket
             Socket serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             IPEndPoint endPoint = new IPEndPoint(IPAddress.Parse(hostIP), hostPort);
-            List<Socket> remoteSockets = new();
-            List<Task> proceedTasks = new();
+
+            List<Clients> clients = new();
             try
             {
                 serverSocket.Bind(endPoint);
                 serverSocket.Listen(maxConnections);
-                Console.WriteLine($"Server started at {endPoint}. Waiting for connection from users..");
+                Console.WriteLine($"Server started at {endPoint}. Waiting for {maxConnections} connections from users..");
                 // Server started
 
-                // TODO) processing clients properly
+                
+                int connectionsCount = 0;
+                for (int i = 0; i < maxConnections; ++i)
+                {
+                    new Thread(async () =>
+                    {
 
-                //int connectionsCount = 0;
-                //while (connectionsCount!=maxConnections)
-                //{
-                //    // waiting for connection
-                //    Socket remoteSocket = await serverSocket.AcceptAsync();
-                //    remoteSockets.Add(remoteSocket);
-                //    Console.WriteLine($"{remoteSocket.LocalEndPoint} connected");
-                //    // adding current client to task list
-                //    proceedTasks.Add(proceed(remoteSocket));
-                //    connectionsCount++;
-                //}
-                //while(true)
-                //{
-                //    // processing connected clients forever
-                //    foreach (Task task in proceedTasks)
-                //    {
-                //        task.Start();
-                //    }
-                //}    
+                        // waiting for connection
+                        Socket remoteSocket = await serverSocket.AcceptAsync();
+                        clients.Add(new Clients(remoteSocket, connectionsCount));
 
+                        Console.WriteLine($"{clients[connectionsCount].socket.RemoteEndPoint} with id {clients[connectionsCount].id}connected");
+
+                        connectionsCount++;
+                    }).Start();
+                }
+                Console.ReadLine();                                               // KOSTIL))
+                Console.WriteLine($"{clients.Count} connected");
+                if (connectionsCount == maxConnections)
+                {
+                    foreach (Clients client in clients)
+                    {
+                        new Thread(async () =>
+                        {
+                            while (true)
+                            {
+                                // Processing new client
+                                string response = Task.Run(async () => await getClientResponseAsync(client.socket)).Result;
+                                Console.WriteLine($"Client(id = {client.id} sent you \"{response}\"");
+                                // Logic with response....
+
+                                // Server reply
+                                string reply = "OK))";
+                                await client.socket.SendAsync(Encoding.UTF8.GetBytes(reply));
+                            }
+                        }).Start();
+                    }
+                }
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
             }
 
-        }
-        private async Task proceed(Socket socket)
-        {
-            // Processing new client
-            string response = Task.Run(async () => await getClientResponseAsync(socket)).Result;
-            Console.WriteLine($"Client sent you \"{response}\"");
-            // Logic with response....
-
-            // Server reply
-            Console.WriteLine("Your response");
-            string reply = Console.ReadLine();
-            await socket.SendAsync(Encoding.UTF8.GetBytes(reply));
         }
         private async Task<string> getClientResponseAsync(Socket remoteSocket)
         {

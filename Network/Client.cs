@@ -4,9 +4,23 @@ using System.Reflection.Metadata.Ecma335;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
-// UTF-8 encoding
+
 namespace Network
 {
+    public struct Clients
+    {
+        public Socket socket;
+        public int id;
+
+        public Clients(Socket socket, int id)
+        {
+            this.socket = socket;
+            this.id = id;
+        }
+    }
+
+
+
     class Client
     {
         private int serverPort;
