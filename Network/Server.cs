@@ -1,115 +1,64 @@
-﻿using System.Net;
+﻿using NetworkEngine.Handling;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading.Tasks;
 
-namespace Network
+namespace NetworkEngine
 {
-
-    class Server
+    public class Server
     {
-        private readonly int maxConnections;
-        private object locker = new object();
-        private Random r = new Random();
+        public event Action<IPEndPoint>? ServerStarted;
+        public event Action<Socket>? Connected;             // TODO: <ConnectionInfo> type against <Socket> ?
+        public event Action<string>? MessageReceived;
 
-        public int hostPort { get; }
+        public IPAddress Host { get; private set; }
+        public int Port { get; private set; }
 
-        private readonly string hostIP;
+        private IPEndPoint serverEndPoint;
+        private Socket serverSocket;
+        private Socket? remoteSocket;
 
-        public Server(string hostIP = "127.0.0.1", int maxConnections = 10)
+        private int connectionCount;
+
+        private IServerHandler handler;
+
+        public Server(string host, int port, IServerHandler handler, int connectionCount)
         {
-            this.hostIP = hostIP;
-            //this.hostPort = getFreePort();
-            hostPort = 59469;
-            this.maxConnections = maxConnections;
+            Host = IPAddress.Parse(host);
+            Port = port;
+            this.handler = handler;
+            handler.DataDecoded += Handler_DataDecoded;
+
+            this.connectionCount = connectionCount;
+
+            serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            serverEndPoint = new IPEndPoint(Host, Port);
         }
 
-        private int getFreePort()
+        private void Handler_DataDecoded(string message)
         {
-            const int minPort = 49152;
-            const int maxPort = 65535;
-            int port = 0;
-            do
-            { port = minPort + r.Next(maxPort - minPort); }
-            while (System.Net.NetworkInformation.IPGlobalProperties.GetIPGlobalProperties().GetActiveTcpListeners().Any(l => l.Port == port));
-
-            return port;
+            MessageReceived?.Invoke(message);
         }
 
-        public void startServer()
+        public async Task StartAsync()
         {
-            // setting up server socket
-            Socket serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            IPEndPoint endPoint = new IPEndPoint(IPAddress.Parse(hostIP), hostPort);
+            serverSocket.Bind(serverEndPoint);
+            serverSocket.Listen(connectionCount);
+            ServerStarted?.Invoke(serverEndPoint);
 
-            List<Clients> clients = new();
-            try
-            {
-                serverSocket.Bind(endPoint);
-                serverSocket.Listen(maxConnections);
-                Console.WriteLine($"Server started at {endPoint}. Waiting for {maxConnections} connections from users..");
-                // Server started
+            remoteSocket = await serverSocket.AcceptAsync();
+            Connected?.Invoke(remoteSocket);
 
-                
-                int connectionsCount = 0;
-                for (int i = 0; i < maxConnections; ++i)
-                {
-                    new Thread(async () =>
-                    {
-
-                        // waiting for connection
-                        Socket remoteSocket = await serverSocket.AcceptAsync();
-                        clients.Add(new Clients(remoteSocket, connectionsCount));
-
-                        Console.WriteLine($"{clients[connectionsCount].socket.RemoteEndPoint} with id {clients[connectionsCount].id}connected");
-
-                        connectionsCount++;
-                    }).Start();
-                }
-                Console.ReadLine();                                               // KOSTIL))
-                Console.WriteLine($"{clients.Count} connected");
-                if (connectionsCount == maxConnections)
-                {
-                    foreach (Clients client in clients)
-                    {
-                        new Thread(async () =>
-                        {
-                            while (true)
-                            {
-                                // Processing new client
-                                string response = Task.Run(async () => await getClientResponseAsync(client.socket)).Result;
-                                Console.WriteLine($"Client(id = {client.id} sent you \"{response}\"");
-                                // Logic with response....
-
-                                // Server reply
-                                string reply = "OK))";
-                                await client.socket.SendAsync(Encoding.UTF8.GetBytes(reply));
-                            }
-                        }).Start();
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
-
+            await handler.HandleAsync(remoteSocket);
         }
-        private async Task<string> getClientResponseAsync(Socket remoteSocket)
+
+        public async Task SendAsync(string message)
         {
-            // buffer for incoming data
-            ArraySegment<byte> buffer = new byte[1024];
-            int byteCount = 0;
-            string data = string.Empty;
-
-            do
-            {
-                byteCount = await remoteSocket.ReceiveAsync(buffer, SocketFlags.None);
-                data += Encoding.ASCII.GetString(buffer.ToArray(), 0, byteCount);
-
-            } while (remoteSocket.Available > 0);
-
-            return data;
+            await handler.SendTo(remoteSocket, message);
         }
     }
-
 }
