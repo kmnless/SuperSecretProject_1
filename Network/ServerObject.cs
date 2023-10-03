@@ -27,7 +27,7 @@ public class ServerObject
         try
         {
             tcpListener.Start(connectionCount);
-            Console.WriteLine("Server started. Waiting clients to connect...");
+            Console.WriteLine($"Server started on {tcpListener.LocalEndpoint}. Waiting clients to connect...");
 
             while (true)
             {
