@@ -69,7 +69,6 @@ public class MapGeneratorScript : MonoBehaviour
         int singleInterval = range / (textures.Count() - 2);
         baseTexture.SetPixel(x, y, textureColors[(height - waterline) / singleInterval + 1]);
     }
-
     private void FillBuildings(Texture2D texture, int[,] matrix)
     {
         for(int i = 0; i < matrix.GetLength(0); ++i) 
@@ -92,8 +91,6 @@ public class MapGeneratorScript : MonoBehaviour
         }
 
     }
-
-
     private void PlaceRoads(Texture2D texture, int[,] matrix)
     {
         for (int i = 0; i < matrix.GetLength(0); ++i)

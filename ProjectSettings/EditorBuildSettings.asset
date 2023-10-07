@@ -10,8 +10,14 @@ EditorBuildSettings:
     guid: 8c9cfa26abfee488c85f1582747f6a02
   - enabled: 1
     path: Assets/Scenes/GameSetup.unity
-    guid: 6680ff550ab595c4c930402256f43fef
+    guid: 833af26976158e544ac0584aeca3a849
   - enabled: 1
     path: Assets/Scenes/Game.unity
-    guid: 583c5db1812ec7445a2f6b3d65aa19d8
+    guid: 6680ff550ab595c4c930402256f43fef
+  - enabled: 1
+    path: Assets/Scenes/GameConnection.unity
+    guid: bbcf096e177ff50429ee49fec0af6009
+  - enabled: 1
+    path: Assets/Scenes/GameHost.unity
+    guid: 0bb7d660f4dbff34197d45f00f924475
   m_configObjects: {}

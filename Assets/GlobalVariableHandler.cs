@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Net;
+using UnityEditor;
 using UnityEngine;
 
 
@@ -17,5 +19,5 @@ public class GlobalVariableHandler : MonoBehaviour
     static public int[,] buldingsField;
     static public int waterline;
     static public int montainLine;
-    
+    static public IPEndPoint serverIPEndPoint;
 }
