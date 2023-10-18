@@ -38,7 +38,7 @@ public class ClientObject
             string? message = $"{userName} connected";
             // посылаем сообщение о подключении всем подключенным пользователям
             await server.BroadcastMessageAsync(message, Id);
-            Debug.Log(message);
+            //Debug.Log(message);
             // в бесконечном цикле получаем сообщения от клиента
             while (true)
             {

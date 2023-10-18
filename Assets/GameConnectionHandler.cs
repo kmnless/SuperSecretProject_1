@@ -44,11 +44,10 @@ public class GameConnectionHandler : MonoBehaviour
         StreamWriter? Writer = null;
         try
         {
-            client.Connect(host, port); //подключение клиента
-            Debug.Log($"{name} has connected to {host}:{port}");
+            client.Connect(host, port); // подключение клиента
             Reader = new StreamReader(client.GetStream());
             Writer = new StreamWriter(client.GetStream());
-            if (Writer is null || Reader is null) return;
+            if (Writer is null || Reader is null) throw new Exception();
             // запускаем новый поток для получения данных
             Task.Run(() => ReceiveMessageAsync(Reader));
             // запускаем ввод сообщений
@@ -88,34 +87,34 @@ public class GameConnectionHandler : MonoBehaviour
     //    Reader?.Close();
     //}
 
-    public async void ConnectToLocalServerAsync()
-    {
-        if (IsHosted)
-        {
-            using TcpClient client = new TcpClient();
-            StreamReader? Reader = null;
-            StreamWriter? Writer = null;
-            try
-            {
-                client.Connect(IPAddress.Parse(InputIp.text), Convert.ToInt32(InputPort.text)); //подключение клиента
-                Debug.Log($"local client({InputName.text}) connected to localhost");
-                Reader = new StreamReader(client.GetStream());
-                Writer = new StreamWriter(client.GetStream());
-                await SendMessageAsync(Writer);
-                if (Writer is null || Reader is null) return;
-                // запускаем новый поток для получения данных
-                Task.Run(() => ReceiveMessageAsync(Reader));
-                // запускаем ввод сообщений
-                await SendMessageAsync(Writer);
-            }
-            catch (Exception ex)
-            {
-                Debug.LogException(ex);
-            }
-            Writer?.Close();
-            Reader?.Close();
-        }
-    }
+    //public async void ConnectToLocalServerAsync()
+    //{
+    //    if (IsHosted)
+    //    {
+    //        using TcpClient client = new TcpClient();
+    //        StreamReader? Reader = null;
+    //        StreamWriter? Writer = null;
+    //        try
+    //        {
+    //            client.Connect(IPAddress.Parse(InputIp.text), Convert.ToInt32(InputPort.text)); //подключение клиента
+    //            //Debug.Log($"local client({InputName.text}) connected to localhost");
+    //            Reader = new StreamReader(client.GetStream());
+    //            Writer = new StreamWriter(client.GetStream());
+    //            await SendMessageAsync(Writer);
+    //            if (Writer is null || Reader is null) return;
+    //            // запускаем новый поток для получения данных
+    //            Task.Run(() => ReceiveMessageAsync(Reader));
+    //            // запускаем ввод сообщений
+    //            await SendMessageAsync(Writer);
+    //        }
+    //        catch (Exception ex)
+    //        {
+    //            Debug.LogException(ex);
+    //        }
+    //        Writer?.Close();
+    //        Reader?.Close();
+    //    }
+    //}
 
     // отправка сообщений
     private async Task SendMessageAsync(StreamWriter writer)

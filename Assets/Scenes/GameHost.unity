@@ -2202,7 +2202,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 52.8
+  m_fontSize: 52.85
   m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -2391,7 +2391,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 98709608}
         m_TargetAssemblyTypeName: GameConnectionHandler, Assembly-CSharp
-        m_MethodName: ConnectToLocalServerAsync
+        m_MethodName: ConnectToServerAsync
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3103,7 +3103,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 66.9
+  m_fontSize: 67
   m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 1
