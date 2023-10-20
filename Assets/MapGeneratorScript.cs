@@ -24,7 +24,9 @@ public class MapGeneratorScript : MonoBehaviour
     [SerializeField] private Color lowPrioritySimplifiedFlagColor;
     [SerializeField] private Color SimplifiedBaseColor;
     [SerializeField] private Button playButton;
-
+    [SerializeField] private GameObject basePrefab;
+    [SerializeField] private GameObject flagPrefab;
+    [SerializeField] private GameObject outpostPrefab;
 
     private bool generated=false;
     private Color[] textureColors;
@@ -214,6 +216,9 @@ public class MapGeneratorScript : MonoBehaviour
             GlobalVariableHandler.fieldSizeX = X; GlobalVariableHandler.fieldSizeY = Y;
             GlobalVariableHandler.waterline = waterline;
             GlobalVariableHandler.montainLine = mountainLine;
+            GlobalVariableHandler.basePrefab = basePrefab;
+            GlobalVariableHandler.flagPrefab = flagPrefab;
+            GlobalVariableHandler.outpostPrefab = outpostPrefab;
             sceneHandler.ChangeState(Constants.GAME_SCENE_INDEX);
         } 
     }

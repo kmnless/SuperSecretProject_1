@@ -1,3 +1,4 @@
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -44,13 +45,13 @@ public class GameConnectionHandler : MonoBehaviour
         StreamWriter? Writer = null;
         try
         {
-            client.Connect(host, port); // подключение клиента
+            client.Connect(host, port); // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
             Reader = new StreamReader(client.GetStream());
             Writer = new StreamWriter(client.GetStream());
             if (Writer is null || Reader is null) throw new Exception();
-            // запускаем новый поток для получения данных
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
             Task.Run(() => ReceiveMessageAsync(Reader));
-            // запускаем ввод сообщений
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
             await SendMessageAsync(Writer);
         }
         catch (Exception ex)
@@ -69,14 +70,14 @@ public class GameConnectionHandler : MonoBehaviour
     //    IPEndPoint endPoint = GlobalVariableHandler.serverIPEndPoint;
     //    try
     //    {
-    //        client.Connect(endPoint); //подключение клиента
+    //        client.Connect(endPoint); //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     //        Debug.Log($"{name} has connected to {endPoint}");
     //        Reader = new StreamReader(client.GetStream());
     //        Writer = new StreamWriter(client.GetStream());
     //        if (Writer is null || Reader is null) return;
-    //        // запускаем новый поток для получения данных
+    //        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
     //        await Task.Run(() => ReceiveMessageAsync(Reader));
-    //        // запускаем ввод сообщений
+    //        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     //        await SendMessageAsync(Writer);
     //    }
     //    catch (Exception ex)
@@ -96,15 +97,15 @@ public class GameConnectionHandler : MonoBehaviour
     //        StreamWriter? Writer = null;
     //        try
     //        {
-    //            client.Connect(IPAddress.Parse(InputIp.text), Convert.ToInt32(InputPort.text)); //подключение клиента
+    //            client.Connect(IPAddress.Parse(InputIp.text), Convert.ToInt32(InputPort.text)); //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     //            //Debug.Log($"local client({InputName.text}) connected to localhost");
     //            Reader = new StreamReader(client.GetStream());
     //            Writer = new StreamWriter(client.GetStream());
     //            await SendMessageAsync(Writer);
     //            if (Writer is null || Reader is null) return;
-    //            // запускаем новый поток для получения данных
+    //            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
     //            Task.Run(() => ReceiveMessageAsync(Reader));
-    //            // запускаем ввод сообщений
+    //            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     //            await SendMessageAsync(Writer);
     //        }
     //        catch (Exception ex)
@@ -116,13 +117,13 @@ public class GameConnectionHandler : MonoBehaviour
     //    }
     //}
 
-    // отправка сообщений
+    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     private async Task SendMessageAsync(StreamWriter writer)
     {
-        // сначала отправляем имя
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ
         await writer.WriteLineAsync(InputName.text);
         await writer.FlushAsync();
-        //Console.WriteLine("Для отправки сообщений введите сообщение и нажмите Enter");                // ---------------------------------- ?
+        //Console.WriteLine("пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ Enter");                // ---------------------------------- ?
 
         while (true)
         {
@@ -131,18 +132,18 @@ public class GameConnectionHandler : MonoBehaviour
             await writer.FlushAsync();
         }
     }
-    // получение сообщений
+    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     private async Task ReceiveMessageAsync(StreamReader reader)
     {
         while (true)
         {
             try
             {
-                // считываем ответ в виде строки
+                // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
                 string? message = await reader.ReadLineAsync();
-                // если пустой ответ, ничего не выводим на консоль
+                // пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
                 if (string.IsNullOrEmpty(message)) continue;
-                //Print(message);//вывод сообщения        
+                //Print(message);//пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ        
                 //Debug.Log(message);
             }
             catch
@@ -151,22 +152,22 @@ public class GameConnectionHandler : MonoBehaviour
             }
         }
     }
-    // чтобы полученное сообщение не накладывалось на ввод нового сообщения
+    // пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     //void Print(string message)
     //{
-    //    if (System.OperatingSystem.IsWindows())    // если ОС Windows
+    //    if (System.OperatingSystem.IsWindows())    // пїЅпїЅпїЅпїЅ пїЅпїЅ Windows
     //    {
-    //        var position = Console.GetCursorPosition(); // получаем текущую позицию курсора
-    //        int left = position.Left;   // смещение в символах относительно левого края
-    //        int top = position.Top;     // смещение в строках относительно верха
-    //                                    // копируем ранее введенные символы в строке на следующую строку
+    //        var position = Console.GetCursorPosition(); // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+    //        int left = position.Left;   // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
+    //        int top = position.Top;     // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
+    //                                    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
     //        Console.MoveBufferArea(0, top, left, 1, 0, top + 1);
-    //        // устанавливаем курсор в начало текущей строки
+    //        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
     //        Console.SetCursorPosition(0, top);
-    //        // в текущей строке выводит полученное сообщение
+    //        // пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     //        Console.WriteLine(message);
-    //        // переносим курсор на следующую строку
-    //        // и пользователь продолжает ввод уже на следующей строке
+    //        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
+    //        // пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
     //        Console.SetCursorPosition(left, top + 1);
     //    }
     //    else Console.WriteLine(message);

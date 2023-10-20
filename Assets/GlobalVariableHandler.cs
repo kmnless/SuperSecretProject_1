@@ -11,6 +11,11 @@ public class GlobalVariableHandler : MonoBehaviour
     static public Texture2D roadTexture;
     static public Texture2D flagTexture;
     static public Texture2D baseTexture;
+    static public GameObject basePrefab;
+    static public GameObject flagPrefab;
+    static public GameObject outpostPrefab;
+    static public PlayerProperty[] players;
+    static public int myIndex;
     static public int playerCount;
     static public float cellSize;
     static public int fieldSizeX;

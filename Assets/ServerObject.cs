@@ -1,4 +1,5 @@
-﻿using System.Net.Sockets;
+﻿
+using System.Net.Sockets;
 using System.Net;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +17,7 @@ public class ServerObject
     List<ClientObject> clients = new List<ClientObject>();
     private int connectionCount;
 
-    public IPEndPoint localEndPoint { get; internal set; }
+    public IPEndPoint? localEndPoint { get; internal set; }
 
     public ServerObject(int connectionCount, IPEndPoint? endPoint = null)
     {

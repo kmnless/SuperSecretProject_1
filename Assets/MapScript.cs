@@ -10,7 +10,6 @@ public class MapScript : MonoBehaviour
 {
 
     static public GameObject[,] sprites;
-
     private static void texturize(double perlinHeight, int buildingType, GameObject obj, float spriteSize)
     {
         Texture2D[] textures = GlobalVariableHandler.textures;
@@ -47,10 +46,43 @@ public class MapScript : MonoBehaviour
             {
                 sprites[i, j] = new GameObject();
                 texturize(terrain[i, j], buldings[i, j], sprites[i, j], spriteSize);
-                sprites[i, j].transform.position= new Vector3(j*spriteSize/100.0f,i*spriteSize/100.0f, 10);
+                sprites[i, j].transform.position= new Vector3(j*spriteSize/100.0f,i*spriteSize/100.0f, 10.0f);
                 sprites[i, j].transform.parent = map.transform;
             }
         }
         
     }   
+    public static void CreateEntities(int sizeX, int sizeY,int[,] buldings, float spriteSize, GameObject bases, GameObject flags, GameObject outposts)
+    {
+        int baseIndex = 0;
+        int flagIndex = 0;
+        int outpostIndex = 0;
+        GameObject buffer;
+        for(int i = 0; i < sizeY; ++i)
+        {
+            for (int j = 0; j < sizeX; ++j) 
+            {
+                switch(buldings[i,j])
+                {
+                    case (int)Constants.Buildings.None:
+                        break;
+                    case (int)Constants.Buildings.Base:
+                        buffer = Instantiate(GlobalVariableHandler.basePrefab, new Vector3(j*spriteSize/100.0f,i*spriteSize/100.0f, -1.0f), Quaternion.identity);
+                        buffer.transform.parent = bases.transform;
+                        buffer.name = "Base" + baseIndex++.ToString();
+                        break;
+                    case (int)Constants.Buildings.Flag:
+                        buffer = Instantiate(GlobalVariableHandler.flagPrefab, new Vector3(j*spriteSize/100.0f,i*spriteSize/100.0f, -1.0f), Quaternion.identity);
+                        buffer.transform.parent = flags.transform;
+                        buffer.name = "Flag" + flagIndex++.ToString();
+                        break;
+                    case (int)Constants.Buildings.Outpost:
+                        buffer = Instantiate(GlobalVariableHandler.outpostPrefab, new Vector3(j*spriteSize/100.0f,i*spriteSize/100.0f, -1.0f), Quaternion.identity);
+                        buffer.transform.parent = outposts.transform;
+                        buffer.name = "Outpost" + outpostIndex++.ToString();
+                        break;
+                }
+            }
+        }
+    }
 }
