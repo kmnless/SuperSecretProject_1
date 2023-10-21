@@ -6,7 +6,7 @@ using UnityEngine;
 public class GameLoaderScript : MonoBehaviour
 {
     // Start is called before the first frame update
-    [SerializeField] public float spriteSize = 128.0f;
+    [SerializeField] static public float spriteSize = 128.0f;
     [SerializeField] private GameObject map;
     [SerializeField] private GameObject flags;
     [SerializeField] private GameObject bases;
