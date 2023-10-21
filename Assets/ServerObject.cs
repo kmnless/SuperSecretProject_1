@@ -17,9 +17,9 @@ public class ServerObject
     List<ClientObject> clients = new List<ClientObject>();
     private int connectionCount;
 
-    public IPEndPoint? localEndPoint { get; internal set; }
+    public IPEndPoint localEndPoint { get; internal set; }
 
-    public ServerObject(int connectionCount, IPEndPoint? endPoint = null)
+    public ServerObject(int connectionCount, IPEndPoint endPoint = null)
     {
         if (endPoint != null)
             this.tcpListener = new TcpListener(endPoint);
@@ -29,7 +29,7 @@ public class ServerObject
     protected internal void RemoveConnection(string id)
     {
         // получаем по id закрытое подключение
-        ClientObject? client = clients.FirstOrDefault(c => c.Id == id);
+        ClientObject client = clients.FirstOrDefault(c => c.Id == id);
         // удаляем его из списка подключений
         if (client != null) clients.Remove(client);
         client?.Close();

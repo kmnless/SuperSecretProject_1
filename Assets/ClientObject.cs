@@ -35,8 +35,8 @@ public class ClientObject
         try
         {
             // получаем имя пользователя
-            string? userName = await Reader.ReadLineAsync();
-            string? message = $"{userName} connected";
+            string userName = await Reader.ReadLineAsync();
+            string message = $"{userName} connected";
             // посылаем сообщение о подключении всем подключенным пользователям
             await server.BroadcastMessageAsync(message, Id);
             //Debug.Log(message);

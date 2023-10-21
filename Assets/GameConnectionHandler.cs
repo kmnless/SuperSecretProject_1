@@ -41,8 +41,8 @@ public class GameConnectionHandler : MonoBehaviour
         int port = Convert.ToInt32(InputPort.text);
         string name = InputName.text;
         using TcpClient client = new TcpClient();
-        StreamReader? Reader = null;
-        StreamWriter? Writer = null;
+        StreamReader Reader = null;
+        StreamWriter Writer = null;
         try
         {
             client.Connect(host, port); // ����������� �������
@@ -62,61 +62,6 @@ public class GameConnectionHandler : MonoBehaviour
         Reader?.Close();
     }
 
-    //public async void ConnectToServerAsync(string name)
-    //{
-    //    using TcpClient client = new TcpClient();
-    //    StreamReader? Reader = null;
-    //    StreamWriter? Writer = null;
-    //    IPEndPoint endPoint = GlobalVariableHandler.serverIPEndPoint;
-    //    try
-    //    {
-    //        client.Connect(endPoint); //����������� �������
-    //        Debug.Log($"{name} has connected to {endPoint}");
-    //        Reader = new StreamReader(client.GetStream());
-    //        Writer = new StreamWriter(client.GetStream());
-    //        if (Writer is null || Reader is null) return;
-    //        // ��������� ����� ����� ��� ��������� ������
-    //        await Task.Run(() => ReceiveMessageAsync(Reader));
-    //        // ��������� ���� ���������
-    //        await SendMessageAsync(Writer);
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //        Debug.LogException(ex);
-    //    }
-    //    Writer?.Close();
-    //    Reader?.Close();
-    //}
-
-    //public async void ConnectToLocalServerAsync()
-    //{
-    //    if (IsHosted)
-    //    {
-    //        using TcpClient client = new TcpClient();
-    //        StreamReader? Reader = null;
-    //        StreamWriter? Writer = null;
-    //        try
-    //        {
-    //            client.Connect(IPAddress.Parse(InputIp.text), Convert.ToInt32(InputPort.text)); //����������� �������
-    //            //Debug.Log($"local client({InputName.text}) connected to localhost");
-    //            Reader = new StreamReader(client.GetStream());
-    //            Writer = new StreamWriter(client.GetStream());
-    //            await SendMessageAsync(Writer);
-    //            if (Writer is null || Reader is null) return;
-    //            // ��������� ����� ����� ��� ��������� ������
-    //            Task.Run(() => ReceiveMessageAsync(Reader));
-    //            // ��������� ���� ���������
-    //            await SendMessageAsync(Writer);
-    //        }
-    //        catch (Exception ex)
-    //        {
-    //            Debug.LogException(ex);
-    //        }
-    //        Writer?.Close();
-    //        Reader?.Close();
-    //    }
-    //}
-
     // �������� ���������
     private async Task SendMessageAsync(StreamWriter writer)
     {
@@ -127,7 +72,7 @@ public class GameConnectionHandler : MonoBehaviour
 
         while (true)
         {
-            string? message = Console.ReadLine();                                                           // ---------------------- ?
+            string message = Console.ReadLine();                                                           // ---------------------- ?
             await writer.WriteLineAsync(message);
             await writer.FlushAsync();
         }
@@ -140,7 +85,7 @@ public class GameConnectionHandler : MonoBehaviour
             try
             {
                 // ��������� ����� � ���� ������
-                string? message = await reader.ReadLineAsync();
+                string message = await reader.ReadLineAsync();
                 // ���� ������ �����, ������ �� ������� �� �������
                 if (string.IsNullOrEmpty(message)) continue;
                 //Print(message);//����� ���������        
@@ -152,25 +97,5 @@ public class GameConnectionHandler : MonoBehaviour
             }
         }
     }
-    // ����� ���������� ��������� �� ������������� �� ���� ������ ���������
-    //void Print(string message)
-    //{
-    //    if (System.OperatingSystem.IsWindows())    // ���� �� Windows
-    //    {
-    //        var position = Console.GetCursorPosition(); // �������� ������� ������� �������
-    //        int left = position.Left;   // �������� � �������� ������������ ������ ����
-    //        int top = position.Top;     // �������� � ������� ������������ �����
-    //                                    // �������� ����� ��������� ������� � ������ �� ��������� ������
-    //        Console.MoveBufferArea(0, top, left, 1, 0, top + 1);
-    //        // ������������� ������ � ������ ������� ������
-    //        Console.SetCursorPosition(0, top);
-    //        // � ������� ������ ������� ���������� ���������
-    //        Console.WriteLine(message);
-    //        // ��������� ������ �� ��������� ������
-    //        // � ������������ ���������� ���� ��� �� ��������� ������
-    //        Console.SetCursorPosition(left, top + 1);
-    //    }
-    //    else Console.WriteLine(message);
-    //}
 }
 
