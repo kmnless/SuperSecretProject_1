@@ -4016,6 +4016,28 @@ MonoBehaviour:
   basePrefab: {fileID: 1421122698930658854, guid: 83c6e8201d7973f769a8c085d8d342f5, type: 3}
   flagPrefab: {fileID: 8286473754652259342, guid: 62e52e6efe2958213b1d8649a336d90a, type: 3}
   outpostPrefab: {fileID: 8286473754652259342, guid: 62e52e6efe2958213b1d8649a336d90a, type: 3}
+  names:
+  - Serj
+  - Tankian
+  - Daron
+  - Makakian
+  - Shavo
+  - Odadjian
+  - John
+  - Dolmayan
+  - Ontronik
+  - Khachaturyan
+  colors:
+  - {r: 0.63221425, g: 0.24887712, b: 0.24887712, a: 1}
+  - {r: 0.7414677, g: 0.4019303, b: 0.2700265, a: 1}
+  - {r: 0.6929108, g: 0.5706, b: 0.19706836, a: 1}
+  - {r: 0.8264431, g: 0.7637396, b: 0.3232167, a: 1}
+  - {r: 0.21267925, g: 0.71718895, b: 0.26176518, a: 1}
+  - {r: 0.31888887, g: 0.6863013, b: 0.7414677, a: 1}
+  - {r: 0.22904417, g: 0.33076006, b: 0.62007517, a: 1}
+  - {r: 0.45973536, g: 0.259007, b: 0.77788556, a: 1}
+  - {r: 0.71718895, g: 0.24750416, b: 0.6433483, a: 1}
+  - {r: 0.15686275, g: 0.15686275, b: 0.15686275, a: 1}
   RANGE_DENOMINATOR: 20
   ROAD_GENERATION_COPLEXITY_DENOMINATOR: 110
   CELLS_PER_PLAYER: 20

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Net;
@@ -7,6 +8,7 @@ using UnityEngine;
 
 public class GlobalVariableHandler : MonoBehaviour
 {
+    static public Color[] colors;
     static public Texture2D[] textures;
     static public Texture2D roadTexture;
     static public Texture2D flagTexture;
@@ -15,7 +17,8 @@ public class GlobalVariableHandler : MonoBehaviour
     static public GameObject flagPrefab;
     static public GameObject outpostPrefab;
     static public PlayerProperty[] players;
-    static public int myIndex;
+    static public String[] playerNames;
+    static public int myIndex = 0; // Sejcas prosto pro debugging, ptom nuzhno budet prosit server poluchit eto pole;
     static public int playerCount;
     static public float cellSize;
     static public int fieldSizeX;

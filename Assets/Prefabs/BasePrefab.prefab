@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4921565521284114837}
-  - component: {fileID: 5361811232070506682}
+  - component: {fileID: 3968687888547521318}
   m_Layer: 0
   m_Name: BasePrefab
   m_TagString: Untagged
@@ -33,7 +33,7 @@ Transform:
   - {fileID: 6110253848108457741}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5361811232070506682
+--- !u!114 &3968687888547521318
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -45,6 +45,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b51e77822da7a668a327f4b1d3c985a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Color: {r: 0, g: 0, b: 0, a: 1}
 --- !u!1 &5738281971829321328
 GameObject:
   m_ObjectHideFlags: 0
@@ -56,7 +57,7 @@ GameObject:
   - component: {fileID: 6110253848108457741}
   - component: {fileID: 847141714614194240}
   m_Layer: 0
-  m_Name: Square
+  m_Name: Skin
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

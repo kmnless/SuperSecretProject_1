@@ -69,7 +69,10 @@ public class MapScript : MonoBehaviour
                     case (int)Constants.Buildings.Base:
                         buffer = Instantiate(GlobalVariableHandler.basePrefab, new Vector3(j*spriteSize/100.0f,i*spriteSize/100.0f, -1.0f), Quaternion.identity);
                         buffer.transform.parent = bases.transform;
-                        buffer.name = "Base" + baseIndex++.ToString();
+                        buffer.name = "Base" + baseIndex.ToString();
+                        BaseProperties prop=buffer.GetComponent<BaseProperties>();
+                        prop.setId(baseIndex);
+                        prop.setName(GlobalVariableHandler.playerNames[baseIndex++]);
                         break;
                     case (int)Constants.Buildings.Flag:
                         buffer = Instantiate(GlobalVariableHandler.flagPrefab, new Vector3(j*spriteSize/100.0f,i*spriteSize/100.0f, -1.0f), Quaternion.identity);

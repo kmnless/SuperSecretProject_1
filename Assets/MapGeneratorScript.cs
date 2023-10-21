@@ -27,7 +27,8 @@ public class MapGeneratorScript : MonoBehaviour
     [SerializeField] private GameObject basePrefab;
     [SerializeField] private GameObject flagPrefab;
     [SerializeField] private GameObject outpostPrefab;
-
+    [SerializeField] private String[] names; // Sejcas prosto pro debugging, ptom nuzhno budet prosit server poluchit eto pole;
+    [SerializeField] private Color[] colors;
     private bool generated=false;
     private Color[] textureColors;
     private int X;
@@ -219,6 +220,8 @@ public class MapGeneratorScript : MonoBehaviour
             GlobalVariableHandler.basePrefab = basePrefab;
             GlobalVariableHandler.flagPrefab = flagPrefab;
             GlobalVariableHandler.outpostPrefab = outpostPrefab;
+            GlobalVariableHandler.colors = colors;
+            GlobalVariableHandler.playerNames= names;
             sceneHandler.ChangeState(Constants.GAME_SCENE_INDEX);
         } 
     }
