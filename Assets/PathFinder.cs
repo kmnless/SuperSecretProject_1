@@ -112,7 +112,7 @@ public class Node {
 }
 
 public class AStar {
-  private Node[,] field;
+   private Node[,] field;
   private int actionCost = 10;
   private smallestCostArray candidates;
   private Coordinate start, finish;
@@ -121,7 +121,7 @@ public class AStar {
   private bool going = true;
   private bool end_ = false;
   public AStar(FieldStates[,] field){
-    int i, j;
+     int i, j;
     if (field == null || field.GetLength(0) == 0) {
       throw new Exception("Field was bad");
     }

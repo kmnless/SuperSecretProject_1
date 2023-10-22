@@ -25,7 +25,7 @@ public class CameraScript : MonoBehaviour
         if (isFollowing)
         {
             transform.position = target.position + new Vector3(0,0,-10);
-            Debug.Log(transform.position);
+            //Debug.Log(transform.position);
         }
     }
 }
