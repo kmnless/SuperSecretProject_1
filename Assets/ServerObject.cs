@@ -16,7 +16,7 @@ public class ServerObject
     TcpListener tcpListener = new TcpListener(IPAddress.Any, 0);
     List<ClientObject> clients = new List<ClientObject>();
     private int connectionCount;
-
+    public Action<string> onConnection;
     public IPEndPoint localEndPoint { get; internal set; }
 
     public ServerObject(int connectionCount, IPEndPoint endPoint = null)

@@ -14,7 +14,7 @@ public class ClientObject
     protected internal string Id { get; } = Guid.NewGuid().ToString();
     protected internal StreamWriter Writer { get; }
     protected internal StreamReader Reader { get; }
-
+    public string userName { get; set; }
     TcpClient client;
     ServerObject server; // объект сервера
 
@@ -35,11 +35,13 @@ public class ClientObject
         try
         {
             // получаем имя пользователя
-            string userName = await Reader.ReadLineAsync();
+            userName = await Reader.ReadLineAsync();      
             string message = $"{userName} connected";
+
+            server.onConnection(userName);
             // посылаем сообщение о подключении всем подключенным пользователям
             await server.BroadcastMessageAsync(message, Id);
-            //Debug.Log(message);
+
             // в бесконечном цикле получаем сообщения от клиента
             while (true)
             {
@@ -48,13 +50,11 @@ public class ClientObject
                     message = await Reader.ReadLineAsync();
                     if (message == null) continue;
                     message = $"{userName}: {message}";
-                    //Debug.Log(message);
                     await server.BroadcastMessageAsync(message, Id);
                 }
                 catch
                 {
                     message = $"{userName} disconnected";
-                    //Debug.Log(message);
                     await server.BroadcastMessageAsync(message, Id);
                     break;
                 }
