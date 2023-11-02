@@ -57,14 +57,10 @@ public class PlayerHandlerScript : MonoBehaviour
         this.path = new List<Vector3>();
         if(worldPosition.x > 0 && worldPosition.y > 0 && worldPosition.x*100 < MapScript.sprites.GetLength(1)*GameLoaderScript.spriteSize && worldPosition.y*100 < MapScript.sprites.GetLength(0)*GameLoaderScript.spriteSize)
         {
-            int playerX;
-            int playerY;
-            int targetX;
-            int targetY;
-            playerX = (int)(player.transform.position.x*100/GameLoaderScript.spriteSize);
-            playerY = (int)(player.transform.position.y*100/GameLoaderScript.spriteSize);
-            targetX = (int)(worldPosition.x*100/GameLoaderScript.spriteSize);
-            targetY = (int)(worldPosition.y*100/GameLoaderScript.spriteSize);
+            int playerX = (int)(player.transform.position.x*100/GameLoaderScript.spriteSize);
+            int playerY = (int)(player.transform.position.y*100/GameLoaderScript.spriteSize);
+            int targetX = (int)(worldPosition.x*100/GameLoaderScript.spriteSize);
+            int targetY = (int)(worldPosition.y*100/GameLoaderScript.spriteSize);
             field[playerY, playerX] = FieldStates.Start;
             field[targetY, targetX] = FieldStates.Finish;
             aStar = new AStar(field);
