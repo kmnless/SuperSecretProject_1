@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,6 +7,7 @@ using UnityEngine.Rendering;
 
 public class PlayerHandlerScript : MonoBehaviour
 {
+    [SerializeField] float moveAllowance;
     [SerializeField] GameObject playerPrefab;
     [SerializeField] private new Camera camera;
     private FieldStates[,] field;
@@ -16,14 +18,43 @@ public class PlayerHandlerScript : MonoBehaviour
     private float animationCounter = 0;
     private int counter = 1;
     private bool allowMove = false;
-
     public float animationSpeed = 0.1f;
+    public PlayerProperty properties;
+    public int id = GlobalVariableHandler.myIndex;
+
     public void createPlayer(Vector3 pos)
     {
         player = Instantiate(playerPrefab, pos + new Vector3(0 + GameLoaderScript.spriteSize/200,0 + GameLoaderScript.spriteSize/200,10), Quaternion.identity);
         player.name = "Player";
+        properties.Color = GlobalVariableHandler.colors[id];
+        properties.Level = 1;
+        properties.Strength = 0;
+        properties.Experience = 0;
+        properties.StrengthMultiplier = 1f;
+        properties.Name = GlobalVariableHandler.playerNames[id];
+        properties.Color = GlobalVariableHandler.colors[id];
+        properties.NeededXP = 50;
+        properties.CurrentXP=0;
+        properties.Money=0;
+        properties.MultiplierXP = 1.5f;
+        properties.StrengthMultiplierGain = 1.15f;
+    }
+    public void addXP(int XP)
+    {
+        properties.CurrentXP+=XP;
+        if(properties.CurrentXP>=properties.NeededXP)
+        {
+            properties.Level++;
+            properties.CurrentXP-=properties.NeededXP;
+            properties.NeededXP = (int)(properties.NeededXP*properties.MultiplierXP);
+            properties.StrengthMultiplier *=properties.StrengthMultiplierGain;
+        }
     }
 
+    public void addMoney(int money)
+    {
+        properties.Money+=money;
+    }
     public void Awake()
     {
         createPlayer(new(0,0,-10));
@@ -36,8 +67,8 @@ public class PlayerHandlerScript : MonoBehaviour
         {
             for(int x = 0; x < GlobalVariableHandler.fieldSizeX; x++)
             {
-                Debug.Log($"{GlobalVariableHandler.terrainField[y, x]} on x={x} on y={y}");
-                if(GlobalVariableHandler.terrainField[y, x]>=-0.1f && GlobalVariableHandler.terrainField[y, x]<=0.1f)
+               // Debug.Log($"{GlobalVariableHandler.terrainField[y, x]} on x={x} on y={y}");
+                if(GlobalVariableHandler.terrainField[y, x]>=-moveAllowance && GlobalVariableHandler.terrainField[y, x]<=moveAllowance)
                 {
                     field[y, x] = FieldStates.Empty;
                 }
@@ -84,18 +115,27 @@ public class PlayerHandlerScript : MonoBehaviour
         {
             FieldStates playerPos = new FieldStates();
             FieldStates playerTarget = new FieldStates();
-
+            List<Coordinate> cordPath = new List<Coordinate>{};
             int playerX = (int)(player.transform.position.x*100/GameLoaderScript.spriteSize);
             int playerY = (int)(player.transform.position.y*100/GameLoaderScript.spriteSize);
             int targetX = (int)(worldPosition.x*100/GameLoaderScript.spriteSize);
             int targetY = (int)(worldPosition.y*100/GameLoaderScript.spriteSize);
 
             playerPos = field[playerY, playerX];
-            field[playerY, playerX] = FieldStates.Start;
+            if(playerPos!=FieldStates.Wall)
+                field[playerY, playerX] = FieldStates.Start;
             playerTarget = field[targetY, targetX];
-            field[targetY, targetX] = FieldStates.Finish;
+            if(playerTarget != FieldStates.Wall)
+                field[targetY, targetX] = FieldStates.Finish;
+            try
+            {
             aStar = new AStar(field);
-            List<Coordinate> cordPath = aStar.solve();
+            cordPath = aStar.solve();
+            }
+            catch(Exception ex)
+            {
+                Debug.Log(ex.Message);
+            }
             for(int i = 0; i < cordPath.Count; i++)
             {
                 this.path.Add(new Vector3((cordPath[cordPath.Count-1-i].y+0.5f) * GameLoaderScript.spriteSize/100, (cordPath[cordPath.Count-1-i].x+0.5f) * GameLoaderScript.spriteSize/100, 0.0f));

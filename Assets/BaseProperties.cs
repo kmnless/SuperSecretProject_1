@@ -16,15 +16,10 @@ public class BaseProperties : MonoBehaviour
     public void setName(string Name)
     {
         this.Name = Name;
-        Debug.Log(Name);
     }
     public void setId(int Id)
     {
         this.Id = Id;
     }
     // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }

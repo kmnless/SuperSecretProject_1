@@ -374,6 +374,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2663c1d6adaaabcd89eaf85fe4f44682, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  moveAllowance: 0.1
   playerPrefab: {fileID: 1645551247277010336, guid: 34dec2160bb8818648d5cd84380b654e, type: 3}
   camera: {fileID: 1785239522}
   animationSpeed: 0.1

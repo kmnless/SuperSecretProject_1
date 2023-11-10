@@ -596,7 +596,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1043823613014162591}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2578472824285283587}
+        m_TargetAssemblyTypeName: MenuHandler, Assembly-CSharp
+        m_MethodName: Capture
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &4868873423236362157
 GameObject:
   m_ObjectHideFlags: 0
@@ -608,7 +620,7 @@ GameObject:
   - component: {fileID: 4297280615641242271}
   - component: {fileID: 9015352658563253747}
   m_Layer: 0
-  m_Name: Square
+  m_Name: texture
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -692,7 +704,7 @@ GameObject:
   - component: {fileID: 2271091248953049240}
   - component: {fileID: 4302732772812531480}
   - component: {fileID: 5756024241206185963}
-  - component: {fileID: 969674750336344666}
+  - component: {fileID: 7969263995192830750}
   m_Layer: 0
   m_Name: FlagPrefab
   m_TagString: Untagged
@@ -791,7 +803,7 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 1
           m_CallState: 2
---- !u!114 &969674750336344666
+--- !u!114 &7969263995192830750
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -800,9 +812,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 8286473754652259342}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 718363b82ed97e683b720b6256b38502, type: 3}
+  m_Script: {fileID: 11500000, guid: eb49b7bfd646bbf25b22c6c6ce389867, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  texture: {fileID: 9015352658563253747}
 --- !u!1 &8761258842249161850
 GameObject:
   m_ObjectHideFlags: 0
@@ -920,3 +933,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee6613c34b3a25541929b344a06a845f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  captureButton: {fileID: 8791729362303212805}
+  flagVisual: {fileID: 4868873423236362157}
+  handler: {fileID: 7969263995192830750}

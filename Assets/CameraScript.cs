@@ -5,14 +5,14 @@ using UnityEngine;
 
 public class CameraScript : MonoBehaviour
 {
-    public float cameraSpeed = 7.5f; // Скорость передвижения камеры
-    public float screenEdgeBorder = 50.0f; // Ширина "границы" от края экрана
-    public float minZoom = 1.5f; // Минимальное увеличение
-    public float maxZoom = 10.0f; // Максимальное увеличение
-    public float zoomSpeed = 1.0f; // Скорость приближения/отдаления
+    public float cameraSpeed = 7.5f; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
+    public float screenEdgeBorder = 50.0f; // пїЅпїЅпїЅпїЅпїЅпїЅ "пїЅпїЅпїЅпїЅпїЅпїЅпїЅ" пїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
+    public float minZoom = 1.5f; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+    public float maxZoom = 10.0f; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+    public float zoomSpeed = 1.0f; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ/пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 
-    private float mapSizeX = (float)GlobalVariableHandler.fieldSizeX;
-    private float mapSizeY = (float)GlobalVariableHandler.fieldSizeY;
+    private float mapSizeX = (float)GlobalVariableHandler.fieldSizeX*GlobalVariableHandler.cellSize/100f;
+    private float mapSizeY = (float)GlobalVariableHandler.fieldSizeY*GlobalVariableHandler.cellSize/100f;
 
     private Transform target;
     private bool isFollowing = false;
@@ -35,30 +35,30 @@ public class CameraScript : MonoBehaviour
     {
         Vector3 mousePosition = Input.mousePosition;
 
-        // Проверяем положение мыши относительно края экрана
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
         if (mousePosition.x <= screenEdgeBorder)
         {
-            // Двигаем камеру влево
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
             transform.Translate(Vector3.left * cameraSpeed * Time.deltaTime);
         }
         else if (mousePosition.x >= Screen.width - screenEdgeBorder)
         {
-            // Двигаем камеру вправо
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
             transform.Translate(Vector3.right * cameraSpeed * Time.deltaTime);
         }
 
         if (mousePosition.y <= screenEdgeBorder)
         {
-            // Двигаем камеру вниз
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
             transform.Translate(Vector3.down * cameraSpeed * Time.deltaTime);
         }
         else if (mousePosition.y >= Screen.height - screenEdgeBorder)
         {
-            // Двигаем камеру вверх
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
             transform.Translate(Vector3.up * cameraSpeed * Time.deltaTime);
         }
 
-        // Ограничение движения камеры
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
         Vector3 currentPosition = transform.position;
         currentPosition.x = Mathf.Clamp(currentPosition.x, 0, mapSizeX);
         currentPosition.y = Mathf.Clamp(currentPosition.y, 0, mapSizeY);

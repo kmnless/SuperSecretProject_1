@@ -28,4 +28,5 @@ public class GlobalVariableHandler : MonoBehaviour
     static public int waterline;
     static public int montainLine;
     static public IPEndPoint serverIPEndPoint;
+    public const int captureDistance=3;
 }
