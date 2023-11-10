@@ -5,9 +5,9 @@ using UnityEngine;
 
 public class CameraScript : MonoBehaviour
 {
-    public float cameraSpeed = 5.0f; // Скорость передвижения камеры
+    public float cameraSpeed = 7.5f; // Скорость передвижения камеры
     public float screenEdgeBorder = 50.0f; // Ширина "границы" от края экрана
-    public float minZoom = 2.0f; // Минимальное увеличение
+    public float minZoom = 1.5f; // Минимальное увеличение
     public float maxZoom = 10.0f; // Максимальное увеличение
     public float zoomSpeed = 1.0f; // Скорость приближения/отдаления
 

@@ -25,10 +25,9 @@ public class GameConnectionHandler : MonoBehaviour
     private ServerObject server;
     public async void StartServerAsync(int maxPlayers)
     {
-        IPEndPoint endPoint = new IPEndPoint(IPAddress.Parse(InputIp.text), Convert.ToInt32(InputPort.text));
+        IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, Convert.ToInt32(InputPort.text));
         server = new ServerObject(maxPlayers, endPoint);
         IsHosted = true;
-        InputIp.enabled = false; 
         InputPort.enabled = false;
         HostButton.interactable = false;
         server.onConnection = changeText;
