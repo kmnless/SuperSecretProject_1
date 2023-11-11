@@ -27,7 +27,7 @@ public class MenuHandler : MonoBehaviour
     }
     public void Capture()
     {
-        if(handler.unitCount <= playerScript.properties.Strength)
+        if(handler.unitCount < playerScript.properties.Strength)
         {
             handler.Capture(playerScript.id);
         }
@@ -35,6 +35,7 @@ public class MenuHandler : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
+        Debug.Log(transform.position.x);
         if(transform.gameObject.activeSelf&&(flagVisual.transform.position - player.transform.position- new Vector3(0f,0f,10f)).magnitude<GlobalVariableHandler.captureDistance*GlobalVariableHandler.cellSize/100f)
         {
             captureButton.interactable = true;

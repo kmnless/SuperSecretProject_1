@@ -29,4 +29,5 @@ public class GlobalVariableHandler : MonoBehaviour
     static public int montainLine;
     static public IPEndPoint serverIPEndPoint;
     public const int captureDistance=3;
+    public const int attacksToDefeat = 3;
 }

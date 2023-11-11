@@ -10,6 +10,7 @@ public class PlayerHandlerScript : MonoBehaviour
     [SerializeField] float moveAllowance;
     [SerializeField] GameObject playerPrefab;
     [SerializeField] private new Camera camera;
+    [SerializeField] private GameObject bases;
     private FieldStates[,] field;
     private List<Vector3> path; 
     private GameObject player;
@@ -24,11 +25,11 @@ public class PlayerHandlerScript : MonoBehaviour
 
     public void createPlayer(Vector3 pos)
     {
-        player = Instantiate(playerPrefab, pos + new Vector3(0 + GameLoaderScript.spriteSize/200,0 + GameLoaderScript.spriteSize/200,10), Quaternion.identity);
+        player = Instantiate(playerPrefab,pos, Quaternion.identity);
         player.name = "Player";
         properties.Color = GlobalVariableHandler.colors[id];
         properties.Level = 1;
-        properties.Strength = 0;
+        properties.Strength = 10;
         properties.Experience = 0;
         properties.StrengthMultiplier = 1f;
         properties.Name = GlobalVariableHandler.playerNames[id];
@@ -57,10 +58,11 @@ public class PlayerHandlerScript : MonoBehaviour
     }
     public void Awake()
     {
-        createPlayer(new(0,0,-10));
+
     }
     public void Start()
     {
+        Vector3 pos;
         field = new FieldStates[GlobalVariableHandler.fieldSizeY, GlobalVariableHandler.fieldSizeX];
         //MapScript.sprites[0,1].SetActive(false);
         for(int y = 0; y < GlobalVariableHandler.fieldSizeY; y++)
@@ -78,6 +80,16 @@ public class PlayerHandlerScript : MonoBehaviour
                 }
             }
         }
+
+        if(bases.transform.childCount>GlobalVariableHandler.myIndex)
+        {
+            pos = bases.transform.GetChild(GlobalVariableHandler.myIndex).position;
+        }
+        else
+        {
+            pos = new Vector3(GlobalVariableHandler.cellSize/200f,GlobalVariableHandler.cellSize/200f,0);
+        }
+        createPlayer(pos);
     }
     public void FixedUpdate()
     {

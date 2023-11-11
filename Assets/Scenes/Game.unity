@@ -377,7 +377,9 @@ MonoBehaviour:
   moveAllowance: 0.1
   playerPrefab: {fileID: 1645551247277010336, guid: 34dec2160bb8818648d5cd84380b654e, type: 3}
   camera: {fileID: 1785239522}
+  bases: {fileID: 2102033614}
   animationSpeed: 0.1
+  id: 0
 --- !u!1 &1602662610
 GameObject:
   m_ObjectHideFlags: 0
