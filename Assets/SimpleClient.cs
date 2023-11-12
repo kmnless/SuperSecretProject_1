@@ -2,6 +2,7 @@ using UnityEngine;
 using Unity.Networking.Transport;
 using TMPro;
 using System;
+using System.Net;
 
 public class ClientBehaviour : MonoBehaviour
 {
@@ -29,8 +30,7 @@ public class ClientBehaviour : MonoBehaviour
     public void ConnectToMyself()
     {
         m_Driver = NetworkDriver.Create();
-
-        var endpoint = NetworkEndpoint.Parse(NetworkEndpoint.LoopbackIpv4.ToString(), Convert.ToUInt16(InputPort.text));
+        var endpoint = NetworkEndpoint.Parse(IPAddress.Loopback.ToString(), Convert.ToUInt16(InputPort.text));
         m_Connection = m_Driver.Connect(endpoint);
         Debug.Log($"Connected to {m_Driver.GetLocalEndpoint()},   {Convert.ToUInt16(InputPort.text)}");
 
@@ -39,7 +39,7 @@ public class ClientBehaviour : MonoBehaviour
 
     void Update()
     {
-        if(!isConnected) { return; Debug.Log("1"); }
+        if(!isConnected) { return; }
         m_Driver.ScheduleUpdate().Complete();
 
         if (!m_Connection.IsCreated)
@@ -50,11 +50,8 @@ public class ClientBehaviour : MonoBehaviour
         NetworkEvent.Type cmd;
         while ((cmd = m_Connection.PopEvent(m_Driver, out stream)) != NetworkEvent.Type.Empty)
         {
-            Debug.Log("2");
-
             if (cmd == NetworkEvent.Type.Connect)
             {
-
                 Debug.Log("We are now connected to the server.");
 
                 uint value = 1;
@@ -64,8 +61,6 @@ public class ClientBehaviour : MonoBehaviour
             }
             else if (cmd == NetworkEvent.Type.Data)
             {
-                Debug.Log("3");
-
                 uint value = stream.ReadUInt();
                 Debug.Log($"Got the value {value} back from the server.");
 
@@ -74,8 +69,6 @@ public class ClientBehaviour : MonoBehaviour
             }
             else if (cmd == NetworkEvent.Type.Disconnect)
             {
-                Debug.Log("4");
-
                 Debug.Log("Client got disconnected from server.");
                 m_Connection = default;
             }
