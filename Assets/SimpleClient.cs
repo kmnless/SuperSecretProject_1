@@ -3,6 +3,10 @@ using Unity.Networking.Transport;
 using TMPro;
 using System;
 using System.Net;
+using System.Collections.Generic;
+using Newtonsoft.Json;
+using Unity.Collections;
+using System.Text;
 
 public class ClientBehaviour : MonoBehaviour
 {
@@ -44,6 +48,28 @@ public class ClientBehaviour : MonoBehaviour
         isConnected = true;
     }
 
+    private NativeArray<byte> MakeInitPacket(string name)
+    {
+        InitPacket packet = new InitPacket(name);
+        NativeArray<byte> bytes = new NativeArray<byte>();
+        bytes.CopyFrom(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(packet)));
+        return bytes;
+    }
+    private NativeArray<byte> MakeDefaultPacket(PlayerProperty playerProperty)
+    {
+        DefaultPacket packet = new DefaultPacket(playerProperty);
+        NativeArray<byte> bytes = new NativeArray<byte>();
+        bytes.CopyFrom(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(packet)));
+        return bytes;
+    }
+    private NativeArray<byte> MakeSpecialPacket(PlayerProperty playerProperty, SpecialAction action)
+    {
+        SpecialPacket packet = new SpecialPacket(playerProperty, action);
+        NativeArray<byte> bytes = new NativeArray<byte>();
+        bytes.CopyFrom(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(packet)));
+        return bytes;
+    }
+
     void Update()
     {
         if(!isConnected) { return; }
@@ -60,19 +86,23 @@ public class ClientBehaviour : MonoBehaviour
             if (cmd == NetworkEvent.Type.Connect)
             {
                 Debug.Log("We are now connected to the server.");
+                NativeArray<byte> message = MakeInitPacket(InputName.text);
 
-                uint value = 1;
                 m_Driver.BeginSend(m_Connection, out var writer);
-                writer.WriteUInt(value);
+                writer.WriteBytes(message);
                 m_Driver.EndSend(writer);
             }
             else if (cmd == NetworkEvent.Type.Data)
             {
-                uint value = stream.ReadUInt();
-                Debug.Log($"Got the value {value} back from the server.");
+                NativeArray<byte> message = new NativeArray<byte>();
+                stream.ReadBytes(message);
+                Debug.Log($"Got the message from the server.");
 
-                m_Connection.Disconnect(m_Driver);
-                m_Connection = default;
+                ServerPacket serverPacket = JsonConvert.DeserializeObject<ServerPacket>(message.ToString());
+                // process message....
+
+
+
             }
             else if (cmd == NetworkEvent.Type.Disconnect)
             {

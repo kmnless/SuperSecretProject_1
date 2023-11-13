@@ -4,7 +4,10 @@ using System.Collections.Generic;
 using TMPro;
 using Unity.Collections;
 using Unity.Networking.Transport;
+using Unity.VisualScripting.FullSerializer;
 using UnityEngine;
+using Newtonsoft.Json;
+using System.Text;
 
 public class SimpleServer : MonoBehaviour
 {
@@ -14,6 +17,8 @@ public class SimpleServer : MonoBehaviour
 
     NetworkDriver m_Driver;
     NativeList<NetworkConnection> m_Connections;
+
+    List<PlayerProperty> players = new List<PlayerProperty>();
 
     void Start()
     {
@@ -45,7 +50,7 @@ public class SimpleServer : MonoBehaviour
 
         m_Driver.ScheduleUpdate().Complete();
 
-        // Clean up connections(������ ������� � ���������� �����������).
+        // Clean up connections.
         for (int i = 0; i < m_Connections.Length; i++)
         {
             if (!m_Connections[i].IsCreated)
@@ -73,17 +78,61 @@ public class SimpleServer : MonoBehaviour
                 if (cmd == NetworkEvent.Type.Data)
                 {
                     // logic.....
-                    uint number = stream.ReadUInt();
-                    Debug.Log($"Got {number} from a client, adding 2 to it.");
-                    number += 2;
+                    NativeArray<byte> bytes = new NativeArray<byte>();
+                    stream.ReadBytes(bytes);
+                    string JsonRead = bytes.ToString();
+                    if (JsonRead.Contains("InitPacket"))
+                    {
+                        InitPacket packet = JsonConvert.DeserializeObject<InitPacket>(JsonRead);
+
+                        // ?????
+
+                    }
+                    else if (JsonRead.Contains("MapPacket"))
+                    {
+                        MapPacket packet = JsonConvert.DeserializeObject<MapPacket>(JsonRead);
+
+
+
+
+                    }
+                    else if (JsonRead.Contains("DefaultPacket"))
+                    {
+                        DefaultPacket packet = JsonConvert.DeserializeObject<DefaultPacket>(JsonRead);
+                        
+
+
+                    }
+                    else if (JsonRead.Contains("SpecialPacket"))
+                    {
+
+
+
+                        SpecialPacket packet = JsonConvert.DeserializeObject<SpecialPacket>(JsonRead);
+                    }
+                    else
+                    {
+                        throw new ArgumentException("Not standardized message");
+                    }
+
+                    NativeArray<byte> serverMessage = MakeServerPacket(null,null);
 
                     m_Driver.BeginSend(NetworkPipeline.Null, m_Connections[i], out var writer);
-                    writer.WriteUInt(number);
+                    writer.WriteBytes(serverMessage);
                     m_Driver.EndSend(writer);
                 }
             }
         }
     }
+
+    NativeArray<byte> MakeServerPacket(List<PlayerProperty> playersSyncData, List<SpecialAction> specialActions)
+    {
+        ServerPacket packet = new ServerPacket(playersSyncData, specialActions);
+        NativeArray<byte> bytes = new NativeArray<byte>();
+        bytes.CopyFrom(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(packet)));
+        return bytes;
+    }
+
     void OnDestroy()
     {
         if (m_Driver.IsCreated)
