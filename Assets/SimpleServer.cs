@@ -29,7 +29,9 @@ public class SimpleServer : MonoBehaviour
     }
     public void CreateServer()
     {
-        if(IsStarted) { return; }
+
+        //Test();
+        if (IsStarted) { return; }
         m_Driver = NetworkDriver.Create();
         m_Connections = new NativeList<NetworkConnection>(10, Allocator.Persistent);
 
@@ -44,7 +46,20 @@ public class SimpleServer : MonoBehaviour
         IsStarted = true;
     }
 
-    void Update()
+    void Test()
+    {
+        InitPacket packet = new InitPacket("name1213");
+        NativeArray<byte> bytes = new NativeArray<byte>(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(packet)),Allocator.Persistent);
+        Debug.Log($"Serialize = {JsonConvert.SerializeObject(packet)}");
+        string JsonRead = Encoding.UTF8.GetString(bytes);
+        Debug.Log($"JsonRead = {JsonRead}");
+        if (JsonRead.Contains("InitPacket"))
+        {
+            InitPacket packet2 = JsonConvert.DeserializeObject<InitPacket>(JsonRead);
+            Debug.Log(packet2.name);
+        }
+    }
+        void Update()
     {
         if (!IsStarted) { return; }
 
@@ -80,7 +95,7 @@ public class SimpleServer : MonoBehaviour
                     // logic.....
                     NativeArray<byte> bytes = new NativeArray<byte>();
                     stream.ReadBytes(bytes);
-                    string JsonRead = bytes.ToString();
+                    string JsonRead = Encoding.UTF8.GetString(bytes);
                     if (JsonRead.Contains("InitPacket"))
                     {
                         InitPacket packet = JsonConvert.DeserializeObject<InitPacket>(JsonRead);
@@ -128,8 +143,7 @@ public class SimpleServer : MonoBehaviour
     NativeArray<byte> MakeServerPacket(List<PlayerProperty> playersSyncData, List<SpecialAction> specialActions)
     {
         ServerPacket packet = new ServerPacket(playersSyncData, specialActions);
-        NativeArray<byte> bytes = new NativeArray<byte>();
-        bytes.CopyFrom(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(packet)));
+        NativeArray<byte> bytes = new NativeArray<byte>(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(packet)), Allocator.Persistent);
         return bytes;
     }
 

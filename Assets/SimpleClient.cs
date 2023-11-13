@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using Unity.Collections;
 using System.Text;
+using UnityEngine.XR;
 
 public class ClientBehaviour : MonoBehaviour
 {
@@ -51,22 +52,19 @@ public class ClientBehaviour : MonoBehaviour
     private NativeArray<byte> MakeInitPacket(string name)
     {
         InitPacket packet = new InitPacket(name);
-        NativeArray<byte> bytes = new NativeArray<byte>();
-        bytes.CopyFrom(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(packet)));
+        NativeArray<byte> bytes = new NativeArray<byte>(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(packet)), Allocator.Persistent);
         return bytes;
     }
     private NativeArray<byte> MakeDefaultPacket(PlayerProperty playerProperty)
     {
         DefaultPacket packet = new DefaultPacket(playerProperty);
-        NativeArray<byte> bytes = new NativeArray<byte>();
-        bytes.CopyFrom(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(packet)));
+        NativeArray<byte> bytes = new NativeArray<byte>(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(packet)), Allocator.Persistent);
         return bytes;
     }
     private NativeArray<byte> MakeSpecialPacket(PlayerProperty playerProperty, SpecialAction action)
     {
         SpecialPacket packet = new SpecialPacket(playerProperty, action);
-        NativeArray<byte> bytes = new NativeArray<byte>();
-        bytes.CopyFrom(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(packet)));
+        NativeArray<byte> bytes = new NativeArray<byte>(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(packet)), Allocator.Persistent);
         return bytes;
     }
 
@@ -98,7 +96,8 @@ public class ClientBehaviour : MonoBehaviour
                 stream.ReadBytes(message);
                 Debug.Log($"Got the message from the server.");
 
-                ServerPacket serverPacket = JsonConvert.DeserializeObject<ServerPacket>(message.ToString());
+                string JsonRead = Encoding.UTF8.GetString(message);
+                ServerPacket serverPacket = JsonConvert.DeserializeObject<ServerPacket>(JsonRead);
                 // process message....
 
 
