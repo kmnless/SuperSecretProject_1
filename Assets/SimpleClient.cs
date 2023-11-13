@@ -11,16 +11,23 @@ public class ClientBehaviour : MonoBehaviour
     [SerializeField] private TMP_InputField InputPort;
 
 
-    bool isConnected = false;
+    public bool isConnected {get; private set;} = false; 
 
     NetworkDriver m_Driver;
     NetworkConnection m_Connection;
+    void Start()
+    {
+        // Получите ссылку на экземпляр ObjectManager
+        ObjectManager objectManager = ObjectManager.Instance;
 
+        // Установите ваш объект
+        objectManager.setClient(gameObject);
+    }
     public void ConnectToServer()
     {
         m_Driver = NetworkDriver.Create();
 
-        var endpoint = NetworkEndpoint.Parse(InputIp.text, Convert.ToUInt16(InputPort.text));
+            var endpoint = NetworkEndpoint.Parse(InputIp.text, Convert.ToUInt16(InputPort.text));
         m_Connection = m_Driver.Connect(endpoint);
 
         isConnected = true;

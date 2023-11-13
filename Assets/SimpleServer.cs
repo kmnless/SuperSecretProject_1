@@ -15,6 +15,13 @@ public class SimpleServer : MonoBehaviour
     NetworkDriver m_Driver;
     NativeList<NetworkConnection> m_Connections;
 
+    void Start()
+    {
+        ObjectManager objectManager = ObjectManager.Instance;
+
+        // РЈСЃС‚Р°РЅРѕРІРёС‚Рµ РІР°С€ РѕР±СЉРµРєС‚
+        objectManager.setServer(gameObject);
+    }
     public void CreateServer()
     {
         if(IsStarted) { return; }
@@ -38,7 +45,7 @@ public class SimpleServer : MonoBehaviour
 
         m_Driver.ScheduleUpdate().Complete();
 
-        // Clean up connections(убрать висячие и неактивные подключения).
+        // Clean up connections(пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ).
         for (int i = 0; i < m_Connections.Length; i++)
         {
             if (!m_Connections[i].IsCreated)
