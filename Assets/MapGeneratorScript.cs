@@ -202,7 +202,7 @@ public class MapGeneratorScript : MonoBehaviour
             generated = true;
         }
     }
-    public void StartGame()
+    public void StartGame(string scene)
     {
         if (generated) 
         {
@@ -221,8 +221,7 @@ public class MapGeneratorScript : MonoBehaviour
             GlobalVariableHandler.flagPrefab = flagPrefab;
             GlobalVariableHandler.outpostPrefab = outpostPrefab;
             GlobalVariableHandler.colors = colors;
-            GlobalVariableHandler.playerNames= names;
-            sceneHandler.ChangeState(Constants.GAME_SCENE_INDEX);
+            sceneHandler.ChangeState(scene);
         } 
     }
 }

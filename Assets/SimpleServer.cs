@@ -14,6 +14,7 @@ public class SimpleServer : MonoBehaviour
     [SerializeField] private TMP_InputField InputPort;
 
     private bool IsStarted = false;
+    private int id=0;
 
     NetworkDriver m_Driver;
     NativeList<NetworkConnection> m_Connections;
@@ -33,8 +34,8 @@ public class SimpleServer : MonoBehaviour
         //Test();
         if (IsStarted) { return; }
         m_Driver = NetworkDriver.Create();
-        m_Connections = new NativeList<NetworkConnection>(10, Allocator.Persistent);
-
+        m_Connections = new NativeList<NetworkConnection>(GlobalVariableHandler.playerCount, Allocator.Persistent);
+        GlobalVariableHandler.players=new PlayerProperty[GlobalVariableHandler.playerCount];
         var endpoint = NetworkEndpoint.AnyIpv4.WithPort(Convert.ToUInt16(InputPort.text));
         if (m_Driver.Bind(endpoint) != 0)
         {
@@ -80,6 +81,7 @@ public class SimpleServer : MonoBehaviour
         while ((c = m_Driver.Accept()) != default)
         {
             m_Connections.Add(c);
+            
             Debug.Log("Accepted a connection.");
         }
 
@@ -99,8 +101,14 @@ public class SimpleServer : MonoBehaviour
                     if (JsonRead.Contains("InitPacket"))
                     {
                         InitPacket packet = JsonConvert.DeserializeObject<InitPacket>(JsonRead);
+                        players[id]=new PlayerProperty(packet.name,GlobalVariableHandler.colors[id]);
+                        NativeArray<byte> msg = new NativeArray<byte>(Encoding.UTF8.GetBytes(id.ToString()),Allocator.Persistent);
+                        id++;
 
-                        // ?????
+                        m_Driver.BeginSend(NetworkPipeline.Null, m_Connections[i], out var whisper);
+                        whisper.WriteBytes(msg);
+                        
+                        m_Driver.EndSend(whisper);
 
                     }
                     else if (JsonRead.Contains("MapPacket"))

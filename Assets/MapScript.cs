@@ -72,7 +72,7 @@ public class MapScript : MonoBehaviour
                         buffer.name = "Base" + baseIndex.ToString();
                         BaseHandler prop=buffer.GetComponent<BaseHandler>();
                         prop.setId(baseIndex);
-                        prop.setName(GlobalVariableHandler.playerNames[baseIndex++]);
+                        prop.setName(GlobalVariableHandler.players[baseIndex++].Name);
                         break;
                     case (int)Constants.Buildings.Flag:
                         buffer = Instantiate(GlobalVariableHandler.flagPrefab, new Vector3((j+0.5f)*spriteSize/100.0f,(i+0.5f)*spriteSize/100.0f, -1.0f), Quaternion.identity);

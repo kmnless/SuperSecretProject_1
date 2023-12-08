@@ -27,18 +27,7 @@ public class PlayerHandlerScript : MonoBehaviour
     {
         player = Instantiate(playerPrefab,pos, Quaternion.identity);
         player.name = "Player";
-        properties.Color = GlobalVariableHandler.colors[id];
-        properties.Level = 1;
-        properties.Strength = 10;
-        properties.Experience = 0;
-        properties.StrengthMultiplier = 1f;
-        properties.Name = GlobalVariableHandler.playerNames[id];
-        properties.Color = GlobalVariableHandler.colors[id];
-        properties.NeededXP = 50;
-        properties.CurrentXP=0;
-        properties.Money=0;
-        properties.MultiplierXP = 1.5f;
-        properties.StrengthMultiplierGain = 1.15f;
+        properties = GlobalVariableHandler.players[id];
     }
     public void addXP(int XP)
     {

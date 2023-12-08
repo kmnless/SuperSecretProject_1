@@ -17,7 +17,7 @@ public class ClientBehaviour : MonoBehaviour
 
 
     public bool isConnected {get; private set;} = false; 
-
+    private bool gotId=false;
     NetworkDriver m_Driver;
     NetworkConnection m_Connection;
     void Start()
@@ -95,11 +95,17 @@ public class ClientBehaviour : MonoBehaviour
                 NativeArray<byte> message = new NativeArray<byte>();
                 stream.ReadBytes(message);
                 Debug.Log($"Got the message from the server.");
-
+                if(gotId)
+                {
                 string JsonRead = Encoding.UTF8.GetString(message);
                 ServerPacket serverPacket = JsonConvert.DeserializeObject<ServerPacket>(JsonRead);
                 // process message....
-
+                }
+                else
+                {
+                    GlobalVariableHandler.myIndex=Convert.ToInt32(Encoding.UTF8.GetString(message));
+                    Debug.Log(GlobalVariableHandler.myIndex);
+                }
 
 
             }

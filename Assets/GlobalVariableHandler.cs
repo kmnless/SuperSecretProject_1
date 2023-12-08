@@ -17,7 +17,6 @@ public class GlobalVariableHandler : MonoBehaviour
     static public GameObject flagPrefab;
     static public GameObject outpostPrefab;
     static public PlayerProperty[] players;
-    static public String[] playerNames;
     static public int myIndex = 0; // Sejcas prosto pro debugging, ptom nuzhno budet prosit server poluchit eto pole;
     static public int playerCount;
     static public float cellSize;
