@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using Unity.Collections;
 using System.Text;
 using UnityEngine.XR;
+using Unity.VisualScripting;
 
 public class ClientBehaviour : MonoBehaviour
 {
@@ -67,6 +68,22 @@ public class ClientBehaviour : MonoBehaviour
         NativeArray<byte> bytes = new NativeArray<byte>(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(packet)), Allocator.Persistent);
         return bytes;
     }
+    private NativeArray<byte> MakeMovePacket(byte id, int x, int y)
+    {
+        MovePacket packet = new MovePacket(id, x, y);
+        NativeArray<byte> bytes = new NativeArray<byte>(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(packet)), Allocator.Persistent);
+        return bytes;
+    }
+
+
+    public void SendMovementSignal(int x,int y) 
+    {
+
+    }
+    public void SendCaptureSignal(int id) 
+    {
+
+    }
 
     void Update()
     {
@@ -97,8 +114,8 @@ public class ClientBehaviour : MonoBehaviour
                 Debug.Log($"Got the message from the server.");
                 if(gotId)
                 {
-                string JsonRead = Encoding.UTF8.GetString(message);
-                ServerPacket serverPacket = JsonConvert.DeserializeObject<ServerPacket>(JsonRead);
+                    string JsonRead = Encoding.UTF8.GetString(message);
+                    ServerPacket serverPacket = JsonConvert.DeserializeObject<ServerPacket>(JsonRead);
                 // process message....
                 }
                 else

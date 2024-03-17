@@ -1,7 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameLoaderScript : MonoBehaviour
 {
@@ -12,9 +14,23 @@ public class GameLoaderScript : MonoBehaviour
     [SerializeField] private GameObject bases;
     [SerializeField] private GameObject outposts;
     [SerializeField] private PlayerHandlerScript playerHandler;
+    [SerializeField] private NavMeshPlus.Components.NavMeshSurface navigator;
     private void Awake()
     {
-        MapScript.CreateSpriteMap(GlobalVariableHandler.fieldSizeX,GlobalVariableHandler.fieldSizeY,GlobalVariableHandler.terrainField,GlobalVariableHandler.buldingsField,spriteSize,map);
-        MapScript.CreateEntities(GlobalVariableHandler.fieldSizeX,GlobalVariableHandler.fieldSizeY,GlobalVariableHandler.buldingsField,spriteSize,bases,flags,outposts);
+        try
+        {
+            MapScript.CreateSpriteMap(GlobalVariableHandler.fieldSizeX, GlobalVariableHandler.fieldSizeY, GlobalVariableHandler.terrainField, GlobalVariableHandler.buldingsField, spriteSize, map);
+            MapScript.CreateEntities(GlobalVariableHandler.fieldSizeX, GlobalVariableHandler.fieldSizeY, GlobalVariableHandler.buldingsField, spriteSize, bases, flags, outposts);
+        }
+        catch(Exception ex) 
+        {
+            Debug.LogException(ex);
+        };
+
+    }
+    private void Start()
+    {
+        navigator.BuildNavMeshAsync();
+
     }
 }

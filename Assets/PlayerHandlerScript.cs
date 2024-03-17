@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.Rendering;
 
 public class PlayerHandlerScript : MonoBehaviour
@@ -12,6 +13,7 @@ public class PlayerHandlerScript : MonoBehaviour
     [SerializeField] private new Camera camera;
     [SerializeField] private GameObject bases;
     private FieldStates[,] field;
+    private NavMeshAgent agent = null;
     private List<Vector3> path; 
     private GameObject player;
     private AStar aStar;
@@ -22,12 +24,16 @@ public class PlayerHandlerScript : MonoBehaviour
     public float animationSpeed = 0.1f;
     public PlayerProperty properties;
     public int id = GlobalVariableHandler.myIndex;
+    public ClientBehaviour client;
 
     public void createPlayer(Vector3 pos)
     {
         player = Instantiate(playerPrefab,pos, Quaternion.identity);
         player.name = "Player";
-        properties = GlobalVariableHandler.players[id];
+        agent = player.GetComponent<NavMeshAgent>();
+        agent.updateRotation = false;
+        agent.updateUpAxis = false;
+        //properties = GlobalVariableHandler.players[id]; kak tolko budet server budet ok!
     }
     public void addXP(int XP)
     {
@@ -121,7 +127,6 @@ public class PlayerHandlerScript : MonoBehaviour
             int playerY = (int)(player.transform.position.y*100/GameLoaderScript.spriteSize);
             int targetX = (int)(worldPosition.x*100/GameLoaderScript.spriteSize);
             int targetY = (int)(worldPosition.y*100/GameLoaderScript.spriteSize);
-
             playerPos = field[playerY, playerX];
             if(playerPos!=FieldStates.Wall)
                 field[playerY, playerX] = FieldStates.Start;
@@ -162,11 +167,21 @@ public class PlayerHandlerScript : MonoBehaviour
             // Преобразуем позицию из пикселей в мировые координаты
             Vector3 worldPosition = camera.ScreenToWorldPoint(mousePosition);
 
-            // Выводим координаты места клика в консоль
-            Debug.Log("Mouse Clicked at: " + worldPosition);
-            if(MapScript.sprites != null)
+            if (worldPosition.x > 0 && worldPosition.y > 0 && worldPosition.x * 100 < MapScript.sprites.GetLength(1) * GameLoaderScript.spriteSize && worldPosition.y * 100 < MapScript.sprites.GetLength(0) * GameLoaderScript.spriteSize)
             {
-                findPath(worldPosition);
+                // Выводим координаты места клика в консоль
+                Debug.Log("Mouse Clicked at: " + worldPosition);
+                if (MapScript.sprites != null)
+                {
+                    int targetX = (int)(worldPosition.x * 100 / GameLoaderScript.spriteSize);
+                    int targetY = (int)(worldPosition.y * 100 / GameLoaderScript.spriteSize);
+                    if (GlobalVariableHandler.buldingsField[targetY, targetX] != Convert.ToInt32(Constants.Buildings.None))
+                    {
+                        Vector3 pos = new Vector3((targetX+0.5f) * GameLoaderScript.spriteSize / 100f, (targetY+0.5f) * GameLoaderScript.spriteSize / 100f,10f);
+                        Debug.Log("Destination: " + pos );
+                        agent.SetDestination(pos);
+                    }
+                }
             }
         }
     }
