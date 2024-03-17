@@ -11,6 +11,19 @@ public enum Action
     LEVEUP,
 }
 
+public struct MovePacket 
+{
+    public MovePacket(byte initiatorId, int X,  int Y) 
+    {
+        this.initiatorId = initiatorId;
+        this.X = X; 
+        this.Y = Y; 
+    }
+    public byte initiatorId;
+    public int X;
+    public int Y;
+
+}
 public struct SpecialAction
 {
     public SpecialAction(byte initiatorId, Action action, byte subjectId)

@@ -60,7 +60,7 @@ public class SimpleServer : MonoBehaviour
             Debug.Log(packet2.name);
         }
     }
-        void Update()
+    void Update()
     {
         if (!IsStarted) { return; }
 
@@ -105,7 +105,7 @@ public class SimpleServer : MonoBehaviour
                         NativeArray<byte> msg = new NativeArray<byte>(Encoding.UTF8.GetBytes(id.ToString()),Allocator.Persistent);
                         id++;
 
-                        m_Driver.BeginSend(NetworkPipeline.Null, m_Connections[i], out var whisper);
+                        m_Driver.BeginSend(NetworkPipeline.Null, m_Connections[i], out var whisper); // v teorii mozhet obostatsa [i] mojno kak id luche.
                         whisper.WriteBytes(msg);
                         
                         m_Driver.EndSend(whisper);
