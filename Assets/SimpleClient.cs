@@ -33,7 +33,7 @@ public class ClientBehaviour : MonoBehaviour
     {
         m_Driver = NetworkDriver.Create();
 
-            var endpoint = NetworkEndpoint.Parse(InputIp.text, Convert.ToUInt16(InputPort.text));
+        var endpoint = NetworkEndpoint.Parse(InputIp.text, Convert.ToUInt16(InputPort.text));
         m_Connection = m_Driver.Connect(endpoint);
 
         isConnected = true;
@@ -102,7 +102,8 @@ public class ClientBehaviour : MonoBehaviour
             {
                 Debug.Log("We are now connected to the server.");
                 NativeArray<byte> message = MakeInitPacket(InputName.text);
-
+                string JsonRead = Encoding.UTF8.GetString(message);
+                Debug.Log("Sent message: " + JsonRead);
                 m_Driver.BeginSend(m_Connection, out var writer);
                 writer.WriteBytes(message);
                 m_Driver.EndSend(writer);

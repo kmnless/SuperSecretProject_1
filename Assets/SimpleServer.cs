@@ -8,6 +8,7 @@ using Unity.VisualScripting.FullSerializer;
 using UnityEngine;
 using Newtonsoft.Json;
 using System.Text;
+using System.IO;
 
 public class SimpleServer : MonoBehaviour
 {
@@ -88,21 +89,28 @@ public class SimpleServer : MonoBehaviour
 
         for (int i = 0; i < m_Connections.Length; i++)
         {
-            DataStreamReader stream;
+            DataStreamReader stream = new DataStreamReader();
             NetworkEvent.Type cmd;
             while ((cmd = m_Driver.PopEventForConnection(m_Connections[i], out stream)) != NetworkEvent.Type.Empty)
             {
                 if (cmd == NetworkEvent.Type.Data)
                 {
-                    // logic.....
                     NativeArray<byte> bytes = new NativeArray<byte>();
-                    stream.ReadBytes(bytes);
-                    string JsonRead = Encoding.UTF8.GetString(bytes);
-                    if (JsonRead.Contains("InitPacket"))
+                    stream.ReadBytes(bytes);				// IDK WHY but there is an exception
+                    JsonTextReader reader = new JsonTextReader(new StringReader(Encoding.UTF8.GetString(bytes)));
+                    JsonSerializer serializer = new JsonSerializer();
+                    IPacket packet = serializer.Deserialize<IPacket>(reader);
+                    if (reader.Value == null)
                     {
-                        InitPacket packet = JsonConvert.DeserializeObject<InitPacket>(JsonRead);
-                        players[id]=new PlayerProperty(packet.name,GlobalVariableHandler.colors[id]);
-                        NativeArray<byte> msg = new NativeArray<byte>(Encoding.UTF8.GetBytes(id.ToString()),Allocator.Persistent);
+                        Debug.LogError($"GOT EMPTY MESSAGE! i = {i}");
+                    }
+                    if (packet.PacketType == "InitPacket")
+                    {
+                        InitPacket concretePacket = packet as InitPacket;
+                        Debug.Log($"Got Init Packet: {concretePacket}");
+                        players[id]=new PlayerProperty(concretePacket.name,GlobalVariableHandler.colors[id]);
+
+                        NativeArray<byte> msg = new NativeArray<byte>(Encoding.UTF8.GetBytes(id.ToString()),Allocator.Persistent); // SENDING ID ?? WHY ??
                         id++;
 
                         m_Driver.BeginSend(NetworkPipeline.Null, m_Connections[i], out var whisper); // v teorii mozhet obostatsa [i] mojno kak id luche.
@@ -111,27 +119,20 @@ public class SimpleServer : MonoBehaviour
                         m_Driver.EndSend(whisper);
 
                     }
-                    else if (JsonRead.Contains("MapPacket"))
+                    else if (packet.PacketType == "MapPacket")
                     {
-                        MapPacket packet = JsonConvert.DeserializeObject<MapPacket>(JsonRead);
-
-
-
-
-                    }
-                    else if (JsonRead.Contains("DefaultPacket"))
-                    {
-                        DefaultPacket packet = JsonConvert.DeserializeObject<DefaultPacket>(JsonRead);
                         
 
+                    }
+                    else if (packet.PacketType == "DefaultPacket")
+                    {
+                       
+
 
                     }
-                    else if (JsonRead.Contains("SpecialPacket"))
+                    else if (packet.PacketType == "SpecialPacket")
                     {
 
-
-
-                        SpecialPacket packet = JsonConvert.DeserializeObject<SpecialPacket>(JsonRead);
                     }
                     else
                     {
