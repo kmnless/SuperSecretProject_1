@@ -110,28 +110,46 @@ public class ClientBehaviour : MonoBehaviour
             }
             else if (cmd == NetworkEvent.Type.Data)
             {
-                NativeArray<byte> message = new NativeArray<byte>();
+                NativeArray<byte> message = new NativeArray<byte>(stream.Length, Allocator.Temp);
                 stream.ReadBytes(message);
                 Debug.Log($"Got the message from the server.");
-                if(gotId)
+                if (!gotId)
                 {
-                    string JsonRead = Encoding.UTF8.GetString(message);
-                    ServerPacket serverPacket = JsonConvert.DeserializeObject<ServerPacket>(JsonRead);
-                // process message....
+                    GlobalVariableHandler.myIndex = Convert.ToInt32(Encoding.UTF8.GetString(message));
+                    Debug.Log("My id is :" + GlobalVariableHandler.myIndex);
+                    gotId = true;
                 }
                 else
                 {
-                    GlobalVariableHandler.myIndex=Convert.ToInt32(Encoding.UTF8.GetString(message));
-                    Debug.Log(GlobalVariableHandler.myIndex);
+                    string JsonRead = Encoding.UTF8.GetString(message);
+                    ServerPacket serverPacket = JsonConvert.DeserializeObject<ServerPacket>(JsonRead);
+                    // process message....
                 }
 
-
+                message.Dispose();
             }
             else if (cmd == NetworkEvent.Type.Disconnect)
             {
                 Debug.Log("Client got disconnected from server.");
                 m_Connection = default;
             }
+        }
+    }
+    public void Disconnect()
+    {
+        if (isConnected)
+        {
+            // Отключаем соединение
+            m_Connection.Disconnect(m_Driver);
+            m_Connection = default;
+
+            // Освобождаем сетевой драйвер
+            m_Driver.Dispose();
+
+            // Устанавливаем флаг соединения в false
+            isConnected = false;
+
+            Debug.Log("Disconnected from the server.");
         }
     }
 

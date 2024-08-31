@@ -12,15 +12,13 @@ public enum Action
     LEVEUP,
 }
 
-public interface IPacket
+public class IPacket
 {
-    string PacketType { get; set; }
-    public string ToString();
+    public string PacketType { get; set; }
 }
 
 public class MovePacket : IPacket
 {
-    public string PacketType { get; set; }
     public byte initiatorId;
     public int X;
     public int Y;
@@ -36,9 +34,8 @@ public class MovePacket : IPacket
         return $"PacketType: {PacketType}, initiatorId: {initiatorId}, X: {X}, Y: {Y}";
     }
 }
-public class SpecialAction : IPacket
+public class SpecialAction
 {
-    public string PacketType { get; set; }
     public byte initiatorId;
     public Action action;
     public byte subjectID;
@@ -50,29 +47,53 @@ public class SpecialAction : IPacket
     }
     override public string ToString()
     {
-        return $"PacketType: {PacketType}, initiatorId: {initiatorId}, Action: {action}, subjectID: {subjectID}";
+        return $"initiatorId: {initiatorId}, Action: {action}, subjectID: {subjectID}";
     }
 }
 public class MapPacket : IPacket
 {
-    public string PacketType { get; set; }
-    public byte[,] mapTerrainTexture;
-    public int[,] buildings;
-    public MapPacket(byte[,] mapTerrainTexture, int[,] buildings)
+    public int sizeX;
+    public int sizeY;
+    public int seed;
+    public int baseCount;
+    public int flagAmount;
+    public int middleFlagAmount;
+    public int minimalDistance;
+    public int safePlaceRadius;
+    public double terrainScale;
+    public int smoothRange;
+    public float smoothCoef;
+    public float contrast;
+    public float clip;
+    public int roadGenerationComplexity;
+
+    public MapPacket(int sizeX, int sizeY, int seed, int baseCount, int flagAmount, int middleFlagAmount, int minimalDistance, int safePlaceRadius,
+            double terrainScale, int smoothRange, float smoothCoef, float contrast, float clip, int roadGenerationComplexity = 80)
     {
         PacketType = "MapPacket";
-        this.mapTerrainTexture = mapTerrainTexture;
-        this.buildings = buildings;
 
+        this.sizeX = sizeX;
+        this.sizeY = sizeY;
+        this.seed = seed;
+        this.baseCount = baseCount;
+        this.flagAmount = flagAmount;
+        this.middleFlagAmount = middleFlagAmount;
+        this.minimalDistance = minimalDistance;
+        this.safePlaceRadius = safePlaceRadius;
+        this.terrainScale = terrainScale;
+        this.smoothRange = smoothRange;
+        this.smoothCoef = smoothCoef;
+        this.contrast = contrast;
+        this.clip = clip;
+        this.roadGenerationComplexity = roadGenerationComplexity;
     }
     override public string ToString()
     {
-        return $"PacketType: {PacketType}";
+        return $"PacketType: {PacketType}, seed: {seed}";
     }
 }
 public class DefaultPacket : IPacket
 {
-    public string PacketType { get; set; }
     public PlayerProperty playerProperty;
     public DefaultPacket(PlayerProperty playerProperty)
     {
@@ -86,7 +107,6 @@ public class DefaultPacket : IPacket
 }
 public class SpecialPacket : IPacket
 {
-    public string PacketType { get; set; }
     public PlayerProperty playerProperty;
     public SpecialAction action;
     public SpecialPacket(PlayerProperty playerProperty, SpecialAction specialAction)
@@ -102,9 +122,8 @@ public class SpecialPacket : IPacket
 }
 public class InitPacket : IPacket
 {
-    public string PacketType { get; set; }
     public string name;
-    //public int id;                 // ??????
+    //public int id;                 // ?????? ne
 
     public InitPacket(string name)
     {
@@ -116,11 +135,8 @@ public class InitPacket : IPacket
         return $"PacketType: {PacketType}, name: {name}";
     }
 }
-
-
 public class ServerPacket : IPacket
 {
-    public string PacketType { get; set; }
     public List<PlayerProperty> playersSyncData;
     public List<SpecialAction> specialActions;
     public ServerPacket(List<PlayerProperty> playersSyncData, List<SpecialAction> specialActions)
