@@ -1,4 +1,4 @@
-1. Тема. \
+## 1. Тема. \
    "2D игра на Unity" 
 
 2. UseCase диаграмма. \
@@ -6,13 +6,13 @@
 
    
 3. Используемые технологии \
-   • Языки \
-      ‣ C# \
-   • Библиотеки \
-      ‣ Newtonsoft Json \
-      ‣ NavMeshPlus \
-      ‣ Unity AI Navigation \
-      ‣ Unity Transport \
-   • Инструменты разработки \
-      ‣ Git \
-      ‣ Unity Hub 
+   <p style="margin-left: 50px;">* Языки</p>
+      <p style="margin-left: 75px;">‣ C# </p>
+   <p style="margin-left: 50px;">* Библиотеки </p>
+      <p style="margin-left: 75px;">‣ Newtonsoft Json </p>
+      <p style="margin-left: 75px;">‣ NavMeshPlus </p>
+      <p style="margin-left: 75px;">‣ Unity AI Navigation </p>
+      <p style="margin-left: 75px;">‣ Unity Transport </p>
+   <p style="margin-left: 50px;">* Инструменты разработки </p>
+      <p style="margin-left: 75px;">‣ Git </p>
+      <p style="margin-left: 75px;">‣ Unity Hub </p>
