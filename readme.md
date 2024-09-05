@@ -6,4 +6,13 @@
 
    
 3. Используемые технологии
-  
+   • Языки
+      ‣ C#
+   • Библиотеки
+      ‣ Newtonsoft Json
+      ‣ NavMeshPlus
+      ‣ Unity AI Navigation
+      ‣ Unity Transport
+   • Инструменты разработки
+      ‣ Git
+      ‣ Unity Hub
