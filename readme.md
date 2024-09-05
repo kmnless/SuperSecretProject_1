@@ -2,7 +2,8 @@
    "2D игра на Unity"
 
 2. UseCase диаграмма.
-   ![supersecretproject diagrams](https://github.com/user-attachments/assets/a03454b8-68c2-4014-95ba-760391f01ccc)
+   ![supersecretproject diagrams](https://github.com/user-attachments/assets/b65351ba-563d-400b-b6a6-6ea12b525c44)
 
+   
 3. Используемые технологии
   
