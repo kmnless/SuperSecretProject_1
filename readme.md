@@ -6,13 +6,13 @@
 
    
 ## 3. Используемые технологии 
-   <p style="margin-left: 50px;">* Языки</p>
-      <p style="margin-left: 75px;">‣ C# </p>
-   <p style="margin-left: 50px;">* Библиотеки </p>
-      <p style="margin-left: 75px;">‣ Newtonsoft Json </p>
-      <p style="margin-left: 75px;">‣ NavMeshPlus </p>
-      <p style="margin-left: 75px;">‣ Unity AI Navigation </p>
-      <p style="margin-left: 75px;">‣ Unity Transport </p>
-   <p style="margin-left: 50px;">* Инструменты разработки </p>
-      <p style="margin-left: 75px;">‣ Git </p>
-      <p style="margin-left: 75px;">‣ Unity Hub </p>
+   ⋅⋅* Языки</p>
+      ‣ C# 
+   ⋅⋅* Библиотеки 
+      ‣ Newtonsoft Json 
+      ‣ NavMeshPlus 
+      ‣ Unity AI Navigation 
+      ‣ Unity Transport 
+   ⋅⋅* Инструменты разработки </p>
+      ‣ Git 
+      ‣ Unity Hub 
