@@ -5,14 +5,14 @@ using UnityEngine;
 
 public class CameraScript : MonoBehaviour
 {
-    public float cameraSpeed = 7.5f; // �������� ������������ ������
-    public float screenEdgeBorder = 50.0f; // ������ "�������" �� ���� ������
-    public float minZoom = 1.5f; // ����������� ����������
-    public float maxZoom = 10.0f; // ������������ ����������
-    public float zoomSpeed = 1.0f; // �������� �����������/���������
+    public float cameraSpeed = 7.5f;
+    public float screenEdgeBorder = 50.0f;
+    public float minZoom = 1.5f;
+    public float maxZoom = 10.0f;
+    public float zoomSpeed = 1.0f;
 
-    private float mapSizeX = (float)GlobalVariableHandler.fieldSizeX*GlobalVariableHandler.cellSize/100f;
-    private float mapSizeY = (float)GlobalVariableHandler.fieldSizeY*GlobalVariableHandler.cellSize/100f;
+    private float mapSizeX = (float)GlobalVariableHandler.Instance.FieldSizeX *GlobalVariableHandler.Instance.CellSize /100f;
+    private float mapSizeY = (float)GlobalVariableHandler.Instance.FieldSizeY *GlobalVariableHandler.Instance.CellSize /100f;
 
     private Transform target;
     private bool isFollowing = false;
@@ -35,30 +35,24 @@ public class CameraScript : MonoBehaviour
     {
         Vector3 mousePosition = Input.mousePosition;
 
-        // ��������� ��������� ���� ������������ ���� ������
         if (mousePosition.x <= screenEdgeBorder)
         {
-            // ������� ������ �����
             transform.Translate(Vector3.left * cameraSpeed * Time.deltaTime);
         }
         else if (mousePosition.x >= Screen.width - screenEdgeBorder)
         {
-            // ������� ������ ������
             transform.Translate(Vector3.right * cameraSpeed * Time.deltaTime);
         }
 
         if (mousePosition.y <= screenEdgeBorder)
         {
-            // ������� ������ ����
             transform.Translate(Vector3.down * cameraSpeed * Time.deltaTime);
         }
         else if (mousePosition.y >= Screen.height - screenEdgeBorder)
         {
-            // ������� ������ �����
             transform.Translate(Vector3.up * cameraSpeed * Time.deltaTime);
         }
 
-        // ����������� �������� ������
         Vector3 currentPosition = transform.position;
         currentPosition.x = Mathf.Clamp(currentPosition.x, 0, mapSizeX);
         currentPosition.y = Mathf.Clamp(currentPosition.y, 0, mapSizeY);

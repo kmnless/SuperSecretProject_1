@@ -9,103 +9,77 @@ using System.Net.Sockets;
 using System.Threading.Tasks;
 using TMPro;
 using Unity.Collections;
+using Unity.Netcode;
 using Unity.Networking.Transport;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class GameConnectionHandler : MonoBehaviour
 {
-    [SerializeField] private TMP_InputField InputIp;
+    private const string SceneName = "GameSetup";
+
     [SerializeField] private TMP_InputField InputName;
-    [SerializeField] private TMP_InputField InputPort;
-    [SerializeField] private Button HostButton;
-    [SerializeField] private TMP_Text PlayersText;
+    [SerializeField] private Button ConnectButton;
+    [SerializeField] private Button CreateButton;
+    [SerializeField] private ScrollRect AvailableGamesScrollView;
+    [SerializeField] private GameObject GameListItemPrefab;
 
-   
+    private void Start()
+    {
+        ConnectButton.onClick.AddListener(ConnectToServer);
+        CreateButton.onClick.AddListener(CreateNewGame);
+    }
 
-    //private bool IsHosted = false;
+    private void Update()
+    {
+        if (string.IsNullOrEmpty(InputName.text))
+        {
+            ConnectButton.interactable = false;
+            CreateButton.interactable = false;
+        }
+        else
+        {
+            ConnectButton.interactable = true;
+            CreateButton.interactable = true;
+        }
+    }
 
-    //private ServerObject server;
-    //public async void StartServerAsync(int maxPlayers)
-    //{
-    //    IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, Convert.ToInt32(InputPort.text));
-    //    server = new ServerObject(maxPlayers, endPoint);
-    //    IsHosted = true;
-    //    InputPort.enabled = false;
-    //    HostButton.interactable = false;
-    //    server.onConnection = changeText;
+    private void ConnectToServer()
+    {
+        if (string.IsNullOrEmpty(InputName.text)) return;
 
-    //    GlobalVariableHandler.serverIPEndPoint = endPoint;
-    //    await server.ListenAsync();
-    //}
+        string playerName = InputName.text;
 
-    //private void changeText(string name)
-    //{
-    //    //PlayersText.SetText(name);
-    //    Debug.Log(name);
-    //}
+        NetworkManager.Singleton.NetworkConfig.Prefabs.Add(new NetworkPrefab { Prefab = InputName.gameObject });
 
-    //public async void ConnectToServerAsync()
-    //{
-    //    string host = InputIp.text;
-    //    int port = Convert.ToInt32(InputPort.text);
-    //    string name = InputName.text;
-    //    using TcpClient client = new TcpClient();
-    //    StreamReader Reader = null;
-    //    StreamWriter Writer = null;
-    //    try
-    //    {
-    //        client.Connect(host, port); // подключение клиента
-    //        Reader = new StreamReader(client.GetStream());
-    //        Writer = new StreamWriter(client.GetStream());
-    //        if (Writer is null || Reader is null) throw new Exception();
-    //        // запускаем новый поток для получения данных
-    //        Task.Run(() => ReceiveMessageAsync(Reader));
-    //        // запускаем ввод сообщений
-    //        await SendMessageAsync(Writer);
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //        Debug.LogException(ex);
-    //    }
-    //    Writer?.Close();
-    //    Reader?.Close();
-    //}
+        if (NetworkManager.Singleton.StartClient())
+        {
+            Debug.Log("Connecting...");
+        }
+        else
+        {
+            Debug.Log("Can't connect");
+        }
+    }
 
-    //private async Task SendMessageAsync(StreamWriter writer)
-    //{
-    //    // сначала отправляем имя
-    //    await writer.WriteLineAsync(InputName.text);
-    //    await writer.FlushAsync();
-    //    //Console.WriteLine("Для отправки сообщений введите сообщение и нажмите Enter");                    // ---------------------------------- ?
+    private void CreateNewGame()
+    {
+        if (string.IsNullOrEmpty(InputName.text)) return;
 
-    //    while (true)
-    //    {
-    //        string message = Console.ReadLine();                                                           // ---------------------- ?
-    //        await writer.WriteLineAsync(message);
-    //        await writer.FlushAsync();
-    //    }
-    //}
+        string playerName = InputName.text;
 
-    //private async Task ReceiveMessageAsync(StreamReader reader)
-    //{
-    //    while (true)
-    //    {
-    //        try
-    //        {
-    //            // считываем ответ в виде строки
-    //            string message = await reader.ReadLineAsync();
-    //            // если пустой ответ, ничего не выводим на консоль
-    //            if (string.IsNullOrEmpty(message)) continue;
-    //            //Print(message);//����� ���������        
-    //            //Debug.Log(message);
-    //        }
-    //        catch
-    //        {
-    //            break;
-    //        }
-    //    }
-    //}
+        NetworkManager.Singleton.NetworkConfig.Prefabs.Add(new NetworkPrefab { Prefab = InputName.gameObject });
+        NetworkManager.Singleton.SceneManager.LoadScene(SceneName, LoadSceneMode.Single);
+
+    }
+
+    public void AddGameToList(string gameName)
+    {
+        GameObject newGameItem = Instantiate(GameListItemPrefab, AvailableGamesScrollView.content);
+        Text gameText = newGameItem.GetComponentInChildren<Text>();
+        gameText.text = gameName;
+    }
 }
 

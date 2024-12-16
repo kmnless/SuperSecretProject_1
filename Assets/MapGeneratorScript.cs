@@ -5,6 +5,11 @@ using UnityEngine.UI;
 using Unity.VisualScripting;
 using System.Linq;
 
+using Unity.Netcode;
+using UnityEditor.PackageManager;
+using System.Collections;
+using UnityEngine.SceneManagement;
+
 public class MapGeneratorScript : MonoBehaviour
 {
     [SerializeField] private Slider playerCountSlider;
@@ -144,7 +149,6 @@ public class MapGeneratorScript : MonoBehaviour
         try
         {
             terrain = Combiner.generatePlayField(X, Y, seed, baseCount, flagCount, middleFlagCount, minRadius, banRadius, terrainScale, Math.Max(Math.Abs(X / RANGE_DENOMINATOR), Math.Abs(Y / RANGE_DENOMINATOR)), DAMPING, CONTRAST, CLIP, ROAD_GENERATION_COPLEXITY_DENOMINATOR);
-
         }
         catch 
         {
@@ -204,24 +208,41 @@ public class MapGeneratorScript : MonoBehaviour
     }
     public void StartGame(string scene)
     {
-        if (generated) 
+        if (generated)
         {
-            GlobalVariableHandler.textures = textures;
-            GlobalVariableHandler.flagTexture = flagTexture;
-            GlobalVariableHandler.baseTexture = baseTexture;
-            GlobalVariableHandler.roadTexture = roadTexture;
-            GlobalVariableHandler.buldingsField = terrain.Item2;
-            GlobalVariableHandler.terrainField = terrain.Item1;
-            GlobalVariableHandler.cellSize = textures[0].width;
-            GlobalVariableHandler.playerCount = baseCount;
-            GlobalVariableHandler.fieldSizeX = X; GlobalVariableHandler.fieldSizeY = Y;
-            GlobalVariableHandler.waterline = waterline;
-            GlobalVariableHandler.montainLine = mountainLine;
-            GlobalVariableHandler.basePrefab = basePrefab;
-            GlobalVariableHandler.flagPrefab = flagPrefab;
-            GlobalVariableHandler.outpostPrefab = outpostPrefab;
-            GlobalVariableHandler.colors = colors;
-            sceneHandler.ChangeState(scene);
-        } 
+            if (!NetworkManager.Singleton.StartHost())
+            {
+                Debug.LogError("Server start error");
+                return;
+            }
+
+            if (!NetworkManager.Singleton.IsServer)
+            {
+                Debug.LogError("Server not available");
+                return;
+            }
+
+            Debug.Log("Server is started succesfully");
+
+
+            GlobalVariableHandler.Instance.Textures = textures;
+            GlobalVariableHandler.Instance.FlagTexture = flagTexture;
+            GlobalVariableHandler.Instance.BaseTexture = baseTexture;
+            GlobalVariableHandler.Instance.RoadTexture = roadTexture;
+            GlobalVariableHandler.Instance.BuildingsField = terrain.Item2;
+            GlobalVariableHandler.Instance.TerrainField = terrain.Item1;
+            GlobalVariableHandler.Instance.CellSize = textures[0].width;
+            GlobalVariableHandler.Instance.PlayerCount = baseCount;
+            GlobalVariableHandler.Instance.FieldSizeX = X; GlobalVariableHandler.Instance.FieldSizeY = Y;
+            GlobalVariableHandler.Instance.Waterline = waterline;
+            GlobalVariableHandler.Instance.MountainLine = mountainLine;
+            GlobalVariableHandler.Instance.BasePrefab = basePrefab;
+            GlobalVariableHandler.Instance.FlagPrefab = flagPrefab;
+            GlobalVariableHandler.Instance.OutpostPrefab = outpostPrefab;
+            GlobalVariableHandler.Instance.Colors = colors;
+            //sceneHandler.ChangeState(scene);
+            NetworkManager.Singleton.SceneManager.LoadScene(scene, LoadSceneMode.Single);
+        }
     }
+
 }

@@ -12,174 +12,176 @@ using System.Linq;
 
 public class SimpleServer : MonoBehaviour
 {
-    [SerializeField] private TMP_InputField InputPort;
-    [SerializeField] private TextMeshProUGUI PlayerNames;
+    //[SerializeField] private TMP_InputField InputPort;
+    //[SerializeField] private TextMeshProUGUI PlayerNames;
 
-    private bool IsStarted = false;
-    private bool GameIsOn = false;
-    private int id = 0;
+    //private bool IsStarted = false;
+    //private bool GameIsOn = false;
+    //private int id = 0;
 
-    private NetworkDriver m_Driver;
-    private NativeList<NetworkConnection> m_Connections;
+    //private NetworkDriver m_Driver;
+    //private NativeList<NetworkConnection> m_Connections;
 
-    private List<PlayerProperty> players = new List<PlayerProperty>();
+    //private List<PlayerProperty> players = new List<PlayerProperty>();
 
-    void Start()
-    {
-        ObjectManager objectManager = ObjectManager.Instance;
+    //Deprecated
 
-        objectManager.setServer(gameObject);
-    }
+    //void Start()
+    //{
+    //    ObjectManager objectManager = ObjectManager.Instance;
 
-    public void CreateServer()
-    {
-        if (IsStarted) { return; }
-        m_Driver = NetworkDriver.Create();
-        m_Connections = new NativeList<NetworkConnection>(GlobalVariableHandler.playerCount, Allocator.Persistent);
-        GlobalVariableHandler.players = new PlayerProperty[GlobalVariableHandler.playerCount];
-        var endpoint = NetworkEndpoint.AnyIpv4.WithPort(Convert.ToUInt16(InputPort.text));
-        if (m_Driver.Bind(endpoint) != 0)
-        {
-            Debug.LogError($"Failed to bind to port {Convert.ToUInt16(InputPort.text)}.");
-            return;
-        }
-        m_Driver.Listen();
-        Debug.Log($"Server started at {m_Driver.GetLocalEndpoint()}");
-        IsStarted = true;
-    }
+    //    objectManager.setServer(gameObject);
+    //}
 
-    void Update()
-    {
-        if (!IsStarted) { return; }
+    //public void CreateServer()
+    //{
+    //    if (IsStarted) { return; }
+    //    m_Driver = NetworkDriver.Create();
+    //    m_Connections = new NativeList<NetworkConnection>(GlobalVariableHandler.playerCount, Allocator.Persistent);
+    //    GlobalVariableHandler.players = new PlayerProperty[GlobalVariableHandler.playerCount];
+    //    var endpoint = NetworkEndpoint.AnyIpv4.WithPort(Convert.ToUInt16(InputPort.text));
+    //    if (m_Driver.Bind(endpoint) != 0)
+    //    {
+    //        Debug.LogError($"Failed to bind to port {Convert.ToUInt16(InputPort.text)}.");
+    //        return;
+    //    }
+    //    m_Driver.Listen();
+    //    Debug.Log($"Server started at {m_Driver.GetLocalEndpoint()}");
+    //    IsStarted = true;
+    //}
 
-        m_Driver.ScheduleUpdate().Complete();
+    //void Update()
+    //{
+    //    if (!IsStarted) { return; }
 
-        // Clean up connections.
-        for (int i = 0; i < m_Connections.Length; i++)
-        {
-            if (!m_Connections[i].IsCreated)
-            {
-                m_Connections.RemoveAtSwapBack(i);
-                i--;
-            }
-        }
+    //    m_Driver.ScheduleUpdate().Complete();
 
-        // Accept new connections.
-        NetworkConnection c;
-        while ((c = m_Driver.Accept()) != default)
-        {
-            if (GameIsOn)
-                c.Close(m_Driver);
-            m_Connections.Add(c);
-            Debug.Log("Accepted a connection.");
-        }
+    //    // Clean up connections.
+    //    for (int i = 0; i < m_Connections.Length; i++)
+    //    {
+    //        if (!m_Connections[i].IsCreated)
+    //        {
+    //            m_Connections.RemoveAtSwapBack(i);
+    //            i--;
+    //        }
+    //    }
 
-        for (int i = 0; i < m_Connections.Length; i++)
-        {
-            DataStreamReader stream;
-            NetworkEvent.Type cmd;
-            while ((cmd = m_Driver.PopEventForConnection(m_Connections[i], out stream)) != NetworkEvent.Type.Empty)
-            {
-                if (cmd == NetworkEvent.Type.Data)
-                {
-                    NativeArray<byte> bytes = new NativeArray<byte>(stream.Length, Allocator.Temp);
-                    stream.ReadBytes(bytes);
+    //    // Accept new connections.
+    //    NetworkConnection c;
+    //    while ((c = m_Driver.Accept()) != default)
+    //    {
+    //        if (GameIsOn)
+    //            c.Close(m_Driver);
+    //        m_Connections.Add(c);
+    //        Debug.Log("Accepted a connection.");
+    //    }
 
-                    JsonTextReader reader = new JsonTextReader(new StringReader(Encoding.UTF8.GetString(bytes)));
-                    JsonSerializer serializer = new JsonSerializer();
-                    IPacket packet = serializer.Deserialize<IPacket>(reader);
+    //    for (int i = 0; i < m_Connections.Length; i++)
+    //    {
+    //        DataStreamReader stream;
+    //        NetworkEvent.Type cmd;
+    //        while ((cmd = m_Driver.PopEventForConnection(m_Connections[i], out stream)) != NetworkEvent.Type.Empty)
+    //        {
+    //            if (cmd == NetworkEvent.Type.Data)
+    //            {
+    //                NativeArray<byte> bytes = new NativeArray<byte>(stream.Length, Allocator.Temp);
+    //                stream.ReadBytes(bytes);
 
-                    if (packet == null)
-                    {
-                        Debug.LogError($"GOT EMPTY MESSAGE! i = {i}");
-                    }
-                    else
-                    {
-                        if (packet.PacketType == "InitPacket")
-                        {
-                            JsonTextReader reader2 = new JsonTextReader(new StringReader(Encoding.UTF8.GetString(bytes)));
-                            InitPacket concretePacket = serializer.Deserialize<InitPacket>(reader2);
-                            Debug.Log($"Got Init Packet: {concretePacket.name}");
+    //                JsonTextReader reader = new JsonTextReader(new StringReader(Encoding.UTF8.GetString(bytes)));
+    //                JsonSerializer serializer = new JsonSerializer();
+    //                IPacket packet = serializer.Deserialize<IPacket>(reader);
 
-                            players.Add(new PlayerProperty(concretePacket.name, id));
+    //                if (packet == null)
+    //                {
+    //                    Debug.LogError($"GOT EMPTY MESSAGE! i = {i}");
+    //                }
+    //                else
+    //                {
+    //                    if (packet.PacketType == "InitPacket")
+    //                    {
+    //                        JsonTextReader reader2 = new JsonTextReader(new StringReader(Encoding.UTF8.GetString(bytes)));
+    //                        InitPacket concretePacket = serializer.Deserialize<InitPacket>(reader2);
+    //                        Debug.Log($"Got Init Packet: {concretePacket.name}");
 
-                            //Debug.Log($"FIRST i: {i} player.l {players.Count}");
-                            //foreach (var player in players)
-                            //{
-                            //    Debug.Log($"name[]: {player.Name}");
-                            //}
+    //                        players.Add(new PlayerProperty(concretePacket.name, id));
 
-                            UpdatePlayerNameText();
+    //                        //Debug.Log($"FIRST i: {i} player.l {players.Count}");
+    //                        //foreach (var player in players)
+    //                        //{
+    //                        //    Debug.Log($"name[]: {player.Name}");
+    //                        //}
 
-                            NativeArray<byte> msg = new NativeArray<byte>(Encoding.UTF8.GetBytes(id.ToString()), Allocator.Temp);
-                            id++;
+    //                        UpdatePlayerNameText();
 
-                            m_Driver.BeginSend(NetworkPipeline.Null, m_Connections[i], out var whisper);
-                            whisper.WriteBytes(msg);
-                            m_Driver.EndSend(whisper);
+    //                        NativeArray<byte> msg = new NativeArray<byte>(Encoding.UTF8.GetBytes(id.ToString()), Allocator.Temp);
+    //                        id++;
 
-                            msg.Dispose();  
-                        }
-                        else if (packet.PacketType == "DefaultPacket")
-                        {
-                            throw new NotImplementedException("DefaultPacket");
-                        }
-                        else if (packet.PacketType == "SpecialPacket")
-                        {
-                            throw new NotImplementedException("SpecialPacket");
-                        }
-                        else
-                        {
-                            throw new ArgumentException("Not standardized message");
-                        }
-                    }
+    //                        m_Driver.BeginSend(NetworkPipeline.Null, m_Connections[i], out var whisper);
+    //                        whisper.WriteBytes(msg);
+    //                        m_Driver.EndSend(whisper);
 
-                    bytes.Dispose();
-                }
-                else if (cmd == NetworkEvent.Type.Disconnect)
-                {
-                    Debug.Log($"SECOND i: {i} player.l {players.Count} m_con {m_Connections.Length}");
-                    foreach (var player in players)
-                    {
-                        if (player.Id == i)
-                        {
-                            Debug.Log($"{player.Name} LIKVIDIROVAN (ego id {player.Id})");
-                            players.Remove(player);
-                            UpdatePlayerNameText();
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-    }
+    //                        msg.Dispose();  
+    //                    }
+    //                    else if (packet.PacketType == "DefaultPacket")
+    //                    {
+    //                        throw new NotImplementedException("DefaultPacket");
+    //                    }
+    //                    else if (packet.PacketType == "SpecialPacket")
+    //                    {
+    //                        throw new NotImplementedException("SpecialPacket");
+    //                    }
+    //                    else
+    //                    {
+    //                        throw new ArgumentException("Not standardized message");
+    //                    }
+    //                }
 
-    private NativeArray<byte> MakeServerPacket(List<PlayerProperty> playersSyncData, List<SpecialAction> specialActions)
-    {
-        ServerPacket packet = new ServerPacket(playersSyncData, specialActions);
-        NativeArray<byte> bytes = new NativeArray<byte>(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(packet)), Allocator.Persistent);
-        return bytes;
-    }
+    //                bytes.Dispose();
+    //            }
+    //            else if (cmd == NetworkEvent.Type.Disconnect)
+    //            {
+    //                Debug.Log($"SECOND i: {i} player.l {players.Count} m_con {m_Connections.Length}");
+    //                foreach (var player in players)
+    //                {
+    //                    if (player.Id == i)
+    //                    {
+    //                        Debug.Log($"{player.Name} LIKVIDIROVAN (ego id {player.Id})");
+    //                        players.Remove(player);
+    //                        UpdatePlayerNameText();
+    //                        break;
+    //                    }
+    //                }
+    //            }
+    //        }
+    //    }
+    //}
 
-    private void UpdatePlayerNameText()
-    {
-        if (GameIsOn)
-            return;
+    //private NativeArray<byte> MakeServerPacket(List<PlayerProperty> playersSyncData, List<SpecialAction> specialActions)
+    //{
+    //    ServerPacket packet = new ServerPacket(playersSyncData, specialActions);
+    //    NativeArray<byte> bytes = new NativeArray<byte>(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(packet)), Allocator.Persistent);
+    //    return bytes;
+    //}
 
-        PlayerNames.text = String.Empty; 
+    //private void UpdatePlayerNameText()
+    //{
+    //    if (GameIsOn)
+    //        return;
 
-        foreach (var player in players)
-        {
-            PlayerNames.text += player.Name + Environment.NewLine;
-        }
-    }
+    //    PlayerNames.text = String.Empty; 
 
-    void OnDestroy()
-    {
-        if (m_Driver.IsCreated)
-        {
-            m_Driver.Dispose();
-            m_Connections.Dispose();
-        }
-    }
+    //    foreach (var player in players)
+    //    {
+    //        PlayerNames.text += player.Name + Environment.NewLine;
+    //    }
+    //}
+
+    //void OnDestroy()
+    //{
+    //    if (m_Driver.IsCreated)
+    //    {
+    //        m_Driver.Dispose();
+    //        m_Connections.Dispose();
+    //    }
+    //}
 }

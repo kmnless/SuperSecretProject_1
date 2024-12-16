@@ -31,7 +31,7 @@ public class BaseMenuHandler : MonoBehaviour
 
     void FixedUpdate()
     {
-        if(transform.gameObject.activeSelf&&(baseVisual.transform.position - player.transform.position- new Vector3(0f,0f,10f)).magnitude<GlobalVariableHandler.captureDistance*GlobalVariableHandler.cellSize/100f)
+        if(transform.gameObject.activeSelf&&(baseVisual.transform.position - player.transform.position- new Vector3(0f,0f,10f)).magnitude<GlobalVariableHandler.CaptureDistance*GlobalVariableHandler.Instance.CellSize /100f)
         {
             attackButton.interactable = true;
         }
@@ -47,7 +47,7 @@ public class BaseMenuHandler : MonoBehaviour
         if(playerScript.properties.Strength*playerScript.properties.StrengthMultiplier > handler.unitCout)
         {
             handler.timesAttacked++;
-            if(handler.timesAttacked>=GlobalVariableHandler.attacksToDefeat)
+            if(handler.timesAttacked>=GlobalVariableHandler.AttacksToDefeat)
             {
                 grave.SetActive(true);
                 transform.gameObject.SetActive(false);

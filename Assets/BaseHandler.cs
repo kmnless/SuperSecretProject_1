@@ -15,7 +15,7 @@ public class BaseHandler : MonoBehaviour
     private Camera cam;
     void Start()
     {
-        spriteRenderer.color = GlobalVariableHandler.colors[Id];
+        spriteRenderer.color = GlobalVariableHandler.Instance.Colors[Id];
         cam = GameObject.Find("Camera").GetComponent<Camera>(); 
         foreach(Canvas child in transform.GetComponentsInChildren<Canvas>(true))
         {

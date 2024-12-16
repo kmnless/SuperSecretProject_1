@@ -1,32 +1,46 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Net;
-using UnityEditor;
 using UnityEngine;
-
 
 public class GlobalVariableHandler : MonoBehaviour
 {
-    static public Color[] colors;
-    static public Texture2D[] textures;
-    static public Texture2D roadTexture;
-    static public Texture2D flagTexture;
-    static public Texture2D baseTexture;
-    static public GameObject basePrefab;
-    static public GameObject flagPrefab;
-    static public GameObject outpostPrefab;
-    static public PlayerProperty[] players;
-    static public int myIndex = 0; // Sejcas prosto pro debugging, ptom nuzhno budet prosit server poluchit eto pole;
-    static public int playerCount;
-    static public float cellSize;
-    static public int fieldSizeX;
-    static public int fieldSizeY;
-    static public double[,] terrainField;
-    static public int[,] buldingsField;
-    static public int waterline;
-    static public int montainLine;
-    static public IPEndPoint serverIPEndPoint;
-    public const int captureDistance=3;
-    public const int attacksToDefeat = 3;
+    // Singleton Instance
+    public static GlobalVariableHandler Instance { get; private set; }
+
+    // Public variables to store global data
+    public Color[] Colors { get; set; }
+    public Texture2D[] Textures { get; set; }
+    public Texture2D RoadTexture { get; set; }
+    public Texture2D FlagTexture { get; set; }
+    public Texture2D BaseTexture { get; set; }
+    public GameObject BasePrefab { get; set; }
+    public GameObject FlagPrefab { get; set; }
+    public GameObject OutpostPrefab { get; set; }
+    public PlayerProperty[] Players { get; set; }
+    public int MyIndex { get; set; } = 0;
+    public int PlayerCount { get; set; }
+    public float CellSize { get; set; }
+    public int FieldSizeX { get; set; }
+    public int FieldSizeY { get; set; }
+    public double[,] TerrainField { get; set; }
+    public int[,] BuildingsField { get; set; }
+    public int Waterline { get; set; }
+    public int MountainLine { get; set; }
+    public IPEndPoint ServerIPEndPoint { get; set; }
+
+    // Constants
+    public const int CaptureDistance = 3;
+    public const int AttacksToDefeat = 3;
+
+    private void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject); // Ensure only one instance exists
+            return;
+        }
+
+        Instance = this;
+        DontDestroyOnLoad(gameObject); // Preserve this object across scene loads
+    }
 }

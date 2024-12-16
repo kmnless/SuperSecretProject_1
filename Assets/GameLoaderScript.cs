@@ -19,8 +19,8 @@ public class GameLoaderScript : MonoBehaviour
     {
         try
         {
-            MapScript.CreateSpriteMap(GlobalVariableHandler.fieldSizeX, GlobalVariableHandler.fieldSizeY, GlobalVariableHandler.terrainField, GlobalVariableHandler.buldingsField, spriteSize, map);
-            MapScript.CreateEntities(GlobalVariableHandler.fieldSizeX, GlobalVariableHandler.fieldSizeY, GlobalVariableHandler.buldingsField, spriteSize, bases, flags, outposts);
+            MapScript.CreateSpriteMap(GlobalVariableHandler.Instance.FieldSizeX, GlobalVariableHandler.Instance.FieldSizeY, GlobalVariableHandler.Instance.TerrainField, GlobalVariableHandler.Instance.BuildingsField, spriteSize, map);
+            MapScript.CreateEntities(GlobalVariableHandler.Instance.FieldSizeX, GlobalVariableHandler.Instance.FieldSizeY, GlobalVariableHandler.Instance.BuildingsField, spriteSize, bases, flags, outposts);
         }
         catch(Exception ex) 
         {

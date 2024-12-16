@@ -23,7 +23,7 @@ public class PlayerHandlerScript : MonoBehaviour
     private bool allowMove = false;
     public float animationSpeed = 0.1f;
     public PlayerProperty properties;
-    public int id = GlobalVariableHandler.myIndex;
+    public int id = GlobalVariableHandler.Instance.MyIndex;
     public ClientBehaviour client;
 
     public void createPlayer(Vector3 pos)
@@ -58,14 +58,14 @@ public class PlayerHandlerScript : MonoBehaviour
     public void Start()
     {
         Vector3 pos;
-        field = new FieldStates[GlobalVariableHandler.fieldSizeY, GlobalVariableHandler.fieldSizeX];
+        field = new FieldStates[GlobalVariableHandler.Instance.FieldSizeY, GlobalVariableHandler.Instance.FieldSizeX];
         //MapScript.sprites[0,1].SetActive(false);
-        for(int y = 0; y < GlobalVariableHandler.fieldSizeY; y++)
+        for(int y = 0; y < GlobalVariableHandler.Instance.FieldSizeY; y++)
         {
-            for(int x = 0; x < GlobalVariableHandler.fieldSizeX; x++)
+            for(int x = 0; x < GlobalVariableHandler.Instance.FieldSizeX; x++)
             {
                // Debug.Log($"{GlobalVariableHandler.terrainField[y, x]} on x={x} on y={y}");
-                if(GlobalVariableHandler.terrainField[y, x]>=-moveAllowance && GlobalVariableHandler.terrainField[y, x]<=moveAllowance)
+                if(GlobalVariableHandler.Instance.TerrainField[y, x]>=-moveAllowance && GlobalVariableHandler.Instance.TerrainField[y, x]<=moveAllowance)
                 {
                     field[y, x] = FieldStates.Empty;
                 }
@@ -76,13 +76,13 @@ public class PlayerHandlerScript : MonoBehaviour
             }
         }
 
-        if(bases.transform.childCount>GlobalVariableHandler.myIndex)
+        if(bases.transform.childCount>GlobalVariableHandler.Instance.MyIndex)
         {
-            pos = bases.transform.GetChild(GlobalVariableHandler.myIndex).position;
+            pos = bases.transform.GetChild(GlobalVariableHandler.Instance.MyIndex).position;
         }
         else
         {
-            pos = new Vector3(GlobalVariableHandler.cellSize/200f,GlobalVariableHandler.cellSize/200f,0);
+            pos = new Vector3(GlobalVariableHandler.Instance.CellSize /200f,GlobalVariableHandler.Instance.CellSize /200f,0);
         }
         createPlayer(pos);
     }
@@ -175,7 +175,7 @@ public class PlayerHandlerScript : MonoBehaviour
                 {
                     int targetX = (int)(worldPosition.x * 100 / GameLoaderScript.spriteSize);
                     int targetY = (int)(worldPosition.y * 100 / GameLoaderScript.spriteSize);
-                    if (GlobalVariableHandler.buldingsField[targetY, targetX] != Convert.ToInt32(Constants.Buildings.None))
+                    if (GlobalVariableHandler.Instance.BuildingsField[targetY, targetX] != Convert.ToInt32(Constants.Buildings.None))
                     {
                         Vector3 pos = new Vector3((targetX+0.5f) * GameLoaderScript.spriteSize / 100f, (targetY+0.5f) * GameLoaderScript.spriteSize / 100f,10f);
                         Debug.Log("Destination: " + pos );
