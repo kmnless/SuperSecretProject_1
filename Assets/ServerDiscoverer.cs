@@ -32,6 +32,7 @@ public class ServerDiscoverer : MonoBehaviour
                     string gameName = parts[0];
                     string ipAddress = parts[1];
                     int port = int.Parse(parts[2]);
+                    Debug.Log($"Received broadcast message: {message}");
 
                     connectionHandler.AddGameToList($"{gameName} ({ipAddress}:{port})");
                 }

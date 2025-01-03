@@ -25,6 +25,7 @@ public class ServerBroadcaster : MonoBehaviour
 
             IPEndPoint endpoint = new IPEndPoint(IPAddress.Broadcast, BroadcastPort);
             udpClient.Send(data, data.Length, endpoint);
+            Debug.Log($"Broadcast message sent: {message}");
 
             await Task.Delay(1000);
         }

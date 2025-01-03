@@ -96,6 +96,7 @@ public class GameConnectionHandler : MonoBehaviour
         if (!discoveredGames.Contains(gameInfo))
         {
             discoveredGames.Add(gameInfo);
+            Debug.Log($"Adding game to list: {gameInfo}");
 
             GameObject newGameItem = Instantiate(GameListItemPrefab, AvailableGamesScrollView.content);
             Text gameText = newGameItem.GetComponentInChildren<Text>();
