@@ -100,7 +100,18 @@ public class GameConnectionHandler : MonoBehaviour
 
             GameObject newGameItem = Instantiate(GameListItemPrefab, AvailableGamesScrollView.content);
             Text gameText = newGameItem.GetComponentInChildren<Text>();
-            gameText.text = gameInfo;
+            if (gameText != null)
+            {
+                gameText.text = gameInfo;
+            }
+            else
+            {
+                Debug.LogError("GameListItemPrefab is missing a Text component!");
+            }
+        }
+        else
+        {
+            Debug.Log($"Game already in list: {gameInfo}");
         }
     }
     private void OnDestroy()
