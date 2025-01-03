@@ -25,7 +25,7 @@ public class GameConnectionHandler : MonoBehaviour
     [SerializeField] private Button CreateButton;
     [SerializeField] private ScrollRect AvailableGamesScrollView;
     [SerializeField] private GameObject GameListItemPrefab;
-
+    private HashSet<string> discoveredGames = new HashSet<string>();
     private void Start()
     {
         ConnectButton.onClick.AddListener(ConnectToServer);
@@ -69,17 +69,46 @@ public class GameConnectionHandler : MonoBehaviour
         if (string.IsNullOrEmpty(InputName.text)) return;
 
         string playerName = InputName.text;
+        if (NetworkManager.Singleton == null)
+        {
+            Debug.LogError("NetworkManager.Singleton не настроен или отсутствует.");
+            return;
+        }
 
-        NetworkManager.Singleton.NetworkConfig.Prefabs.Add(new NetworkPrefab { Prefab = InputName.gameObject });
+        if (!NetworkManager.Singleton.StartHost())
+        {
+            Debug.LogError("Не удалось запустить сервер.");
+            return;
+        }
+
+        if (NetworkManager.Singleton.SceneManager == null)
+        {
+            Debug.LogError("SceneManager не настроен.");
+            return;
+        }
+        //NetworkManager.Singleton.NetworkConfig.Prefabs.Add(new NetworkPrefab { Prefab = InputName.gameObject });
         NetworkManager.Singleton.SceneManager.LoadScene(SceneName, LoadSceneMode.Single);
 
     }
 
-    public void AddGameToList(string gameName)
+    public void AddGameToList(string gameInfo)
     {
-        GameObject newGameItem = Instantiate(GameListItemPrefab, AvailableGamesScrollView.content);
-        Text gameText = newGameItem.GetComponentInChildren<Text>();
-        gameText.text = gameName;
+        if (!discoveredGames.Contains(gameInfo))
+        {
+            discoveredGames.Add(gameInfo);
+
+            GameObject newGameItem = Instantiate(GameListItemPrefab, AvailableGamesScrollView.content);
+            Text gameText = newGameItem.GetComponentInChildren<Text>();
+            gameText.text = gameInfo;
+        }
+    }
+    private void OnDestroy()
+    {
+        if (NetworkManager.Singleton != null && NetworkManager.Singleton.IsListening)
+        {
+            NetworkManager.Singleton.Shutdown();
+            Debug.Log("NetworkManager завершил работу.");
+        }
     }
 }
 

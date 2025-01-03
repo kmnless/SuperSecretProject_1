@@ -210,6 +210,17 @@ public class MapGeneratorScript : MonoBehaviour
     {
         if (generated)
         {
+            if (NetworkManager.Singleton == null)
+            {
+                Debug.LogError("NetworkManager.Singleton не настроен.");
+                return;
+            }
+
+            if (NetworkManager.Singleton.IsHost || NetworkManager.Singleton.IsServer || NetworkManager.Singleton.IsClient)
+            {
+                Debug.LogWarning("—ервер или клиент уже запущены.");
+                return;
+            }
             if (!NetworkManager.Singleton.StartHost())
             {
                 Debug.LogError("Server start error");
