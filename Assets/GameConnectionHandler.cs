@@ -96,15 +96,39 @@ public class GameConnectionHandler : MonoBehaviour
         {
             availableGames[gameName] = address;
 
+            // Instantiate the prefab
             GameObject newGameItem = Instantiate(GameListItemPrefab, AvailableGamesScrollView.content);
-            Text gameText = newGameItem.GetComponentInChildren<Text>();
-            gameText.text = gameName;
 
-            // Add click listener to select the game
+            // Find the text component in the prefab
+            Text gameText = newGameItem.GetComponentInChildren<Text>();
+            if (gameText != null)
+            {
+                gameText.text = gameName; // Set game name
+            }
+            else
+            {
+                Debug.LogError("GameListPrefab is missing a Text component!");
+            }
+
+            // Add click listener to the button
             Button button = newGameItem.GetComponent<Button>();
-            button.onClick.AddListener(() => SelectGame(gameName, address));
+            if (button != null)
+            {
+                button.onClick.AddListener(() => SelectGame(gameName, address));
+            }
+            else
+            {
+                Debug.LogError("GameListItemPrefab is missing a Button component!");
+            }
+
+            Debug.Log($"Game added to list: {gameName} at {address}");
+        }
+        else
+        {
+            Debug.Log($"Game {gameName} already exists in the list.");
         }
     }
+
     private void SelectGame(string gameName, string address)
     {
         selectedGameAddress = address;
