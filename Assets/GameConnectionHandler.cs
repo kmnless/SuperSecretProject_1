@@ -98,7 +98,9 @@ public class GameConnectionHandler : MonoBehaviour
         {
             availableGames[gameName] = address;
 
+            // Instantiate the prefab
             GameObject newGameItem = Instantiate(GameListItemPrefab, AvailableGamesScrollView.content);
+            Debug.Log($"New game item instantiated: {newGameItem.name}");
 
             TMP_Text gameText = newGameItem.GetComponentInChildren<TMP_Text>();
             if (gameText != null)
@@ -121,14 +123,16 @@ public class GameConnectionHandler : MonoBehaviour
             {
                 Debug.LogError("GameListItemPrefab is missing a Button component!");
             }
+
+            // Force update layout
+            LayoutRebuilder.ForceRebuildLayoutImmediate(AvailableGamesScrollView.content.GetComponent<RectTransform>());
         }
         else
         {
             Debug.Log($"Game {gameName} already exists in the list.");
         }
-        LayoutRebuilder.ForceRebuildLayoutImmediate(AvailableGamesScrollView.content.GetComponent<RectTransform>());
-
     }
+
 
 
     private void SelectGame(string gameName, string address)
