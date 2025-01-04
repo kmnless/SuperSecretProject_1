@@ -34,11 +34,12 @@ public class ServerDiscoverer : MonoBehaviour
                     string port = parts[2];
                     string address = $"{ipAddress}:{port}";
 
+                    Debug.Log($"Calling AddGameToList with: {gameName}, {address}");
                     connectionHandler.AddGameToList(gameName, address);
                 }
                 else
                 {
-                    Debug.LogWarning("Invalid broadcast message format.");
+                    Debug.LogWarning($"Invalid broadcast format: {message}");
                 }
             }
             catch (SocketException ex)
@@ -47,6 +48,7 @@ public class ServerDiscoverer : MonoBehaviour
             }
         }
     }
+
 
     private void OnDestroy()
     {
