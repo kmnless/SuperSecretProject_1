@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using TMPro;
 using Unity.Collections;
 using Unity.Netcode;
+using Unity.Netcode.Transports.UTP;
 using Unity.Networking.Transport;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
@@ -25,42 +26,52 @@ public class GameConnectionHandler : MonoBehaviour
     [SerializeField] private Button CreateButton;
     [SerializeField] private ScrollRect AvailableGamesScrollView;
     [SerializeField] private GameObject GameListItemPrefab;
-    private HashSet<string> discoveredGames = new HashSet<string>();
+
+    private string selectedGameAddress;
+    private Dictionary<string, string> availableGames = new Dictionary<string, string>(); // gameName -> IP:Port
     private void Start()
     {
         ConnectButton.onClick.AddListener(ConnectToServer);
         CreateButton.onClick.AddListener(CreateNewGame);
+
+        ConnectButton.interactable = false;
+        CreateButton.interactable = false;
     }
 
     private void Update()
     {
-        if (string.IsNullOrEmpty(InputName.text))
-        {
-            ConnectButton.interactable = false;
-            CreateButton.interactable = false;
-        }
-        else
-        {
-            ConnectButton.interactable = true;
-            CreateButton.interactable = true;
-        }
+        bool hasName = !string.IsNullOrEmpty(InputName.text);
+        ConnectButton.interactable = hasName && !string.IsNullOrEmpty(selectedGameAddress);
+        CreateButton.interactable = hasName;
     }
 
     private void ConnectToServer()
     {
-        if (string.IsNullOrEmpty(InputName.text)) return;
+        if (string.IsNullOrEmpty(selectedGameAddress))
+        {
+            Debug.LogError("No game selected to connect!");
+            return;
+        }
 
-        string playerName = InputName.text;
+        // Split address into IP and Port
+        string[] addressParts = selectedGameAddress.Split(':');
+        if (addressParts.Length != 2)
+        {
+            Debug.LogError("Invalid game address format!");
+            return;
+        }
 
-        NetworkManager.Singleton.NetworkConfig.Prefabs.Add(new NetworkPrefab { Prefab = InputName.gameObject });
+        string ip = addressParts[0];
+        int port = int.Parse(addressParts[1]);
 
+        NetworkManager.Singleton.GetComponent<UnityTransport>().SetConnectionData(ip, (ushort)port);
         if (NetworkManager.Singleton.StartClient())
         {
-            Debug.Log("Connecting...");
+            Debug.Log($"Connecting to server at {selectedGameAddress}...");
         }
         else
         {
-            Debug.Log("Can't connect");
+            Debug.LogError("Failed to connect to server.");
         }
     }
 
@@ -69,21 +80,9 @@ public class GameConnectionHandler : MonoBehaviour
         if (string.IsNullOrEmpty(InputName.text)) return;
 
         string playerName = InputName.text;
-        if (NetworkManager.Singleton == null)
-        {
-            Debug.LogError("NetworkManager.Singleton не настроен или отсутствует.");
-            return;
-        }
-
         if (!NetworkManager.Singleton.StartHost())
         {
-            Debug.LogError("Не удалось запустить сервер.");
-            return;
-        }
-
-        if (NetworkManager.Singleton.SceneManager == null)
-        {
-            Debug.LogError("SceneManager не настроен.");
+            Debug.LogError("Failed to start host.");
             return;
         }
         //NetworkManager.Singleton.NetworkConfig.Prefabs.Add(new NetworkPrefab { Prefab = InputName.gameObject });
@@ -91,29 +90,28 @@ public class GameConnectionHandler : MonoBehaviour
 
     }
 
-    public void AddGameToList(string gameInfo)
+    public void AddGameToList(string gameName, string address)
     {
-        if (!discoveredGames.Contains(gameInfo))
+        if (!availableGames.ContainsKey(gameName))
         {
-            discoveredGames.Add(gameInfo);
-            Debug.Log($"Adding game to list: {gameInfo}");
+            availableGames[gameName] = address;
 
             GameObject newGameItem = Instantiate(GameListItemPrefab, AvailableGamesScrollView.content);
             Text gameText = newGameItem.GetComponentInChildren<Text>();
-            if (gameText != null)
-            {
-                gameText.text = gameInfo;
-            }
-            else
-            {
-                Debug.LogError("GameListItemPrefab is missing a Text component!");
-            }
-        }
-        else
-        {
-            Debug.Log($"Game already in list: {gameInfo}");
+            gameText.text = gameName;
+
+            // Add click listener to select the game
+            Button button = newGameItem.GetComponent<Button>();
+            button.onClick.AddListener(() => SelectGame(gameName, address));
         }
     }
+    private void SelectGame(string gameName, string address)
+    {
+        selectedGameAddress = address;
+        Debug.Log($"Selected game: {gameName} at {address}");
+    }
+
+
     private void OnDestroy()
     {
         if (NetworkManager.Singleton != null && NetworkManager.Singleton.IsListening)

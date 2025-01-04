@@ -6,10 +6,9 @@ using UnityEngine;
 
 public class ServerDiscoverer : MonoBehaviour
 {
+    [SerializeField] private GameConnectionHandler connectionHandler;
     private UdpClient udpClient;
     private const int ListenPort = 8888;
-
-    public GameConnectionHandler connectionHandler;
 
     private void Start()
     {
@@ -25,21 +24,26 @@ public class ServerDiscoverer : MonoBehaviour
             {
                 UdpReceiveResult result = await udpClient.ReceiveAsync();
                 string message = Encoding.UTF8.GetString(result.Buffer);
-                string[] parts = message.Split('|');
+                Debug.Log($"Received broadcast: {message}");
 
+                string[] parts = message.Split('|');
                 if (parts.Length == 3)
                 {
                     string gameName = parts[0];
                     string ipAddress = parts[1];
-                    int port = int.Parse(parts[2]);
-                    Debug.Log($"Received broadcast message: {message}");
+                    string port = parts[2];
+                    string address = $"{ipAddress}:{port}";
 
-                    connectionHandler.AddGameToList($"{gameName} ({ipAddress}:{port})");
+                    connectionHandler.AddGameToList(gameName, address);
+                }
+                else
+                {
+                    Debug.LogWarning("Invalid broadcast message format.");
                 }
             }
             catch (SocketException ex)
             {
-                Debug.LogWarning($"UDP Receive Error: {ex.Message}");
+                Debug.LogError($"UDP Receive Error: {ex.Message}");
             }
         }
     }
