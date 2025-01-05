@@ -24,7 +24,6 @@ public class PlayerHandlerScript : MonoBehaviour
     public float animationSpeed = 0.1f;
     public PlayerProperty properties;
     public int id = GlobalVariableHandler.Instance.MyIndex;
-    public ClientBehaviour client;
 
     public void createPlayer(Vector3 pos)
     {

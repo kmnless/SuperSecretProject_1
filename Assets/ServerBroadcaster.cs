@@ -4,12 +4,13 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Unity.Netcode;
 using UnityEngine;
 
 public class ServerBroadcaster : MonoBehaviour
 {
-    private const int BroadcastPort = 8888; // Port for broadcasting
-    private const string GameName = "MyStrategyGame"; // Game name to broadcast, will be player nickname(i guess??)
+    private const int BroadcastPort = GlobalVariableHandler.BroadcastPort;
+    private string GameName = GlobalVariableHandler.DefaultGameName;
 
     private UdpClient udpClient;
     private CancellationTokenSource cancellationTokenSource;
@@ -18,6 +19,9 @@ public class ServerBroadcaster : MonoBehaviour
     {
         udpClient = new UdpClient { EnableBroadcast = true };
         cancellationTokenSource = new CancellationTokenSource();
+
+        if(GlobalVariableHandler.Instance.ServerName != string.Empty)
+            this.GameName = GlobalVariableHandler.Instance.ServerName;
 
         Task.Run(() => SendBroadcasts(cancellationTokenSource.Token), cancellationTokenSource.Token);
     }
@@ -35,7 +39,6 @@ public class ServerBroadcaster : MonoBehaviour
                 {
                     IPEndPoint endpoint = new IPEndPoint(broadcastAddress, BroadcastPort);
                     udpClient.Send(data, data.Length, endpoint);
-                    Debug.Log($"Broadcast message sent to {broadcastAddress}");
                 }
 
                 await Task.Delay(5000, cancellationToken); // Wait for 5 second or until cancellation

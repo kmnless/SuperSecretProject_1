@@ -1196,6 +1196,10 @@ PrefabInstance:
       propertyPath: GlobalObjectIdHash
       value: 2714551263
       objectReference: {fileID: 0}
+    - target: {fileID: 8019646257827857419, guid: 9ad3e25ea5c4e98438a77d610f661209, type: 3}
+      propertyPath: SynchronizeTransform
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8523265286449356810, guid: 9ad3e25ea5c4e98438a77d610f661209, type: 3}
       propertyPath: m_LocalPosition.x
       value: 373.70312
@@ -1483,7 +1487,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1013403994}
   m_Direction: 2
   m_Value: 0
-  m_Size: 1
+  m_Size: 0.99997354
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -1809,7 +1813,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.0006158552}
+  m_AnchoredPosition: {x: 0, y: 0.00019990592}
   m_SizeDelta: {x: 0, y: 339.3969}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1446363019

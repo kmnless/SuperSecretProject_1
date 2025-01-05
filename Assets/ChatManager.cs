@@ -26,6 +26,11 @@ public class ChatManager : NetworkBehaviour
             Debug.LogWarning("Network is not active. Did you start the client?");
         }
 
+        if (!IsClient)
+        {
+            Debug.LogError("Client is not connected!");
+        }
+
         sendButton.onClick.AddListener(SendMessageToServer);
     }
 

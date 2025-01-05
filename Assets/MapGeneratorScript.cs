@@ -252,6 +252,7 @@ public class MapGeneratorScript : MonoBehaviour
             GlobalVariableHandler.Instance.OutpostPrefab = outpostPrefab;
             GlobalVariableHandler.Instance.Colors = colors;
             //sceneHandler.ChangeState(scene);
+            ServerHandler.RefreshPlayerCount();
             NetworkManager.Singleton.SceneManager.LoadScene(scene, LoadSceneMode.Single);
         }
     }

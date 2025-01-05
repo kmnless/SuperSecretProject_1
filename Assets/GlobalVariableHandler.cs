@@ -8,6 +8,9 @@ public class GlobalVariableHandler : MonoBehaviour
     public static GlobalVariableHandler Instance { get; private set; }
 
     // Public variables to store global data
+    public string ServerName { get; set; }
+    public const int BroadcastPort = 8888;
+    public const string DefaultGameName = "GameName";
     public Color[] Colors { get; set; }
     public Texture2D[] Textures { get; set; }
     public Texture2D RoadTexture { get; set; }
