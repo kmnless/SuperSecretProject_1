@@ -17,6 +17,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
+
 public class GameConnectionHandler : MonoBehaviour
 {
     private const string SceneName = "GameSetup";
@@ -37,6 +38,10 @@ public class GameConnectionHandler : MonoBehaviour
         ConnectButton.interactable = false;
         CreateButton.interactable = false;
 
+
+        AddGameToList("Test Game 1", "127.0.0.1:7777");
+        AddGameToList("Test Game 2", "127.0.0.1:8888");
+        AddGameToList("Test Game 3", "127.0.0.1:9999");
         //Debug.Log("Testing Instantiate...");
         //GameObject testItem = Instantiate(GameListItemPrefab, AvailableGamesScrollView.content);
         //GameObject testItem1 = Instantiate(GameListItemPrefab, AvailableGamesScrollView.content);
@@ -128,7 +133,6 @@ public class GameConnectionHandler : MonoBehaviour
         {
             Debug.Log("if");
             availableGames[gameName] = address;
-            GameObject testItem = Instantiate(GameListItemPrefab, AvailableGamesScrollView.content);
             GameObject newGameItem = Instantiate(GameListItemPrefab, AvailableGamesScrollView.content);
 
             RectTransform rectTransform = newGameItem.GetComponent<RectTransform>();
@@ -137,10 +141,11 @@ public class GameConnectionHandler : MonoBehaviour
             TMP_Text gameText = newGameItem.GetComponentInChildren<TMP_Text>();
             gameText.text = gameName;
 
-            Button button = newGameItem.GetComponent<Button>();
+            Button button = newGameItem.GetComponentInChildren<Button>();
             button.onClick.AddListener(() => SelectGame(gameName, address));
 
             LayoutRebuilder.ForceRebuildLayoutImmediate(AvailableGamesScrollView.content.GetComponent<RectTransform>());
+
         }
         else
         {
