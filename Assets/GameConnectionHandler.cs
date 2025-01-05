@@ -39,9 +39,9 @@ public class GameConnectionHandler : MonoBehaviour
         CreateButton.interactable = false;
 
 
-        AddGameToList("Test Game 1", "127.0.0.1:7777");
-        AddGameToList("Test Game 2", "127.0.0.1:8888");
-        AddGameToList("Test Game 3", "127.0.0.1:9999");
+        //AddGameToList("Test Game 1", "127.0.0.1:7777");
+        //AddGameToList("Test Game 2", "127.0.0.1:8888");
+        //AddGameToList("Test Game 3", "127.0.0.1:9999");
         //Debug.Log("Testing Instantiate...");
         //GameObject testItem = Instantiate(GameListItemPrefab, AvailableGamesScrollView.content);
         //GameObject testItem1 = Instantiate(GameListItemPrefab, AvailableGamesScrollView.content);
@@ -131,21 +131,21 @@ public class GameConnectionHandler : MonoBehaviour
 
         if (!availableGames.ContainsKey(gameName))
         {
-            Debug.Log("if");
+            Debug.Log("1");
             availableGames[gameName] = address;
             GameObject newGameItem = Instantiate(GameListItemPrefab, AvailableGamesScrollView.content);
-
+            Debug.Log($"2 {newGameItem.name}");
             RectTransform rectTransform = newGameItem.GetComponent<RectTransform>();
             rectTransform.sizeDelta = new Vector2(AvailableGamesScrollView.viewport.rect.width, 50); // Ўирина = ширине Viewport, высота = 50
 
             TMP_Text gameText = newGameItem.GetComponentInChildren<TMP_Text>();
             gameText.text = gameName;
-
+            Debug.Log($"3 {gameName}; {gameText}");
             Button button = newGameItem.GetComponentInChildren<Button>();
             button.onClick.AddListener(() => SelectGame(gameName, address));
-
+            Debug.Log($"4 {button.name}");
             LayoutRebuilder.ForceRebuildLayoutImmediate(AvailableGamesScrollView.content.GetComponent<RectTransform>());
-
+            Debug.Log("5");
         }
         else
         {
