@@ -126,8 +126,9 @@ public class GameConnectionHandler : MonoBehaviour
 
         if (!availableGames.ContainsKey(gameName))
         {
+            Debug.Log("if");
             availableGames[gameName] = address;
-
+            GameObject testItem = Instantiate(GameListItemPrefab, AvailableGamesScrollView.content);
             GameObject newGameItem = Instantiate(GameListItemPrefab, AvailableGamesScrollView.content);
 
             RectTransform rectTransform = newGameItem.GetComponent<RectTransform>();
