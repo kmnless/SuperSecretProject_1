@@ -36,6 +36,36 @@ public class GameConnectionHandler : MonoBehaviour
 
         ConnectButton.interactable = false;
         CreateButton.interactable = false;
+
+        //Debug.Log("Testing Instantiate...");
+        //GameObject testItem = Instantiate(GameListItemPrefab, AvailableGamesScrollView.content);
+        //GameObject testItem1 = Instantiate(GameListItemPrefab, AvailableGamesScrollView.content);
+        //GameObject testItem2 = Instantiate(GameListItemPrefab, AvailableGamesScrollView.content);
+        //if (testItem != null)
+        //{
+        //    Debug.Log($"Test item instantiated: {testItem.name}");
+        //    RectTransform rectTransform = testItem.GetComponent<RectTransform>();
+        //    if (rectTransform != null)
+        //    {
+        //        rectTransform.sizeDelta = new Vector2(AvailableGamesScrollView.viewport.rect.width, 50); // Ширина = ширине Viewport, высота = 50
+        //    }
+
+
+
+        //    TMP_Text text = testItem.GetComponentInChildren<TMP_Text>();
+        //    if (text != null)
+        //    {
+        //        text.text = "Test Game";
+        //    }
+
+        //    // Принудительное обновление макета
+        //    RectTransform contentRect = AvailableGamesScrollView.content.GetComponent<RectTransform>();
+        //    LayoutRebuilder.ForceRebuildLayoutImmediate(contentRect);
+        //}
+        //else
+        //{
+        //    Debug.LogError("Failed to instantiate test item!");
+        //}
     }
 
     private void Update()
@@ -98,33 +128,17 @@ public class GameConnectionHandler : MonoBehaviour
         {
             availableGames[gameName] = address;
 
-            // Instantiate the prefab
             GameObject newGameItem = Instantiate(GameListItemPrefab, AvailableGamesScrollView.content);
-            Debug.Log($"New game item instantiated: {newGameItem.name}");
+
+            RectTransform rectTransform = newGameItem.GetComponent<RectTransform>();
+            rectTransform.sizeDelta = new Vector2(AvailableGamesScrollView.viewport.rect.width, 50); // Ширина = ширине Viewport, высота = 50
 
             TMP_Text gameText = newGameItem.GetComponentInChildren<TMP_Text>();
-            if (gameText != null)
-            {
-                gameText.text = gameName;
-                Debug.Log($"Game name set to: {gameName}");
-            }
-            else
-            {
-                Debug.LogError("GameListItemPrefab is missing a TMP_Text component!");
-            }
+            gameText.text = gameName;
 
             Button button = newGameItem.GetComponent<Button>();
-            if (button != null)
-            {
-                button.onClick.AddListener(() => SelectGame(gameName, address));
-                Debug.Log("Button listener added.");
-            }
-            else
-            {
-                Debug.LogError("GameListItemPrefab is missing a Button component!");
-            }
+            button.onClick.AddListener(() => SelectGame(gameName, address));
 
-            // Force update layout
             LayoutRebuilder.ForceRebuildLayoutImmediate(AvailableGamesScrollView.content.GetComponent<RectTransform>());
         }
         else
@@ -132,8 +146,6 @@ public class GameConnectionHandler : MonoBehaviour
             Debug.Log($"Game {gameName} already exists in the list.");
         }
     }
-
-
 
     private void SelectGame(string gameName, string address)
     {
@@ -147,7 +159,7 @@ public class GameConnectionHandler : MonoBehaviour
         if (NetworkManager.Singleton != null && NetworkManager.Singleton.IsListening)
         {
             NetworkManager.Singleton.Shutdown();
-            Debug.Log("NetworkManager завершил работу.");
+            Debug.Log("NetworkManager ended its work");
         }
     }
 }
