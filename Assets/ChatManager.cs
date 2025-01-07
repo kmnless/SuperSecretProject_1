@@ -63,7 +63,7 @@ public class ChatManager : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     private void SendChatMessageServerRpc(string playerName, string message)
     {
-        string formattedMessage = $"playerName: {message}";
+        string formattedMessage = $"{playerName}: {message}";
         UpdateChatClientRpc(formattedMessage);
     }
 
