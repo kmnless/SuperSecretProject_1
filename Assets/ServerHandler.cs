@@ -30,6 +30,7 @@ public class ServerHandler : MonoBehaviour
             response.Approved = false;
             return;
         }
+        Debug.Log($"{nickname}, request.ClientNetworkId");
         GlobalVariableHandler.Instance.Players.Append(new PlayerProperty(nickname, Convert.ToInt32(request.ClientNetworkId)));
 
         // Одобряем подключение

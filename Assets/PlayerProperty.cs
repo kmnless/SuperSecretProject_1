@@ -1,3 +1,5 @@
+using Newtonsoft.Json.Linq;
+using System.Collections;
 using System.Data.Common;
 using UnityEngine;
  public struct PlayerProperty
