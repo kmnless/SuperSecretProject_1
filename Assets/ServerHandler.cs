@@ -12,23 +12,25 @@ public class ServerHandler : MonoBehaviour
 
     private void Start()
     {
-        if (NetworkManager.Singleton.IsHost || NetworkManager.Singleton.IsServer || NetworkManager.Singleton.IsClient)
+        if (NetworkManager.Singleton.IsHost || NetworkManager.Singleton.IsServer)
         {
-            Debug.LogWarning("Server or client already started.");
-            return;
-        }
+            if (GlobalVariableHandler.Instance.Players == null)
+            {
+                GlobalVariableHandler.Instance.Players = new NetworkList<PlayerProperty>();
+            }
 
-        NetworkManager.Singleton.ConnectionApprovalCallback += OnConnectionApproval;
-        NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
-        NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnected;
+            NetworkManager.Singleton.ConnectionApprovalCallback = OnConnectionApproval;
+            NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
+            NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnected;
 
-        if (NetworkManager.Singleton.StartHost())
-        {
-            Debug.Log("Server started successfully on Lobby scene.");
-        }
-        else
-        {
-            Debug.LogError("Failed to start server.");
+            if (NetworkManager.Singleton.StartHost())
+            {
+                Debug.Log("Host started successfully.");
+            }
+            else
+            {
+                Debug.LogError("Failed to start host.");
+            }
         }
     }
     private void Awake()
@@ -62,12 +64,9 @@ public class ServerHandler : MonoBehaviour
             return;
         }
 
-        Debug.Log($"{nickname}, {request.ClientNetworkId}");
-
         var player = new PlayerProperty(nickname, (int)request.ClientNetworkId);
         GlobalVariableHandler.Instance.Players.Add(player);
 
-        // Одобряем подключение
         response.Approved = true;
         //response.CreatePlayerObject = true; // Создавать объект игрока, если используется PlayerPrefab
         //response.Position = Vector3.zero; // Начальная позиция, если нужно
