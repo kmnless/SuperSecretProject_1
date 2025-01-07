@@ -11,26 +11,27 @@ public class ServerHandler : MonoBehaviour
     private static int PlayerCount;
     private void Start()
     {
-        if (NetworkManager.Singleton.IsServer)
+        if (NetworkManager.Singleton.IsServer || NetworkManager.Singleton.IsHost)
         {
             NetworkManager.Singleton.ConnectionApprovalCallback += OnConnectionApproval;
+            Debug.Log("ConnectionApprovalCallback registered.");
             NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
             NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnected;
         }
     }
     private void OnConnectionApproval(NetworkManager.ConnectionApprovalRequest request, NetworkManager.ConnectionApprovalResponse response)
     {
+        Debug.Log($"OnConnectionApproval called for client {request.ClientNetworkId}.");
         string nickname = System.Text.Encoding.UTF8.GetString(request.Payload);
         Debug.Log($"Client {request.ClientNetworkId} is trying to connect with nickname: {nickname}");
 
-        // Проверка, если нужно ограничить количество подключений
         if (NetworkManager.Singleton.ConnectedClients.Count >= MaxConnections)
         {
             Debug.LogWarning($"Connection rejected for client {request.ClientNetworkId}. Server is full.");
             response.Approved = false;
             return;
         }
-        Debug.Log($"{nickname}, request.ClientNetworkId");
+        Debug.Log($"{nickname}, {request.ClientNetworkId}");
         var player = new PlayerProperty(nickname, (int)request.ClientNetworkId);
         GlobalVariableHandler.Instance.Players.Add(player);
 
