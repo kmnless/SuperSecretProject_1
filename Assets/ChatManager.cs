@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using Unity.Netcode;
 using TMPro;
 using System;
+using Unity.Collections;
 
 public class ChatManager : NetworkBehaviour
 {
@@ -43,14 +44,14 @@ public class ChatManager : NetworkBehaviour
 
         if (IsClient)
         {
-            string nickname = "NicknamePlaceholder";
+            FixedString512Bytes nickname = "NicknamePlaceholder";
             foreach (var p in GlobalVariableHandler.Instance.Players)
             {
                 if(p.Id == Convert.ToInt32(NetworkManager.LocalClientId))
                     nickname = p.Name;
             }
 
-            SendChatMessageServerRpc(nickname, message);
+            SendChatMessageServerRpc(Convert.ToString(nickname), message);
             messageInput.text = "";
         }
         else
