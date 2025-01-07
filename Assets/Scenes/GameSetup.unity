@@ -2462,51 +2462,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: -20, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!1 &1302498528
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1302498530}
-  - component: {fileID: 1302498529}
-  m_Layer: 0
-  m_Name: SceneHandler
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1302498529
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1302498528}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1c3a9d42ba622264a8ffb3d1750c70e7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Delay: 0
---- !u!4 &1302498530
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1302498528}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 851.3147, y: 150.01991, z: 1.8888364}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1358095017
 GameObject:
   m_ObjectHideFlags: 0
@@ -4052,7 +4007,6 @@ MonoBehaviour:
   roadTexture: {fileID: 2800000, guid: 85b4e502791211248b58ce9c9409ab51, type: 3}
   flagTexture: {fileID: 2800000, guid: 6cdcb72d9cc0c7a439a8f745d5881bb2, type: 3}
   baseTexture: {fileID: 10912, guid: 0000000000000000f000000000000000, type: 0}
-  sceneHandler: {fileID: 1302498529}
   highPrioritySimplifiedFlagColor: {r: 1, g: 0, b: 0.06326771, a: 1}
   lowPrioritySimplifiedFlagColor: {r: 0, g: 0.22372389, b: 1, a: 1}
   SimplifiedBaseColor: {r: 1, g: 0.5231712, b: 0, a: 1}
@@ -4913,6 +4867,5 @@ SceneRoots:
   - {fileID: 1573449901}
   - {fileID: 157133185}
   - {fileID: 1977972614}
-  - {fileID: 1302498530}
   - {fileID: 2064420634}
   - {fileID: 1585055248}

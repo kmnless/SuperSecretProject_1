@@ -24,7 +24,8 @@ public class ServerDiscoverer : MonoBehaviour
             {
                 UdpReceiveResult result = await udpClient.ReceiveAsync();
                 string message = Encoding.UTF8.GetString(result.Buffer);
-                //message = "{GameName}|{PlayerCount}|{MaxPlayers}|{GetLocalIPAddress()}|{BroadcastPort}"                    
+                //message = "{GameName}|{PlayerCount}|{MaxPlayers}|{GetLocalIPAddress()}|{BroadcastPort}"
+                Debug.Log($"Recieved message: {message}");
                 string[] parts = message.Split('|');
                 if (parts.Length == 5)
                 {

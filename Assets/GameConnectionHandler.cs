@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Xml.Linq;
 using TMPro;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
@@ -89,12 +90,13 @@ public class GameConnectionHandler : MonoBehaviour
 
         string playerName = InputName.text;
         GlobalVariableHandler.Instance.ServerName = playerName;
-        if (!NetworkManager.Singleton.StartHost())
-        {
-            Debug.LogError("Failed to start host.");
-            return;
-        }
-        NetworkManager.Singleton.SceneManager.LoadScene(SceneName, LoadSceneMode.Single);
+        //if (!NetworkManager.Singleton.StartHost())
+        //{
+        //    Debug.LogError("Failed to start host.");
+        //    return;
+        //}
+        //NetworkManager.Singleton.SceneManager.LoadScene(SceneName, LoadSceneMode.Single);
+        SceneManager.LoadScene(SceneName);
 
     }
 

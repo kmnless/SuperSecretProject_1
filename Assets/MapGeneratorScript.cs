@@ -24,7 +24,6 @@ public class MapGeneratorScript : MonoBehaviour
     [SerializeField] private Texture2D roadTexture;
     [SerializeField] private Texture2D flagTexture;
     [SerializeField] private Texture2D baseTexture;
-    [SerializeField] private SceneHandler sceneHandler;
     [SerializeField] private Color highPrioritySimplifiedFlagColor;
     [SerializeField] private Color lowPrioritySimplifiedFlagColor;
     [SerializeField] private Color SimplifiedBaseColor;
@@ -262,7 +261,6 @@ public class MapGeneratorScript : MonoBehaviour
             GlobalVariableHandler.Instance.FlagPrefab = flagPrefab;
             GlobalVariableHandler.Instance.OutpostPrefab = outpostPrefab;
             GlobalVariableHandler.Instance.Colors = colors;
-            //sceneHandler.ChangeState(scene);
             ServerHandler.RefreshPlayerCount();
             CreateServerBroadcaster();
             NetworkManager.Singleton.SceneManager.LoadScene(scene, LoadSceneMode.Single);
