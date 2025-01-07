@@ -9,16 +9,37 @@ public class ServerHandler : MonoBehaviour
 {
     private static int MaxConnections;
     private static int PlayerCount;
+
     private void Start()
+    {
+        if (NetworkManager.Singleton.IsHost || NetworkManager.Singleton.IsServer || NetworkManager.Singleton.IsClient)
+        {
+            Debug.LogWarning("Server or client already started.");
+            return;
+        }
+
+        NetworkManager.Singleton.ConnectionApprovalCallback += OnConnectionApproval;
+        NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
+        NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnected;
+
+        if (NetworkManager.Singleton.StartHost())
+        {
+            Debug.Log("Server started successfully on Lobby scene.");
+        }
+        else
+        {
+            Debug.LogError("Failed to start server.");
+        }
+    }
+    private void Awake()
     {
         if (NetworkManager.Singleton.IsServer || NetworkManager.Singleton.IsHost)
         {
-            NetworkManager.Singleton.ConnectionApprovalCallback += OnConnectionApproval;
+            NetworkManager.Singleton.ConnectionApprovalCallback = OnConnectionApproval;
             Debug.Log("ConnectionApprovalCallback registered.");
-            NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
-            NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnected;
         }
     }
+    
     private void OnConnectionApproval(NetworkManager.ConnectionApprovalRequest request, NetworkManager.ConnectionApprovalResponse response)
     {
         Debug.Log("OnConnectionApproval called.");

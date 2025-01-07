@@ -98,6 +98,17 @@ public class MapGeneratorScript : MonoBehaviour
         }
 
     }
+    private void CreateServerBroadcaster()
+    {
+        GameObject broadcasterObject = new GameObject("ServerBroadcaster");
+        broadcasterObject.AddComponent<ServerBroadcaster>();
+
+        ServerBroadcaster.GameName = GlobalVariableHandler.Instance.ServerName;
+        ServerBroadcaster.PlayerCount = 1;
+        ServerBroadcaster.MaxPlayers = GlobalVariableHandler.Instance.PlayerCount;
+
+        DontDestroyOnLoad(broadcasterObject);
+    }
     private void PlaceRoads(Texture2D texture, int[,] matrix)
     {
         for (int i = 0; i < matrix.GetLength(0); ++i)
@@ -122,17 +133,6 @@ public class MapGeneratorScript : MonoBehaviour
                 }
             }
         }
-    }
-    private void CreateServerBroadcaster()
-    {
-        GameObject broadcasterObject = new GameObject("ServerBroadcaster");
-        broadcasterObject.AddComponent<ServerBroadcaster>();
-
-        ServerBroadcaster.GameName = GlobalVariableHandler.Instance.ServerName;
-        ServerBroadcaster.PlayerCount = 1;
-        ServerBroadcaster.MaxPlayers = GlobalVariableHandler.Instance.PlayerCount;
-
-        DontDestroyOnLoad(broadcasterObject);
     }
     public void Generate()
     {
@@ -220,32 +220,6 @@ public class MapGeneratorScript : MonoBehaviour
     {
         if (generated)
         {
-            if (NetworkManager.Singleton == null)
-            {
-                Debug.LogError("NetworkManager.Singleton не настроен.");
-                return;
-            }
-
-            if (NetworkManager.Singleton.IsHost || NetworkManager.Singleton.IsServer || NetworkManager.Singleton.IsClient)
-            {
-                Debug.LogWarning("—ервер или клиент уже запущены.");
-                return;
-            }
-            if (!NetworkManager.Singleton.StartHost())
-            {
-                Debug.LogError("Server start error");
-                return;
-            }
-
-            if (!NetworkManager.Singleton.IsServer)
-            {
-                Debug.LogError("Server not available");
-                return;
-            }
-
-            Debug.Log("Server is started succesfully");
-
-
             GlobalVariableHandler.Instance.Textures = textures;
             GlobalVariableHandler.Instance.FlagTexture = flagTexture;
             GlobalVariableHandler.Instance.BaseTexture = baseTexture;
@@ -261,10 +235,8 @@ public class MapGeneratorScript : MonoBehaviour
             GlobalVariableHandler.Instance.FlagPrefab = flagPrefab;
             GlobalVariableHandler.Instance.OutpostPrefab = outpostPrefab;
             GlobalVariableHandler.Instance.Colors = colors;
-            //GlobalVariableHandler.Instance.Players[0] = new PlayerProperty(GlobalVariableHandler.Instance.ServerName, 0);
-            ServerHandler.RefreshPlayerCount();
             CreateServerBroadcaster();
-            NetworkManager.Singleton.SceneManager.LoadScene(scene, LoadSceneMode.Single);
+            SceneManager.LoadScene(scene);
         }
     }
 
