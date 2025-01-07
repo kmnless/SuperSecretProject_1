@@ -98,7 +98,7 @@ public class GameConnectionHandler : MonoBehaviour
 
     }
 
-    public void AddGameToList(string gameName, string address)
+    public void AddGameToList(string gameName, int playerCount, int maxPlayers, string address)
     {
         if (!availableGames.ContainsKey(gameName))
         {
@@ -109,7 +109,7 @@ public class GameConnectionHandler : MonoBehaviour
             rectTransform.sizeDelta = new Vector2(AvailableGamesScrollView.viewport.rect.width, 50);
 
             TMP_Text gameText = newGameItem.GetComponentInChildren<TMP_Text>();
-            gameText.text = gameName;
+            gameText.text = $"{gameName}\t{playerCount}/{maxPlayers}";
             Button button = newGameItem.GetComponentInChildren<Button>();
             button.onClick.AddListener(() => SelectGame(gameName, address));
             LayoutRebuilder.ForceRebuildLayoutImmediate(AvailableGamesScrollView.content.GetComponent<RectTransform>());
@@ -124,11 +124,7 @@ public class GameConnectionHandler : MonoBehaviour
 
     private void OnDestroy()
     {
-        if (NetworkManager.Singleton != null && NetworkManager.Singleton.IsListening)
-        {
-            NetworkManager.Singleton.Shutdown();
-            Debug.Log("NetworkManager ended its work");
-        }
+        
     }
 }
 

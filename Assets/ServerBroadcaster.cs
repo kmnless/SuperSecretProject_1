@@ -10,7 +10,9 @@ using UnityEngine;
 public class ServerBroadcaster : MonoBehaviour
 {
     private const int BroadcastPort = GlobalVariableHandler.BroadcastPort;
-    private string GameName = GlobalVariableHandler.DefaultGameName;
+    public static string GameName { get; set; }
+    public static int PlayerCount { get; set; }
+    public static int MaxPlayers { get; set; }
 
     private UdpClient udpClient;
     private CancellationTokenSource cancellationTokenSource;
@@ -21,7 +23,7 @@ public class ServerBroadcaster : MonoBehaviour
         cancellationTokenSource = new CancellationTokenSource();
 
         if(GlobalVariableHandler.Instance.ServerName != string.Empty)
-            this.GameName = GlobalVariableHandler.Instance.ServerName;
+            GameName = GlobalVariableHandler.Instance.ServerName;
 
         Task.Run(() => SendBroadcasts(cancellationTokenSource.Token), cancellationTokenSource.Token);
     }
@@ -32,7 +34,7 @@ public class ServerBroadcaster : MonoBehaviour
         {
             while (!cancellationToken.IsCancellationRequested)
             {
-                string message = $"{GameName}|{GetLocalIPAddress()}|{BroadcastPort}";
+                string message = $"{GameName}|{PlayerCount}|{MaxPlayers}|{GetLocalIPAddress()}|{BroadcastPort}";
                 byte[] data = Encoding.UTF8.GetBytes(message);
 
                 foreach (var broadcastAddress in NetworkUtilities.GetBroadcastAddresses())

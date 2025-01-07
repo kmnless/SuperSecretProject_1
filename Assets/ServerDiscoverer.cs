@@ -24,16 +24,18 @@ public class ServerDiscoverer : MonoBehaviour
             {
                 UdpReceiveResult result = await udpClient.ReceiveAsync();
                 string message = Encoding.UTF8.GetString(result.Buffer);
-
+                //message = "{GameName}|{PlayerCount}|{MaxPlayers}|{GetLocalIPAddress()}|{BroadcastPort}"                    
                 string[] parts = message.Split('|');
-                if (parts.Length == 3)
+                if (parts.Length == 5)
                 {
                     string gameName = parts[0];
-                    string ipAddress = parts[1];
-                    string port = parts[2];
+                    int playerCount = int.Parse(parts[1]);
+                    int maxPlayers = int.Parse(parts[2]);
+                    string ipAddress = parts[3];
+                    string port = parts[4];
                     string address = $"{ipAddress}:{port}";
 
-                    UnityMainThreadDispatcher.Instance().Enqueue(() => connectionHandler.AddGameToList(gameName, address));
+                    UnityMainThreadDispatcher.Instance().Enqueue(() => connectionHandler.AddGameToList(gameName, playerCount, maxPlayers, address));
                 }
                 else
                 {

@@ -124,6 +124,17 @@ public class MapGeneratorScript : MonoBehaviour
             }
         }
     }
+    private void CreateServerBroadcaster()
+    {
+        GameObject broadcasterObject = new GameObject("ServerBroadcaster");
+        broadcasterObject.AddComponent<ServerBroadcaster>();
+
+        ServerBroadcaster.GameName = GlobalVariableHandler.Instance.ServerName;
+        ServerBroadcaster.PlayerCount = 1;
+        ServerBroadcaster.MaxPlayers = GlobalVariableHandler.Instance.PlayerCount;
+
+        DontDestroyOnLoad(broadcasterObject);
+    }
     public void Generate()
     {
         if (textures==null){ throw new ArgumentException("Texture array is empty."); }
@@ -253,6 +264,7 @@ public class MapGeneratorScript : MonoBehaviour
             GlobalVariableHandler.Instance.Colors = colors;
             //sceneHandler.ChangeState(scene);
             ServerHandler.RefreshPlayerCount();
+            CreateServerBroadcaster();
             NetworkManager.Singleton.SceneManager.LoadScene(scene, LoadSceneMode.Single);
         }
     }

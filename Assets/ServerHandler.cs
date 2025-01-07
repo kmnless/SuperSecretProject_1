@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class ServerHandler : MonoBehaviour
 {
-    private static int MaxConnections;    
+    private static int MaxConnections;
+    private static int PlayerCount;
     private void Start()
     {
         if (NetworkManager.Singleton.IsServer)
@@ -24,12 +25,16 @@ public class ServerHandler : MonoBehaviour
         else
         {
             Debug.Log($"Client {clientId} connected. Total clients: {NetworkManager.Singleton.ConnectedClients.Count}");
+            PlayerCount = NetworkManager.Singleton.ConnectedClients.Count;
+            ServerBroadcaster.PlayerCount = PlayerCount;
         }
     }
 
     private void OnClientDisconnected(ulong clientId)
     {
         Debug.Log($"Client {clientId} disconnected. Total clients: {NetworkManager.Singleton.ConnectedClients.Count}");
+        PlayerCount = NetworkManager.Singleton.ConnectedClients.Count;
+        ServerBroadcaster.PlayerCount = PlayerCount;
     }
 
     public static void RefreshPlayerCount()
