@@ -42,7 +42,7 @@ public class ChatManager : NetworkBehaviour
 
         if (IsClient)
         {
-            SendChatMessageServerRpc(, message);
+            SendChatMessageServerRpc(GlobalVariableHandler.Instance.Players[NetworkManager.LocalClientId].Name, message);
             messageInput.text = "";
         }
         else
