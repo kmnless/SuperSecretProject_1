@@ -21,8 +21,17 @@ public class ServerHandler : MonoBehaviour
     }
     private void OnConnectionApproval(NetworkManager.ConnectionApprovalRequest request, NetworkManager.ConnectionApprovalResponse response)
     {
-        Debug.Log($"OnConnectionApproval called for client {request.ClientNetworkId}.");
+        Debug.Log("OnConnectionApproval called.");
+
+        if (request.Payload == null || request.Payload.Length == 0)
+        {
+            Debug.LogError("ConnectionData is null or empty.");
+            response.Approved = false;
+            return;
+        }
+
         string nickname = System.Text.Encoding.UTF8.GetString(request.Payload);
+
         Debug.Log($"Client {request.ClientNetworkId} is trying to connect with nickname: {nickname}");
 
         if (NetworkManager.Singleton.ConnectedClients.Count >= MaxConnections)
@@ -31,7 +40,9 @@ public class ServerHandler : MonoBehaviour
             response.Approved = false;
             return;
         }
+
         Debug.Log($"{nickname}, {request.ClientNetworkId}");
+
         var player = new PlayerProperty(nickname, (int)request.ClientNetworkId);
         GlobalVariableHandler.Instance.Players.Add(player);
 

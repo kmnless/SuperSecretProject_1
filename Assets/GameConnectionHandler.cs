@@ -59,17 +59,18 @@ public class GameConnectionHandler : MonoBehaviour
 
         string ip = addressParts[0];
 
-
         NetworkManager.Singleton.GetComponent<UnityTransport>().SetConnectionData(ip, GamePort);
 
-        string nickname = InputName.text;
+        string nickname = InputName.text.Trim();
         if (string.IsNullOrEmpty(nickname))
         {
             Debug.LogError("Nickname cannot be empty!");
             return;
         }
+
         NetworkManager.Singleton.NetworkConfig.ConnectionData = System.Text.Encoding.UTF8.GetBytes(nickname);
-        NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
+        Debug.Log($"ConnectionData set with nickname: {nickname}");
+
         if (NetworkManager.Singleton.StartClient())
         {
             Debug.Log($"Connecting to server at {selectedGameAddress}...");
@@ -92,14 +93,8 @@ public class GameConnectionHandler : MonoBehaviour
 
         string playerName = InputName.text;
         GlobalVariableHandler.Instance.ServerName = playerName;
-        //if (!NetworkManager.Singleton.StartHost())
-        //{
-        //    Debug.LogError("Failed to start host.");
-        //    return;
-        //}
-        //NetworkManager.Singleton.SceneManager.LoadScene(SceneName, LoadSceneMode.Single);
-        SceneManager.LoadScene(SceneName);
 
+        SceneManager.LoadScene(SceneName);
     }
 
     public void AddGameToList(string gameName, int playerCount, int maxPlayers, string address)
