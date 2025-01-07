@@ -67,7 +67,6 @@ public class GameConnectionHandler : MonoBehaviour
             Debug.LogError("Nickname cannot be empty!");
             return;
         }
-
         NetworkManager.Singleton.NetworkConfig.ConnectionData = System.Text.Encoding.UTF8.GetBytes(nickname);
         Debug.Log($"ConnectionData set with nickname: {nickname}");
 
@@ -93,6 +92,8 @@ public class GameConnectionHandler : MonoBehaviour
 
         string playerName = InputName.text;
         GlobalVariableHandler.Instance.ServerName = playerName;
+
+        NetworkManager.Singleton.NetworkConfig.ConnectionData = System.Text.Encoding.UTF8.GetBytes(playerName);
 
         SceneManager.LoadScene(SceneName);
     }
