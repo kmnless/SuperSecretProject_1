@@ -7,7 +7,7 @@ using UnityEngine.SceneManagement;
 
 public class ServerHandler : MonoBehaviour
 {
-    private static int MaxConnections;
+    private static int MaxConnections = 1;
     private static int PlayerCount;
 
     private void Start()
