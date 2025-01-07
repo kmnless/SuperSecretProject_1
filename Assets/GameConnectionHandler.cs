@@ -62,6 +62,13 @@ public class GameConnectionHandler : MonoBehaviour
 
         NetworkManager.Singleton.GetComponent<UnityTransport>().SetConnectionData(ip, GamePort);
 
+        string nickname = InputName.text;
+        if (string.IsNullOrEmpty(nickname))
+        {
+            Debug.LogError("Nickname cannot be empty!");
+            return;
+        }
+        NetworkManager.Singleton.NetworkConfig.ConnectionData = System.Text.Encoding.UTF8.GetBytes(nickname);
         NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
         if (NetworkManager.Singleton.StartClient())
         {
@@ -76,12 +83,7 @@ public class GameConnectionHandler : MonoBehaviour
 
     private void OnClientConnected(ulong clientId)
     {
-        Debug.Log($"{clientId}; {NetworkManager.Singleton.LocalClientId}");
-        if (clientId == NetworkManager.Singleton.LocalClientId)
-        {
-            Debug.Log("Client connected. Loading Lobby...");
-            NetworkManager.Singleton.SceneManager.LoadScene(SceneName, LoadSceneMode.Single);
-        }
+        Debug.Log($"Client {clientId} connected, waiting for server to manage the scene...");
     }
 
     private void CreateNewGame()

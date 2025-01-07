@@ -42,7 +42,7 @@ public class ChatManager : NetworkBehaviour
 
         if (IsClient)
         {
-            SendChatMessageServerRpc(NetworkManager.Singleton.LocalClientId, message);
+            SendChatMessageServerRpc(, message);
             messageInput.text = "";
         }
         else
@@ -52,9 +52,9 @@ public class ChatManager : NetworkBehaviour
     }
 
     [ServerRpc(RequireOwnership = false)]
-    private void SendChatMessageServerRpc(ulong senderId, string message)
+    private void SendChatMessageServerRpc(string playerName, string message)
     {
-        string formattedMessage = $"Player {senderId}: {message}";
+        string formattedMessage = $"playerName: {message}";
         UpdateChatClientRpc(formattedMessage);
     }
 

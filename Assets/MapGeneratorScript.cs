@@ -261,6 +261,7 @@ public class MapGeneratorScript : MonoBehaviour
             GlobalVariableHandler.Instance.FlagPrefab = flagPrefab;
             GlobalVariableHandler.Instance.OutpostPrefab = outpostPrefab;
             GlobalVariableHandler.Instance.Colors = colors;
+            GlobalVariableHandler.Instance.Players[0] = new PlayerProperty(GlobalVariableHandler.Instance.ServerName, 0);
             ServerHandler.RefreshPlayerCount();
             CreateServerBroadcaster();
             NetworkManager.Singleton.SceneManager.LoadScene(scene, LoadSceneMode.Single);
