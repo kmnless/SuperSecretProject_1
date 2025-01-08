@@ -237,7 +237,8 @@ public class MapGeneratorScript : MonoBehaviour
             GlobalVariableHandler.Instance.Colors = colors;
             CreateServerBroadcaster();
             ServerHandler.RefreshPlayerCount();
-            SceneManager.LoadScene(scene);
+
+            NetworkManager.Singleton.SceneManager.LoadScene(scene, LoadSceneMode.Single);
         }
     }
 

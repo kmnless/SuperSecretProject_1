@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using Unity.Netcode;
@@ -9,47 +10,45 @@ public class ServerHandler : MonoBehaviour
 {
     private static int MaxConnections = 1;
     private static int PlayerCount;
-
+    private static PlayerProperty pl;
+    private bool IsFirst = true;
     private void Start()
     {
-        if (NetworkManager.Singleton.IsHost || NetworkManager.Singleton.IsServer)
+        NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
+        NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnected;
+        NetworkManager.Singleton.ConnectionApprovalCallback += OnConnectionApproval;
+
+        if (NetworkManager.Singleton.StartHost())
         {
-            if (GlobalVariableHandler.Instance.Players == null)
-            {
-                GlobalVariableHandler.Instance.Players = new NetworkList<PlayerProperty>();
-            }
-
-            NetworkManager.Singleton.ConnectionApprovalCallback = OnConnectionApproval;
-            NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
-            NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnected;
-
-            if (NetworkManager.Singleton.StartHost())
-            {
-                Debug.Log("Host started successfully.");
-            }
-            else
-            {
-                Debug.LogError("Failed to start host.");
-            }
+            Debug.Log("Host started successfully.");
+        }
+        else
+        {
+            Debug.LogError("Failed to start host.");
         }
     }
     private void Awake()
     {
-        if (NetworkManager.Singleton.IsServer || NetworkManager.Singleton.IsHost)
-        {
-            NetworkManager.Singleton.ConnectionApprovalCallback = OnConnectionApproval;
-            Debug.Log("ConnectionApprovalCallback registered.");
-        }
+        DontDestroyOnLoad(gameObject);
     }
     
     private void OnConnectionApproval(NetworkManager.ConnectionApprovalRequest request, NetworkManager.ConnectionApprovalResponse response)
     {
         Debug.Log("OnConnectionApproval called.");
 
+        if (!NetworkManager.Singleton.IsServer)
+        {
+            Debug.LogError("OnConnectionApproval called on a non-server instance.");
+            response.Approved = false;
+            response.Reason = "Internal error";
+            return;
+        }
+
         if (request.Payload == null || request.Payload.Length == 0)
         {
             Debug.LogError("ConnectionData is null or empty.");
             response.Approved = false;
+            response.Reason = "No connection data";
             return;
         }
 
@@ -61,12 +60,23 @@ public class ServerHandler : MonoBehaviour
         {
             Debug.LogWarning($"Connection rejected for client {request.ClientNetworkId}. Server is full.");
             response.Approved = false;
+            response.Reason = "Server is full or another issue occurred.";
             return;
         }
 
         var player = new PlayerProperty(nickname, (int)request.ClientNetworkId);
-        GlobalVariableHandler.Instance.Players.Add(player);
+        if (GlobalVariableHandler.Instance.Players == null)
+        {
+            Debug.LogError("Players list is not initialized!");
+            return;
+        }
 
+        if (IsFirst)
+            pl = player;
+        else
+            GlobalVariableHandler.Instance.Players.Add(player);
+
+        IsFirst = false;
         response.Approved = true;
         //response.CreatePlayerObject = true; // Создавать объект игрока, если используется PlayerPrefab
         //response.Position = Vector3.zero; // Начальная позиция, если нужно
@@ -83,11 +93,11 @@ public class ServerHandler : MonoBehaviour
         }
         Debug.Log($"Clientid {clientId} connected. Total clients: {NetworkManager.Singleton.ConnectedClients.Count}");
 
-        NetworkManager.Singleton.SceneManager.LoadScene("Lobby", LoadSceneMode.Single);
-
         PlayerCount = NetworkManager.Singleton.ConnectedClients.Count;
         ServerBroadcaster.PlayerCount = PlayerCount;
 
+        if(!NetworkManager.Singleton.IsServer)
+            NetworkManager.Singleton.SceneManager.LoadScene("Lobby", LoadSceneMode.Single);
     }
 
     private void OnClientDisconnected(ulong clientId)
@@ -100,5 +110,16 @@ public class ServerHandler : MonoBehaviour
     public static void RefreshPlayerCount()
     {
         MaxConnections = GlobalVariableHandler.Instance.PlayerCount;
+        GlobalVariableHandler.Instance.Players.Add(pl);
     }
+    private void OnDestroy()
+    {
+        if (NetworkManager.Singleton != null)
+        {
+            NetworkManager.Singleton.ConnectionApprovalCallback -= OnConnectionApproval;
+            NetworkManager.Singleton.OnClientConnectedCallback -= OnClientConnected;
+            NetworkManager.Singleton.OnClientDisconnectCallback -= OnClientDisconnected;
+        }
+    }
+
 }

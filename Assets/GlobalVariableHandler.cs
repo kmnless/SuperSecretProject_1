@@ -4,7 +4,7 @@ using System.Net;
 using Unity.Netcode;
 using UnityEngine;
 
-public class GlobalVariableHandler : MonoBehaviour
+public class GlobalVariableHandler : NetworkBehaviour
 {
     // Singleton Instance
     public static GlobalVariableHandler Instance { get; private set; }
@@ -21,7 +21,7 @@ public class GlobalVariableHandler : MonoBehaviour
     public GameObject BasePrefab { get; set; }
     public GameObject FlagPrefab { get; set; }
     public GameObject OutpostPrefab { get; set; }
-    public NetworkList<PlayerProperty> Players { get; set; }
+    public NetworkList<PlayerProperty> Players { get; set; } = new NetworkList<PlayerProperty>();
     public int MyIndex { get; set; } = 0;
     public int PlayerCount { get; set; }
     public float CellSize { get; set; }
@@ -47,7 +47,12 @@ public class GlobalVariableHandler : MonoBehaviour
 
         Instance = this;
         DontDestroyOnLoad(gameObject); // Preserve this object across scene loads
-
-        Players = new NetworkList<PlayerProperty>();
+    }
+    public override void OnNetworkSpawn()
+    {
+        if (IsServer)
+        {
+            Debug.Log("GlobalVariableHandler spawned and NetworkList initialized.");
+        }
     }
 }

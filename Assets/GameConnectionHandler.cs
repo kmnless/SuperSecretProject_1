@@ -17,6 +17,8 @@ public class GameConnectionHandler : MonoBehaviour
     private const string SceneName = "GameSetup";
     private const ushort GamePort = 2282; // also kostil ??
 
+    [SerializeField] private GameObject globalVariableHandlerPrefab;
+
     [SerializeField] private TMP_InputField InputName;
     [SerializeField] private Button ConnectButton;
     [SerializeField] private Button CreateButton;
@@ -32,6 +34,19 @@ public class GameConnectionHandler : MonoBehaviour
 
         ConnectButton.interactable = false;
         CreateButton.interactable = false;
+
+        if (GlobalVariableHandler.Instance == null)
+        {
+            Debug.Log("Spawning GlobalVariableHandler...");
+            var globalHandler = Instantiate(globalVariableHandlerPrefab);
+            globalHandler.GetComponent<NetworkObject>().Spawn();
+        }
+    }
+
+    private void Awake()
+    {
+        //Debug.Log($"NetworkManager.Singleton.SpawnManager.SpawnedObjects count: {NetworkManager.Singleton.SpawnManager.SpawnedObjects.Count}");
+        Debug.Log($"GlobalVariableHandler is active: {gameObject.activeSelf}");
     }
 
     private void Update()
