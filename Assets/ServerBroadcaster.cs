@@ -34,7 +34,7 @@ public class ServerBroadcaster : MonoBehaviour
         {
             while (!cancellationToken.IsCancellationRequested)
             {
-                string message = $"{GameName}|{PlayerCount}|{MaxPlayers}|{GetLocalIPAddress()}|{BroadcastPort}";
+                string message = $"{GameName}|{PlayerCount}|{MaxPlayers}|{GetLocalIPAddress()}|{GlobalVariableHandler.Instance.GamePort}";
                 byte[] data = Encoding.UTF8.GetBytes(message);
                 foreach (var broadcastAddress in NetworkUtilities.GetBroadcastAddresses())
                 {

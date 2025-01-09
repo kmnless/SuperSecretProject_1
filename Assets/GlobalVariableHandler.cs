@@ -13,6 +13,7 @@ public class GlobalVariableHandler : NetworkBehaviour
     public string ServerName { get; set; }
     public const int BroadcastPort = 8888;
     public const string DefaultGameName = "GameName";
+    public ushort GamePort = 2282;
     public Color[] Colors { get; set; }
     public Texture2D[] Textures { get; set; }
     public Texture2D RoadTexture { get; set; }
@@ -31,8 +32,6 @@ public class GlobalVariableHandler : NetworkBehaviour
     public int[,] BuildingsField { get; set; }
     public int Waterline { get; set; }
     public int MountainLine { get; set; }
-    public IPEndPoint ServerIPEndPoint { get; set; }
-
     // Constants
     public const int CaptureDistance = 3;
     public const int AttacksToDefeat = 3;

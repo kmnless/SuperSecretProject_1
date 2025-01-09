@@ -6,6 +6,7 @@ using System.Xml.Linq;
 using TMPro;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
+using UnityEditor.Experimental.GraphView;
 using UnityEditor.SearchService;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -15,7 +16,6 @@ using UnityEngine.UI;
 public class GameConnectionHandler : MonoBehaviour
 {
     private const string SceneName = "GameSetup";
-    private const ushort GamePort = 2282; // also kostil ??
 
     [SerializeField] private GameObject globalVariableHandlerPrefab;
 
@@ -25,12 +25,20 @@ public class GameConnectionHandler : MonoBehaviour
     [SerializeField] private ScrollRect AvailableGamesScrollView;
     [SerializeField] private GameObject GameListItemPrefab;
 
+    [SerializeField] private GameObject createPopup;
+    [SerializeField] private Button closePopUp;
+    [SerializeField] private Button createButtonPopUp;
+    [SerializeField] private TMP_InputField portInputField;
+
     private string selectedGameAddress;
     private Dictionary<string, string> availableGames = new Dictionary<string, string>(); // gameName -> IP:Port
+
     private void Start()
     {
         ConnectButton.onClick.AddListener(ConnectToServer);
-        CreateButton.onClick.AddListener(CreateNewGame);
+        createButtonPopUp.onClick.AddListener(CreateNewGame);
+        closePopUp.onClick.AddListener(HideCreatePopup);
+        CreateButton.onClick.AddListener(ShowCreatePopup);
 
         ConnectButton.interactable = false;
         CreateButton.interactable = false;
@@ -56,6 +64,16 @@ public class GameConnectionHandler : MonoBehaviour
         CreateButton.interactable = hasName;
     }
 
+    private void ShowCreatePopup()
+    {
+        createPopup.SetActive(true);
+    }
+
+    private void HideCreatePopup()
+    {
+        createPopup.SetActive(false);
+    }
+
     private void ConnectToServer()
     {
         if (string.IsNullOrEmpty(selectedGameAddress))
@@ -73,8 +91,9 @@ public class GameConnectionHandler : MonoBehaviour
         }
 
         string ip = addressParts[0];
+        ushort port = Convert.ToUInt16(addressParts[1]);
 
-        NetworkManager.Singleton.GetComponent<UnityTransport>().SetConnectionData(ip, GamePort);
+        NetworkManager.Singleton.GetComponent<UnityTransport>().SetConnectionData(ip, port);
 
         string nickname = InputName.text.Trim();
         if (string.IsNullOrEmpty(nickname))
@@ -83,7 +102,6 @@ public class GameConnectionHandler : MonoBehaviour
             return;
         }
         NetworkManager.Singleton.NetworkConfig.ConnectionData = System.Text.Encoding.UTF8.GetBytes(nickname);
-        Debug.Log($"ConnectionData set with nickname: {nickname}");
 
         if (NetworkManager.Singleton.StartClient())
         {
@@ -96,6 +114,41 @@ public class GameConnectionHandler : MonoBehaviour
         }
     }
 
+    public static void ConnectDirect()
+    {
+        string ip = DirectConnectHandler.Ip;
+        ushort port = Convert.ToUInt16(DirectConnectHandler.Port);
+
+        if (string.IsNullOrEmpty(ip) || string.IsNullOrEmpty(DirectConnectHandler.Port))
+        {
+            Debug.LogError("Ip or port is empty");
+            return;
+        }
+
+        NetworkManager.Singleton.GetComponent<UnityTransport>().SetConnectionData(ip, port);
+
+        string nickname = DirectConnectHandler.Name;
+
+        if (string.IsNullOrEmpty(nickname))
+        {
+            Debug.LogError("Nickname cannot be empty!");
+            return;
+        }
+
+        NetworkManager.Singleton.NetworkConfig.ConnectionData = System.Text.Encoding.UTF8.GetBytes(nickname);
+
+        if (NetworkManager.Singleton.StartClient())
+        {
+            Debug.Log($"Connecting to server at {ip}:{port}...");
+
+        }
+        else
+        {
+            Debug.LogError("Failed to connect to server.");
+        }
+    }
+
+
     private void OnClientConnected(ulong clientId)
     {
         Debug.Log($"Client {clientId} connected, waiting for server to manage the scene...");
@@ -105,9 +158,22 @@ public class GameConnectionHandler : MonoBehaviour
     {
         if (string.IsNullOrEmpty(InputName.text)) return;
 
+        string portText = portInputField.text.Trim();
+
+        if (int.TryParse(portText, out int port) && port > 0 && port <= 65535)
+        {
+            GlobalVariableHandler.Instance.GamePort = Convert.ToUInt16(port);
+            Debug.Log($"Server port set to: {port}");
+        }
+        else
+        {
+            GlobalVariableHandler.Instance.GamePort = Convert.ToUInt16(2282);
+        }
+
         string playerName = InputName.text;
         GlobalVariableHandler.Instance.ServerName = playerName;
 
+        NetworkManager.Singleton.GetComponent<UnityTransport>().SetConnectionData("0.0.0.0", GlobalVariableHandler.Instance.GamePort);
         NetworkManager.Singleton.NetworkConfig.ConnectionData = System.Text.Encoding.UTF8.GetBytes(playerName);
 
         SceneManager.LoadScene(SceneName);
