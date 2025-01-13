@@ -6,10 +6,7 @@ using UnityEngine;
 
 public class GlobalVariableHandler : NetworkBehaviour
 {
-    // Singleton Instance
     public static GlobalVariableHandler Instance { get; private set; }
-
-    // Public variables to store global data
     public string ServerName { get; set; }
     public const int BroadcastPort = 8888;
     public const string DefaultGameName = "GameName";
@@ -32,6 +29,7 @@ public class GlobalVariableHandler : NetworkBehaviour
     public int[,] BuildingsField { get; set; }
     public int Waterline { get; set; }
     public int MountainLine { get; set; }
+    public int Seed { get; set; }
     // Constants
     public const int CaptureDistance = 3;
     public const int AttacksToDefeat = 3;
@@ -40,12 +38,12 @@ public class GlobalVariableHandler : NetworkBehaviour
     {
         if (Instance != null && Instance != this)
         {
-            Destroy(gameObject); // Ensure only one instance exists
+            Destroy(gameObject); 
             return;
         }
 
         Instance = this;
-        DontDestroyOnLoad(gameObject); // Preserve this object across scene loads
+        DontDestroyOnLoad(gameObject);
     }
     public override void OnNetworkSpawn()
     {

@@ -1,10 +1,14 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using TMPro;
+using Unity.Collections;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class ServerHandler : MonoBehaviour
 {
@@ -12,11 +16,25 @@ public class ServerHandler : MonoBehaviour
     private static int PlayerCount;
     private static PlayerProperty pl;
     private bool IsFirst = true;
+
+    private NetworkList<PlayerReadyStatus> PlayersReadyList;
+    public TMP_Text playerListText;
+    public TMP_Text countdownText;
+    public Toggle readyToggle;
+    private Coroutine countdownCoroutine;
+    private bool isCountdownActive = false;
+    [SerializeField] private float countdownTime = 3f;
+
     private void Start()
     {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+
         NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
         NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnected;
         NetworkManager.Singleton.ConnectionApprovalCallback += OnConnectionApproval;
+
+        PlayersReadyList = new NetworkList<PlayerReadyStatus>();
+        PlayersReadyList.OnListChanged += UpdatePlayerListUI;
 
         if (NetworkManager.Singleton.StartHost())
         {
@@ -31,7 +49,6 @@ public class ServerHandler : MonoBehaviour
     {
         DontDestroyOnLoad(gameObject);
     }
-    
     private void OnConnectionApproval(NetworkManager.ConnectionApprovalRequest request, NetworkManager.ConnectionApprovalResponse response)
     {
         Debug.Log("OnConnectionApproval called.");
@@ -71,18 +88,14 @@ public class ServerHandler : MonoBehaviour
             return;
         }
 
-        if (IsFirst)
+        if (IsFirst)        // kostil?
             pl = player;
         else
             GlobalVariableHandler.Instance.Players.Add(player);
-
+        PlayersReadyList.Add(new PlayerReadyStatus(player.Id, nickname));
         IsFirst = false;
         response.Approved = true;
-        //response.CreatePlayerObject = true; // Создавать объект игрока, если используется PlayerPrefab
-        //response.Position = Vector3.zero; // Начальная позиция, если нужно
-        //response.Rotation = Quaternion.identity;
     }
-
     private void OnClientConnected(ulong clientId)
     {
         if (NetworkManager.Singleton.ConnectedClients.Count > MaxConnections)
@@ -99,18 +112,89 @@ public class ServerHandler : MonoBehaviour
         if(!NetworkManager.Singleton.IsServer)
             NetworkManager.Singleton.SceneManager.LoadScene("Lobby", LoadSceneMode.Single);
     }
-
     private void OnClientDisconnected(ulong clientId)
     {
         Debug.Log($"Client {clientId} disconnected. Total clients: {NetworkManager.Singleton.ConnectedClients.Count}");
+        foreach (var player in GlobalVariableHandler.Instance.Players)
+        {
+            if (player.Id == (int)clientId)
+            {
+                GlobalVariableHandler.Instance.Players.Remove(player);
+                var p = new PlayerReadyStatus(player.Id, player.Name);
+                PlayersReadyList.Remove(p);
+            }
+        }
         PlayerCount = NetworkManager.Singleton.ConnectedClients.Count;
         ServerBroadcaster.PlayerCount = PlayerCount;
     }
-
-    public static void RefreshPlayerCount()
+    private void UpdatePlayerListUI(NetworkListEvent<PlayerReadyStatus> changeEvent)
     {
-        MaxConnections = GlobalVariableHandler.Instance.PlayerCount;
-        GlobalVariableHandler.Instance.Players.Add(pl);
+        string playerListTextContent = "";
+        foreach (var player in PlayersReadyList)
+        {
+            playerListTextContent += $"{player.Nickname} - {(player.IsReady ? "Ready" : "Not Ready")}\n";
+        }
+        playerListText.text = playerListTextContent;
+    }
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (scene.name == "Lobby")
+        {
+            Debug.Log("Lobby scene loaded. Reinitializing UI references.");
+
+            playerListText = GameObject.Find("Players").GetComponent<TMP_Text>();
+            countdownText = GameObject.Find("Countdown").GetComponent<TMP_Text>();
+            readyToggle = GameObject.Find("ReadyToggle").GetComponent<Toggle>();
+            readyToggle.onValueChanged.AddListener((bool ready) =>
+            {
+                SetPlayerReadyServerRpc(NetworkManager.Singleton.LocalClientId, ready);
+            });
+        }
+    }
+    [ServerRpc(RequireOwnership = false)]
+    private void SetPlayerReadyServerRpc(ulong clientId, bool isReady)
+    {
+        for(int i = 0; i < PlayersReadyList.Count; i++)
+        {
+            if (PlayersReadyList[i].Id == (int)clientId)
+            {
+                var status = PlayersReadyList[i];
+                status.IsReady = isReady;
+                PlayersReadyList[i] = status;
+                break;
+            }
+        }
+
+        if (AllPlayersReady() && !isCountdownActive)
+        {
+            StartCoroutine(StartCountdown());
+        }
+    }
+    private bool AllPlayersReady()
+    {
+        foreach (var player in PlayersReadyList)
+        {
+            if (!player.IsReady) return false;
+        }
+        return true;
+    }
+    private System.Collections.IEnumerator StartCountdown()
+    {
+        isCountdownActive = true;
+
+        for (float t = countdownTime; t > 0; t--)
+        {
+            countdownText.text = $"{Mathf.CeilToInt(t)}";
+            yield return new WaitForSeconds(1f);
+        }
+
+        countdownText.text = "Starting game...";
+        StartGame();
+    }
+    private void StartGame()
+    {
+        Debug.Log("Starting game...");
+        NetworkManager.Singleton.SceneManager.LoadScene("GameScene", UnityEngine.SceneManagement.LoadSceneMode.Single);
     }
     private void OnDestroy()
     {
@@ -120,6 +204,13 @@ public class ServerHandler : MonoBehaviour
             NetworkManager.Singleton.OnClientConnectedCallback -= OnClientConnected;
             NetworkManager.Singleton.OnClientDisconnectCallback -= OnClientDisconnected;
         }
+        PlayersReadyList.OnListChanged -= UpdatePlayerListUI;
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+    public static void RefreshPlayerCount()
+    {
+        MaxConnections = GlobalVariableHandler.Instance.PlayerCount;
+        GlobalVariableHandler.Instance.Players.Add(pl);             // kostil??
     }
 
 }

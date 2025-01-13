@@ -42,19 +42,6 @@ public class GameConnectionHandler : MonoBehaviour
 
         ConnectButton.interactable = false;
         CreateButton.interactable = false;
-
-        if (GlobalVariableHandler.Instance == null)
-        {
-            Debug.Log("Spawning GlobalVariableHandler...");
-            var globalHandler = Instantiate(globalVariableHandlerPrefab);
-            globalHandler.GetComponent<NetworkObject>().Spawn();
-        }
-    }
-
-    private void Awake()
-    {
-        //Debug.Log($"NetworkManager.Singleton.SpawnManager.SpawnedObjects count: {NetworkManager.Singleton.SpawnManager.SpawnedObjects.Count}");
-        Debug.Log($"GlobalVariableHandler is active: {gameObject.activeSelf}");
     }
 
     private void Update()
@@ -82,7 +69,6 @@ public class GameConnectionHandler : MonoBehaviour
             return;
         }
 
-        // Split address into IP and Port
         string[] addressParts = selectedGameAddress.Split(':');
         if (addressParts.Length != 2)
         {
