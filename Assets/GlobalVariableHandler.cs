@@ -45,11 +45,4 @@ public class GlobalVariableHandler : NetworkBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
     }
-    public override void OnNetworkSpawn()
-    {
-        if (IsServer)
-        {
-            Debug.Log("GlobalVariableHandler spawned and NetworkList initialized.");
-        }
-    }
 }

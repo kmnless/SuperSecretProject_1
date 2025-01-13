@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Xml.Linq;
 using Unity.Collections;
 using Unity.Netcode;
 
@@ -25,5 +26,14 @@ public struct PlayerReadyStatus : INetworkSerializable, IEquatable<PlayerReadySt
         serializer.SerializeValue(ref Id);
         serializer.SerializeValue(ref Nickname);
         serializer.SerializeValue(ref IsReady);
+    }
+    public override bool Equals(object obj)
+    {
+        return obj is PlayerProperty other && Equals(other);
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(Id, Nickname);
     }
 }
