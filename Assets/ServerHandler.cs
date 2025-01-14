@@ -157,6 +157,7 @@ public class ServerHandler : MonoBehaviour
             readyToggle.onValueChanged.AddListener((bool ready) =>
             {
                 SetPlayerReadyServerRpc(NetworkManager.Singleton.LocalClientId, ready);
+                UpdatePlayerListUI();
             });
             clientRpcHandler = GameObject.Find("ClientRpcHandler").GetComponent<ClientRpcHandler>();
         }
