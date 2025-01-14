@@ -7,20 +7,18 @@ public class ClientRpcHandler : NetworkBehaviour
 {
     [SerializeField] private TMP_Text playerList;
     [SerializeField] private Button ready;
-    [SerializeField] private NetworkMediator networkMediator;
+    public NetworkMediator networkMediator;
     private void Start()
     {
         ready.onClick.AddListener(() => {
             SendRequestToServer(NetworkManager.Singleton.LocalClientId);
         });
-        networkMediator.GetComponent<NetworkObject>().Spawn();
-
     }
+
     [ClientRpc]
     public void SetTextClientRpc(string message, ClientRpcParams rpcParams = default)
     {
         playerList.SetText(message);
-        Debug.Log(message);
     }
 
     public void RequestClientSetText(string message)
@@ -40,11 +38,4 @@ public class ClientRpcHandler : NetworkBehaviour
         }
     }
 
-    public override void OnNetworkSpawn()
-    {
-        if (IsClient)
-        {
-            Debug.Log($"ClientRpcHandler spawned on client: {OwnerClientId}");
-        }
-    }
 }

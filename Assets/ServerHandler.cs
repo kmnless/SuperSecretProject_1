@@ -165,6 +165,7 @@ public class ServerHandler : MonoBehaviour
             countdownText = GameObject.Find("Countdown").GetComponent<TMP_Text>();
 
             clientRpcHandler = GameObject.Find("ClientRpcHandler").GetComponent<ClientRpcHandler>();
+            clientRpcHandler.networkMediator.NetworkObject.Spawn();
         }
     }
     public void SetPlayerReadyServerRpc(ulong clientId)
