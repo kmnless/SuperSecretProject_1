@@ -2759,6 +2759,14 @@ PrefabInstance:
       propertyPath: GlobalObjectIdHash
       value: 2440929062
       objectReference: {fileID: 0}
+    - target: {fileID: 1112425908419700627, guid: ef11b7623a690e043884e3606f1b65e8, type: 3}
+      propertyPath: DontDestroyWithOwner
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1112425908419700627, guid: ef11b7623a690e043884e3606f1b65e8, type: 3}
+      propertyPath: ActiveSceneSynchronization
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1893164419497064247, guid: ef11b7623a690e043884e3606f1b65e8, type: 3}
       propertyPath: m_LocalPosition.x
       value: 766.1397
