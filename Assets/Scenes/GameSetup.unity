@@ -3042,6 +3042,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81d56e72771b61340b2165405c1d5808, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerListText: {fileID: 0}
+  countdownText: {fileID: 0}
+  readyToggle: {fileID: 0}
+  countdownTime: 3
 --- !u!4 &1585055248
 Transform:
   m_ObjectHideFlags: 0
@@ -4498,6 +4502,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3d5beda4165ae64f9c86a9a7f850cf8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  GamePort: 2282
 --- !u!4 &2064420634
 Transform:
   m_ObjectHideFlags: 0

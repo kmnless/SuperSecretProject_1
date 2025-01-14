@@ -18,13 +18,15 @@ public class ServerHandler : MonoBehaviour
     private static PlayerProperty pl;
     private bool IsFirst = true;
 
-    private static NetworkList<PlayerReadyStatus> PlayersReadyList;
-    public TMP_Text playerListText;
+    private List<PlayerReadyStatus> PlayersReadyList;
+
     public TMP_Text countdownText;
     public Toggle readyToggle;
     private Coroutine countdownCoroutine;
     private bool isCountdownActive = false;
     [SerializeField] private float countdownTime = 3f;
+
+    private ClientRpcHandler clientRpcHandler;
 
     private void Start()
     {
@@ -45,8 +47,7 @@ public class ServerHandler : MonoBehaviour
     }
     private void Awake()
     {
-        PlayersReadyList = new NetworkList<PlayerReadyStatus>();
-        PlayersReadyList.OnListChanged += UpdatePlayerListUI;
+        PlayersReadyList = new List<PlayerReadyStatus>();
         DontDestroyOnLoad(gameObject);
     }
     private void OnConnectionApproval(NetworkManager.ConnectionApprovalRequest request, NetworkManager.ConnectionApprovalResponse response)
@@ -95,9 +96,9 @@ public class ServerHandler : MonoBehaviour
         else
         {
             GlobalVariableHandler.Instance.Players.Add(player);
-            PlayersReadyList.Add(new PlayerReadyStatus(player.Id, nickname));
         }
 
+        PlayersReadyList.Add(new PlayerReadyStatus(player.Id, nickname));
 
         IsFirst = false;
         response.Approved = true;
@@ -112,6 +113,7 @@ public class ServerHandler : MonoBehaviour
         }
         Debug.Log($"Clientid {clientId} connected. Total clients: {NetworkManager.Singleton.ConnectedClients.Count}");
 
+        UpdatePlayerListUI();
         PlayerCount = NetworkManager.Singleton.ConnectedClients.Count;
         ServerBroadcaster.PlayerCount = PlayerCount;
 
@@ -132,35 +134,31 @@ public class ServerHandler : MonoBehaviour
         }
         PlayerCount = NetworkManager.Singleton.ConnectedClients.Count;
         ServerBroadcaster.PlayerCount = PlayerCount;
+        UpdatePlayerListUI();
     }
-    private void UpdatePlayerListUI(NetworkListEvent<PlayerReadyStatus> changeEvent)
+    private void UpdatePlayerListUI()
     {
+        if (clientRpcHandler is null)
+            return;
+        
         string playerListTextContent = "";
         foreach (var player in PlayersReadyList)
         {
             playerListTextContent += $"{player.Nickname} - {(player.IsReady ? "Ready" : "Not Ready")}\n";
-            Debug.Log($"{playerListTextContent}, {player.Nickname} - {(player.IsReady ? "Ready" : "Not Ready")}");
         }
-        playerListText.text = playerListTextContent;
+        clientRpcHandler.RequestClientAction(playerListTextContent);
     }
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         if (scene.name == "Lobby")
         {
-            playerListText = GameObject.Find("Players").GetComponent<TMP_Text>();
             countdownText = GameObject.Find("Countdown").GetComponent<TMP_Text>();
             readyToggle = GameObject.Find("ReadyToggle").GetComponent<Toggle>();
             readyToggle.onValueChanged.AddListener((bool ready) =>
             {
                 SetPlayerReadyServerRpc(NetworkManager.Singleton.LocalClientId, ready);
             });
-
-            //string playerListTextContent = "";
-            //foreach (var player in PlayersReadyList)
-            //{ 
-            //    playerListTextContent += $"{player.Nickname} - {(player.IsReady ? "Ready" : "Not Ready")}\n";
-            //}
-            //playerListText.text = playerListTextContent;
+            clientRpcHandler = GameObject.Find("ClientRpcHandler").GetComponent<ClientRpcHandler>();
         }
     }
     [ServerRpc(RequireOwnership = false)]
@@ -184,6 +182,8 @@ public class ServerHandler : MonoBehaviour
     }
     private bool AllPlayersReady()
     {
+        if(PlayerCount != MaxConnections)
+            return false;
         foreach (var player in PlayersReadyList)
         {
             if (!player.IsReady) return false;
@@ -206,7 +206,7 @@ public class ServerHandler : MonoBehaviour
     private void StartGame()
     {
         Debug.Log("Starting game...");
-        NetworkManager.Singleton.SceneManager.LoadScene("GameScene", UnityEngine.SceneManagement.LoadSceneMode.Single);
+        NetworkManager.Singleton.SceneManager.LoadScene("Game", UnityEngine.SceneManagement.LoadSceneMode.Single);
     }
     private void OnDestroy()
     {
@@ -216,14 +216,12 @@ public class ServerHandler : MonoBehaviour
             NetworkManager.Singleton.OnClientConnectedCallback -= OnClientConnected;
             NetworkManager.Singleton.OnClientDisconnectCallback -= OnClientDisconnected;
         }
-        PlayersReadyList.OnListChanged -= UpdatePlayerListUI;
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
     public static void RefreshPlayerCount()
     {
         MaxConnections = GlobalVariableHandler.Instance.PlayerCount;
         GlobalVariableHandler.Instance.Players.Add(pl);             // kostil??
-        PlayerReadyStatus p = new PlayerReadyStatus(pl.Id, pl.Name);
     }
 
 }
