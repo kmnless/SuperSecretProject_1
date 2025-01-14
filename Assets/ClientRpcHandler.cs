@@ -27,18 +27,14 @@ public class ClientRpcHandler : NetworkBehaviour
 
     public void SendRequestToServer(ulong message)
     {
-        var serverHandler = FindObjectOfType<ServerHandler>();
-        if (serverHandler != null && IsServer)
+        var networkManager = FindObjectOfType<NetworkMediator>();
+        if (networkManager != null && !networkManager.IsServer)
         {
-            Debug.LogError("Cannot send ServerRpc from server. This should be a client-only operation.");
-        }
-        else if (serverHandler != null && IsOwner)
-        {
-            serverHandler.SetPlayerReadyServerRpc(message);
+            networkManager.RequestServerActionServerRpc(message);
         }
         else
         {
-            Debug.LogError("ServerHandler not found on the client!");
+            Debug.LogError("NetworkMediator not found or running on server!");
         }
     }
 

@@ -13,6 +13,8 @@ using UnityEngine.UI;
 
 public class ServerHandler : MonoBehaviour
 {
+    public static ServerHandler Instance;
+
     private static int MaxConnections = 1;
     private static int PlayerCount;
     private static PlayerProperty pl;
@@ -46,6 +48,15 @@ public class ServerHandler : MonoBehaviour
     }
     private void Awake()
     {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+
         PlayersReadyList = new List<PlayerReadyStatus>();
         DontDestroyOnLoad(gameObject);
     }
@@ -156,7 +167,6 @@ public class ServerHandler : MonoBehaviour
             clientRpcHandler = GameObject.Find("ClientRpcHandler").GetComponent<ClientRpcHandler>();
         }
     }
-    [ServerRpc(RequireOwnership = false)]
     public void SetPlayerReadyServerRpc(ulong clientId)
     {
         for(int i = 0; i < PlayersReadyList.Count; i++)
