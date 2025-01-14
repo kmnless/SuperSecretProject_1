@@ -126,7 +126,7 @@ public class ServerHandler : MonoBehaviour
         UpdatePlayerListUI();
         PlayerCount = NetworkManager.Singleton.ConnectedClients.Count;
         ServerBroadcaster.PlayerCount = PlayerCount;
-
+        
         if(!NetworkManager.Singleton.IsServer)
             NetworkManager.Singleton.SceneManager.LoadScene("Lobby", LoadSceneMode.Single);
     }
@@ -143,7 +143,7 @@ public class ServerHandler : MonoBehaviour
             }
         }
         PlayerCount = NetworkManager.Singleton.ConnectedClients.Count;
-        ServerBroadcaster.PlayerCount = PlayerCount;
+        ServerBroadcaster.PlayerCount = NetworkManager.Singleton.ConnectedClients.Count;
         UpdatePlayerListUI();
     }
     private void UpdatePlayerListUI()
