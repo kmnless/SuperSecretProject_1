@@ -7,11 +7,14 @@ public class ClientRpcHandler : NetworkBehaviour
 {
     [SerializeField] private TMP_Text playerList;
     [SerializeField] private Button ready;
+    [SerializeField] private NetworkMediator networkMediator;
     private void Start()
     {
         ready.onClick.AddListener(() => {
             SendRequestToServer(NetworkManager.Singleton.LocalClientId);
         });
+        networkMediator.GetComponent<NetworkObject>().Spawn();
+
     }
     [ClientRpc]
     public void SetTextClientRpc(string message, ClientRpcParams rpcParams = default)
@@ -27,10 +30,9 @@ public class ClientRpcHandler : NetworkBehaviour
 
     public void SendRequestToServer(ulong message)
     {
-        var networkManager = FindObjectOfType<NetworkMediator>();
-        if (networkManager != null)
+        if (networkMediator != null)
         {
-            networkManager.RequestServerActionServerRpc(message);
+            networkMediator.RequestServerActionServerRpc(message);
         }
         else
         {
