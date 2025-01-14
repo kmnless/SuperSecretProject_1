@@ -28,13 +28,13 @@ public class ClientRpcHandler : NetworkBehaviour
     public void SendRequestToServer(ulong message)
     {
         var networkManager = FindObjectOfType<NetworkMediator>();
-        if (networkManager != null && !networkManager.IsServer)
+        if (networkManager != null)
         {
             networkManager.RequestServerActionServerRpc(message);
         }
         else
         {
-            Debug.LogError("NetworkMediator not found or running on server!");
+            Debug.LogError("NetworkMediator not found");
         }
     }
 
