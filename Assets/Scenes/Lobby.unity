@@ -2691,6 +2691,10 @@ PrefabInstance:
       value: ClientRpcHandler
       objectReference: {fileID: 0}
     - target: {fileID: 7468446775560192520, guid: 8b4d0f6f6c0fc8b40bee613866831da4, type: 3}
+      propertyPath: ready
+      value: 
+      objectReference: {fileID: 798705231}
+    - target: {fileID: 7468446775560192520, guid: 8b4d0f6f6c0fc8b40bee613866831da4, type: 3}
       propertyPath: playerList
       value: 
       objectReference: {fileID: 995142994}
