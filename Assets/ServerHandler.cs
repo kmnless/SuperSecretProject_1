@@ -21,7 +21,6 @@ public class ServerHandler : MonoBehaviour
     private List<PlayerReadyStatus> PlayersReadyList;
 
     public TMP_Text countdownText;
-    public Toggle readyToggle;
     private Coroutine countdownCoroutine;
     private bool isCountdownActive = false;
     [SerializeField] private float countdownTime = 3f;
@@ -146,35 +145,37 @@ public class ServerHandler : MonoBehaviour
         {
             playerListTextContent += $"{player.Nickname} - {(player.IsReady ? "Ready" : "Not Ready")}\n";
         }
-        clientRpcHandler.RequestClientAction(playerListTextContent);
+        clientRpcHandler.RequestClientSetText(playerListTextContent);
     }
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         if (scene.name == "Lobby")
         {
             countdownText = GameObject.Find("Countdown").GetComponent<TMP_Text>();
-            readyToggle = GameObject.Find("ReadyToggle").GetComponent<Toggle>();
-            readyToggle.onValueChanged.AddListener((bool ready) =>
-            {
-                SetPlayerReadyServerRpc(NetworkManager.Singleton.LocalClientId, ready);
-                UpdatePlayerListUI();
-            });
+
             clientRpcHandler = GameObject.Find("ClientRpcHandler").GetComponent<ClientRpcHandler>();
         }
     }
     [ServerRpc(RequireOwnership = false)]
-    private void SetPlayerReadyServerRpc(ulong clientId, bool isReady)
+    public void SetPlayerReadyServerRpc(ulong clientId)
     {
         for(int i = 0; i < PlayersReadyList.Count; i++)
         {
             if (PlayersReadyList[i].Id == (int)clientId)
             {
                 var status = PlayersReadyList[i];
-                status.IsReady = isReady;
+
+                if (status.IsReady)
+                    status.IsReady = false;
+                else
+                    status.IsReady = true;
+
                 PlayersReadyList[i] = status;
                 break;
             }
         }
+
+        UpdatePlayerListUI();
 
         if (AllPlayersReady() && !isCountdownActive)
         {

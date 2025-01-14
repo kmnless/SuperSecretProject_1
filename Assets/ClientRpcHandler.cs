@@ -6,17 +6,40 @@ using UnityEngine.UI;
 public class ClientRpcHandler : NetworkBehaviour
 {
     [SerializeField] private TMP_Text playerList;
-
+    [SerializeField] private Button ready;
+    private void Start()
+    {
+        ready.onClick.AddListener(() => {
+            SendRequestToServer(NetworkManager.Singleton.LocalClientId);
+        });
+    }
     [ClientRpc]
-    public void PerformClientActionClientRpc(string message, ClientRpcParams rpcParams = default)
+    public void SetTextClientRpc(string message, ClientRpcParams rpcParams = default)
     {
         playerList.SetText(message);
         Debug.Log(message);
     }
 
-    public void RequestClientAction(string message)
+    public void RequestClientSetText(string message)
     {
-        PerformClientActionClientRpc(message);
+        SetTextClientRpc(message);
+    }
+
+    public void SendRequestToServer(ulong message)
+    {
+        var serverHandler = FindObjectOfType<ServerHandler>();
+        if (serverHandler != null && IsServer)
+        {
+            Debug.LogError("Cannot send ServerRpc from server. This should be a client-only operation.");
+        }
+        else if (serverHandler != null && IsOwner)
+        {
+            serverHandler.SetPlayerReadyServerRpc(message);
+        }
+        else
+        {
+            Debug.LogError("ServerHandler not found on the client!");
+        }
     }
 
     public override void OnNetworkSpawn()
