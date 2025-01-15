@@ -27,6 +27,7 @@ public class ServerHandler : MonoBehaviour
     private bool isCountdownActive = false;
     [SerializeField] private float countdownTime = 3f;
 
+    [SerializeField] private NetworkMediator networkMediator;
     private ClientRpcHandler clientRpcHandler;
 
     private void Start()
@@ -166,6 +167,13 @@ public class ServerHandler : MonoBehaviour
 
             clientRpcHandler = GameObject.Find("ClientRpcHandler").GetComponent<ClientRpcHandler>();
             clientRpcHandler.networkMediator.NetworkObject.Spawn();
+
+            if (NetworkManager.Singleton.IsServer && FindObjectOfType<NetworkMediator>() == null)
+            {
+                var mediatorInstance = Instantiate(networkMediator);
+                mediatorInstance.GetComponent<NetworkObject>().Spawn();
+                DontDestroyOnLoad(mediatorInstance);
+            }
         }
     }
     public void SetPlayerReadyServerRpc(ulong clientId)

@@ -14,6 +14,18 @@ public class ClientRpcHandler : NetworkBehaviour
             SendRequestToServer(NetworkManager.Singleton.LocalClientId);
         });
     }
+    private void UpdateMediatorReference()
+    {
+        var mediator = FindObjectOfType<NetworkMediator>();
+        if (mediator != null)
+        {
+            Debug.Log("NetworkMediator reference updated.");
+        }
+        else
+        {
+            Debug.LogError("NetworkMediator not found.");
+        }
+    }
 
     [ClientRpc]
     public void SetTextClientRpc(string message, ClientRpcParams rpcParams = default)
@@ -35,7 +47,13 @@ public class ClientRpcHandler : NetworkBehaviour
         else
         {
             Debug.LogError("NetworkMediator not found");
+            UpdateMediatorReference();
         }
+    }
+
+    public override void OnNetworkSpawn()
+    {
+        UpdateMediatorReference();
     }
 
 }
