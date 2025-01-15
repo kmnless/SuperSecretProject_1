@@ -160,16 +160,16 @@ public class GlobalVariableHandler : NetworkBehaviour, INetworkSerializable
     }
     public void LoadResources()
     {
-        GrassTexture = Resources.Load<Texture2D>("Textures/GrassTexture");
-        WaterTexture = Resources.Load<Texture2D>("Textures/WaterTexture");
-        MountainTexture = Resources.Load<Texture2D>("Textures/MountainTexture");
-        RoadTexture = Resources.Load<Texture2D>("Textures/RoadTexture");
-        FlagTexture = Resources.Load<Texture2D>("Textures/FlagTexture");
-        BaseTexture = Resources.Load<Texture2D>("Textures/BaseTexture");
+        GrassTexture = Resources.Load<Texture2D>("Textures/grass");
+        WaterTexture = Resources.Load<Texture2D>("Textures/water");
+        MountainTexture = Resources.Load<Texture2D>("Textures/mountain");
+        RoadTexture = Resources.Load<Texture2D>("Textures/road");
+        FlagTexture = Resources.Load<Texture2D>("Textures/flag");
+        BaseTexture = Resources.Load<Texture2D>("Textures/castle");
 
         BasePrefab = Resources.Load<GameObject>("Prefabs/BasePrefab");
         FlagPrefab = Resources.Load<GameObject>("Prefabs/FlagPrefab");
-        OutpostPrefab = Resources.Load<GameObject>("Prefabs/OutpostPrefab");
+        OutpostPrefab = Resources.Load<GameObject>("Prefabs/FlagPrefab"); // !!
 
         if (RoadTexture == null || FlagTexture == null || BaseTexture == null)
             Debug.LogError("One or more textures failed to load.");
