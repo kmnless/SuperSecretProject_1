@@ -12,7 +12,6 @@ public class MapScript : MonoBehaviour
     static public GameObject[,] sprites;
     private static void texturize(double perlinHeight, int buildingType, GameObject obj, float spriteSize, bool near)
     {
-        Texture2D[] textures = GlobalVariableHandler.Instance.Textures;
         obj.AddComponent<SpriteRenderer>();
         SpriteRenderer spriteRenderer = obj.GetComponent<SpriteRenderer>();
         obj.AddComponent<NavMeshPlus.Components.NavMeshModifier>();
@@ -28,20 +27,24 @@ public class MapScript : MonoBehaviour
             int height = Convert.ToInt32(255 * (perlinHeight + 1.0) / 2.0);
             if (height <= GlobalVariableHandler.Instance.Waterline)
             {
-                spriteRenderer.sprite = Sprite.Create(textures.First(), new(0, 0, textures.First().width, textures.First().height), new(0.0f, 0.0f));
+                spriteRenderer.sprite = Sprite.Create(GlobalVariableHandler.Instance.WaterTexture, new(0, 0, GlobalVariableHandler.Instance.WaterTexture.width, GlobalVariableHandler.Instance.WaterTexture.height), new(0.0f, 0.0f));
                 walk.area = 1;
                 return;
             }
             else if (height >= 255 - GlobalVariableHandler.Instance.MountainLine)
             {
-                spriteRenderer.sprite = Sprite.Create(textures.Last(), new(0, 0, textures.Last().width, textures.Last().height), new(0.0f, 0.0f));
+                spriteRenderer.sprite = Sprite.Create(GlobalVariableHandler.Instance.MountainTexture, new(0, 0, GlobalVariableHandler.Instance.MountainTexture.width, GlobalVariableHandler.Instance.MountainTexture.height), new(0.0f, 0.0f));
                 walk.area = 1;
                 return;
 
             }
             int range = 255 - GlobalVariableHandler.Instance.Waterline - GlobalVariableHandler.Instance.MountainLine;
-            int singleInterval = range / (textures.Count() - 2);
-            spriteRenderer.sprite = Sprite.Create(textures[(height - GlobalVariableHandler.Instance.Waterline) / singleInterval + 1], new(0, 0, textures[(height - GlobalVariableHandler.Instance.Waterline) / singleInterval + 1].width, textures[(height - GlobalVariableHandler.Instance.Waterline) / singleInterval + 1].height), new(0.0f, 0.0f));
+            
+            // ??? ETO CHE VOOBSHE, MI POHODU POD NARCOTICAMI PISALI ETO
+            //int singleInterval = range / (textures.Count() - 2);
+            //spriteRenderer.sprite = Sprite.Create(textures[(height - GlobalVariableHandler.Instance.Waterline) / singleInterval + 1], new(0, 0, textures[(height - GlobalVariableHandler.Instance.Waterline) / singleInterval + 1].width, textures[(height - GlobalVariableHandler.Instance.Waterline) / singleInterval + 1].height), new(0.0f, 0.0f));
+            
+            spriteRenderer.sprite = Sprite.Create(GlobalVariableHandler.Instance.GrassTexture, new(0, 0, GlobalVariableHandler.Instance.GrassTexture.width, GlobalVariableHandler.Instance.GrassTexture.height), new(0.0f, 0.0f));
             if (near) 
             {
                 walk.area = 0;
@@ -69,9 +72,9 @@ public class MapScript : MonoBehaviour
         }
         return false ;
     }
-    public static void CreateSpriteMap(int sizeX, int sizeY, double[,] terrain, int[,] buldings,float spriteSize,GameObject map)
+    public static void CreateSpriteMap(int sizeX, int sizeY, double[,] terrain, int[,] buldings, float spriteSize, GameObject map)
     {
-        sprites=new GameObject[sizeY,sizeX];
+        sprites = new GameObject[sizeY, sizeX];
         //GameObject walkable = new GameObject();
         //walkable.AddComponent<SpriteRenderer>();
 
@@ -81,18 +84,17 @@ public class MapScript : MonoBehaviour
         //walkable.AddComponent<NavMeshPlus.Components.NavMeshModifier>();
         //walkable.name = "Walkable";
         //walkable.transform.parent = map.transform;
-        for(int i = 0; i < sizeY; ++i)
+        for (int i = 0; i < sizeY; ++i)
         {
-            for (int j = 0; j < sizeX; ++j) 
+            for (int j = 0; j < sizeX; ++j)
             {
                 sprites[i, j] = new GameObject();
-                texturize(terrain[i, j], buldings[i, j], sprites[i, j], spriteSize, NearRoad(j,i,buldings));
-                sprites[i, j].transform.position= new Vector3(j*spriteSize/100.0f,i*spriteSize/100.0f, 10.0f);
+                texturize(terrain[i, j], buldings[i, j], sprites[i, j], spriteSize, NearRoad(j, i, buldings));
+                sprites[i, j].transform.position = new Vector3(j * spriteSize / 100.0f, i * spriteSize / 100.0f, 10.0f);
                 sprites[i, j].transform.parent = map.transform;
             }
         }
-        
-    }   
+    }
     public static void CreateEntities(int sizeX, int sizeY,int[,] buldings, float spriteSize, GameObject bases, GameObject flags, GameObject outposts)
     {
         int baseIndex = 0;
@@ -111,9 +113,10 @@ public class MapScript : MonoBehaviour
                         buffer = Instantiate(GlobalVariableHandler.Instance.BasePrefab, new Vector3((j+0.5f)*spriteSize/100.0f,(i+0.5f)*spriteSize/100.0f, -1.0f), Quaternion.identity);
                         buffer.transform.parent = bases.transform;
                         buffer.name = "Base" + baseIndex.ToString();
-                        BaseHandler prop=buffer.GetComponent<BaseHandler>();
+                        BaseHandler prop = buffer.GetComponent<BaseHandler>();
                         prop.setId(baseIndex);
                         //prop.setName(GlobalVariableHandler.players[baseIndex++].Name); todo dobavit names ot igrokov!!!
+                        prop.setName(GlobalVariableHandler.Instance.Players[baseIndex++].Name.ToString());  // id mojet ne sovpadat, hz krch, nado testit (ya zabudu)
                         break;
                     case (int)Constants.Buildings.Flag:
                         buffer = Instantiate(GlobalVariableHandler.Instance.FlagPrefab, new Vector3((j+0.5f)*spriteSize/100.0f,(i+0.5f)*spriteSize/100.0f, -1.0f), Quaternion.identity);

@@ -220,10 +220,13 @@ public class MapGeneratorScript : MonoBehaviour
     {
         if (generated)
         {
-            GlobalVariableHandler.Instance.Textures = textures;
-            GlobalVariableHandler.Instance.FlagTexture = flagTexture;
-            GlobalVariableHandler.Instance.BaseTexture = baseTexture;
-            GlobalVariableHandler.Instance.RoadTexture = roadTexture;
+            //GlobalVariableHandler.Instance.Textures = textures;
+            //GlobalVariableHandler.Instance.FlagTexture = flagTexture;
+            //GlobalVariableHandler.Instance.BaseTexture = baseTexture;
+            //GlobalVariableHandler.Instance.RoadTexture = roadTexture;
+            //GlobalVariableHandler.Instance.BasePrefab = basePrefab;
+            //GlobalVariableHandler.Instance.FlagPrefab = flagPrefab;
+            //GlobalVariableHandler.Instance.OutpostPrefab = outpostPrefab;
             GlobalVariableHandler.Instance.BuildingsField = terrain.Item2;
             GlobalVariableHandler.Instance.TerrainField = terrain.Item1;
             GlobalVariableHandler.Instance.CellSize = textures[0].width;
@@ -231,11 +234,11 @@ public class MapGeneratorScript : MonoBehaviour
             GlobalVariableHandler.Instance.FieldSizeX = X; GlobalVariableHandler.Instance.FieldSizeY = Y;
             GlobalVariableHandler.Instance.Waterline = waterline;
             GlobalVariableHandler.Instance.MountainLine = mountainLine;
-            GlobalVariableHandler.Instance.BasePrefab = basePrefab;
-            GlobalVariableHandler.Instance.FlagPrefab = flagPrefab;
-            GlobalVariableHandler.Instance.OutpostPrefab = outpostPrefab;
             GlobalVariableHandler.Instance.Colors = colors;
             GlobalVariableHandler.Instance.Seed = seed;
+
+            GlobalVariableHandler.Instance.LoadResources();
+
             CreateServerBroadcaster();
             ServerHandler.RefreshPlayerCount();
 

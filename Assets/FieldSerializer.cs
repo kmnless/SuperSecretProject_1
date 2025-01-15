@@ -19,7 +19,6 @@ public static class FieldSerializer
     /// <summary>
     /// Converts [,] arr to json string
     /// </summary>
-    /// <param name="field"></param>
     /// <returns>Json string</returns>
     public static string Serialize(int[,] field)
     {

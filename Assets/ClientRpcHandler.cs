@@ -66,11 +66,8 @@ public class ClientRpcHandler : NetworkBehaviour
     {
         base.OnNetworkSpawn();
         UpdateMediatorReference();
-
         if (IsClient && !IsServer)
-        {
-            GlobalVariableHandler.Instance.RequestBuildingsFieldSyncServerRpc();
-        }
+            GlobalVariableHandler.Instance.LoadResources();
     }
 
 }

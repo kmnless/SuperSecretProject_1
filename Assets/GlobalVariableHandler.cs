@@ -4,7 +4,7 @@ using System.Net;
 using Unity.Netcode;
 using UnityEngine;
 
-public class GlobalVariableHandler : NetworkBehaviour
+public class GlobalVariableHandler : NetworkBehaviour, INetworkSerializable
 {
     public static GlobalVariableHandler Instance { get; private set; }
     public string ServerName { get; set; }
@@ -12,7 +12,9 @@ public class GlobalVariableHandler : NetworkBehaviour
     public const string DefaultGameName = "GameName";
     public ushort GamePort = 2282;
     public Color[] Colors { get; set; }
-    public Texture2D[] Textures { get; set; }
+    public Texture2D GrassTexture { get; set; }
+    public Texture2D WaterTexture { get; set; }
+    public Texture2D MountainTexture { get; set; }
     public Texture2D RoadTexture { get; set; }
     public Texture2D FlagTexture { get; set; }
     public Texture2D BaseTexture { get; set; }
@@ -21,15 +23,18 @@ public class GlobalVariableHandler : NetworkBehaviour
     public GameObject OutpostPrefab { get; set; }
     public NetworkList<PlayerProperty> Players { get; set; } = new NetworkList<PlayerProperty>();
     public int MyIndex { get; set; } = 0;
-    public int PlayerCount { get; set; }
-    public float CellSize { get; set; }
-    public int FieldSizeX { get; set; }
-    public int FieldSizeY { get; set; }
-    public double[,] TerrainField { get; set; }
-    public int[,] BuildingsField { get; set; }
-    public int Waterline { get; set; }
-    public int MountainLine { get; set; }
-    public int Seed { get; set; }
+
+    // Syncing fields
+    public int PlayerCount;
+    public float CellSize;
+    public int FieldSizeX;
+    public int FieldSizeY;
+    public int Waterline;
+    public int MountainLine;
+    public int Seed;
+    public double[,] TerrainField;
+    public int[,] BuildingsField;
+
     // Constants
     public const int CaptureDistance = 3;
     public const int AttacksToDefeat = 3;
@@ -37,25 +42,139 @@ public class GlobalVariableHandler : NetworkBehaviour
     {
         if (Instance != null && Instance != this)
         {
-            Destroy(gameObject); 
+            Destroy(gameObject);
             return;
         }
 
         Instance = this;
         DontDestroyOnLoad(gameObject);
     }
-
-    [ClientRpc]
-    public void SyncBuildingsFieldClientRpc(string serializedField, ClientRpcParams rpcParams = default)
+    /// <summary>
+    /// Serialize int matrix
+    /// </summary>
+    private void SerializeArray<T>(BufferSerializer<T> serializer, ref int[,] array) where T : IReaderWriter
     {
-        BuildingsField = FieldSerializer.Deserialize(serializedField);
-        Debug.Log("BuildingsField synchronized successfully!");
+        int rows = array?.GetLength(0) ?? 0;
+        int cols = array?.GetLength(1) ?? 0;
+        serializer.SerializeValue(ref rows);
+        serializer.SerializeValue(ref cols);
+
+        if (serializer.IsWriter)
+        {
+            for (int i = 0; i < rows; i++)
+            {
+                for (int j = 0; j < cols; j++)
+                {
+                    int value = array[i, j];
+                    serializer.SerializeValue(ref value);
+                }
+            }
+        }
+        else
+        {
+            array = new int[rows, cols];
+            for (int i = 0; i < rows; i++)
+            {
+                for (int j = 0; j < cols; j++)
+                {
+                    int value = 0;
+                    serializer.SerializeValue(ref value);
+                    array[i, j] = value;
+                }
+            }
+        }
     }
-
-    [ServerRpc(RequireOwnership = false)]
-    public void RequestBuildingsFieldSyncServerRpc(ServerRpcParams rpcParams = default)
+    /// <summary>
+    /// Serialize double matrix
+    /// </summary>
+    private void SerializeArray<T>(BufferSerializer<T> serializer, ref double[,] array) where T : IReaderWriter
     {
-        string serializedField = FieldSerializer.Serialize(BuildingsField);
-        SyncBuildingsFieldClientRpc(serializedField);
+        int rows = array?.GetLength(0) ?? 0;
+        int cols = array?.GetLength(1) ?? 0;
+        serializer.SerializeValue(ref rows);
+        serializer.SerializeValue(ref cols);
+
+        if (serializer.IsWriter)
+        {
+            for (int i = 0; i < rows; i++)
+            {
+                for (int j = 0; j < cols; j++)
+                {
+                    double value = array[i, j];
+                    serializer.SerializeValue(ref value);
+                }
+            }
+        }
+        else
+        {
+            array = new double[rows, cols];
+            for (int i = 0; i < rows; i++)
+            {
+                for (int j = 0; j < cols; j++)
+                {
+                    double value = 0;
+                    serializer.SerializeValue(ref value);
+                    array[i, j] = value;
+                }
+            }
+        }
+    }
+    public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
+    {
+        // fields
+        serializer.SerializeValue(ref PlayerCount);
+        serializer.SerializeValue(ref CellSize);
+        serializer.SerializeValue(ref FieldSizeX);
+        serializer.SerializeValue(ref FieldSizeY);
+        serializer.SerializeValue(ref Waterline);
+        serializer.SerializeValue(ref MountainLine);
+        serializer.SerializeValue(ref Seed);
+
+        // arrays
+        SerializeArray(serializer, ref TerrainField);
+        SerializeArray(serializer, ref BuildingsField);
+
+        // colors
+        if (serializer.IsWriter)
+        {
+            int colorCount = Colors.Length;
+            serializer.SerializeValue(ref colorCount);
+            foreach (var color in Colors)
+            {
+                Vector4 colorVec = new Vector4(color.r, color.g, color.b, color.a);
+                serializer.SerializeValue(ref colorVec);
+            }
+        }
+        else
+        {
+            int colorCount = 0;
+            serializer.SerializeValue(ref colorCount);
+            Colors = new Color[colorCount];
+            for (int i = 0; i < colorCount; i++)
+            {
+                Vector4 colorVec = Vector4.zero;
+                serializer.SerializeValue(ref colorVec);
+                Colors[i] = new Color(colorVec.x, colorVec.y, colorVec.z, colorVec.w);
+            }
+        }
+    }
+    public void LoadResources()
+    {
+        GrassTexture = Resources.Load<Texture2D>("Textures/GrassTexture");
+        WaterTexture = Resources.Load<Texture2D>("Textures/WaterTexture");
+        MountainTexture = Resources.Load<Texture2D>("Textures/MountainTexture");
+        RoadTexture = Resources.Load<Texture2D>("Textures/RoadTexture");
+        FlagTexture = Resources.Load<Texture2D>("Textures/FlagTexture");
+        BaseTexture = Resources.Load<Texture2D>("Textures/BaseTexture");
+
+        BasePrefab = Resources.Load<GameObject>("Prefabs/BasePrefab");
+        FlagPrefab = Resources.Load<GameObject>("Prefabs/FlagPrefab");
+        OutpostPrefab = Resources.Load<GameObject>("Prefabs/OutpostPrefab");
+
+        if (RoadTexture == null || FlagTexture == null || BaseTexture == null)
+            Debug.LogError("One or more textures failed to load.");
+
+        if (BasePrefab == null || FlagPrefab == null || OutpostPrefab == null)
+            Debug.LogError("One or more prefabs failed to load.");
     }
 }
