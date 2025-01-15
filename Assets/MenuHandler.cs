@@ -35,7 +35,7 @@ public class MenuHandler : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        Debug.Log(transform.position.x);
+        //Debug.Log(transform.position.x);
         if(transform.gameObject.activeSelf&&(flagVisual.transform.position - player.transform.position- new Vector3(0f,0f,10f)).magnitude<GlobalVariableHandler.CaptureDistance * GlobalVariableHandler.Instance.CellSize /100f)
         {
             captureButton.interactable = true;
