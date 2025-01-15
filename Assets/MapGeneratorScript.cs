@@ -180,12 +180,12 @@ public class MapGeneratorScript : MonoBehaviour
             }
         }
         PlaceRoads(newTexture, terrain.Item2);
-        //FillBuildings(newTexture, terrain.Item2);
+        FillBuildings(newTexture, terrain.Item2);                   // !!!!!!  WAS COMMENTED BEFORE. IDK WHY !!!!!!
         newTexture.Apply();
         rawImage.texture= newTexture;
         generated = true;
         playButton.interactable = true;
-    }
+    }   // !!!!!!
     public void GenerateNewScale()
     {
         if (generated)

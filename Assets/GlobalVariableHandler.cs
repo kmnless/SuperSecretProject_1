@@ -33,7 +33,6 @@ public class GlobalVariableHandler : NetworkBehaviour
     // Constants
     public const int CaptureDistance = 3;
     public const int AttacksToDefeat = 3;
-
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -44,5 +43,19 @@ public class GlobalVariableHandler : NetworkBehaviour
 
         Instance = this;
         DontDestroyOnLoad(gameObject);
+    }
+
+    [ClientRpc]
+    public void SyncBuildingsFieldClientRpc(string serializedField, ClientRpcParams rpcParams = default)
+    {
+        BuildingsField = FieldSerializer.Deserialize(serializedField);
+        Debug.Log("BuildingsField synchronized successfully!");
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void RequestBuildingsFieldSyncServerRpc(ServerRpcParams rpcParams = default)
+    {
+        string serializedField = FieldSerializer.Serialize(BuildingsField);
+        SyncBuildingsFieldClientRpc(serializedField);
     }
 }
