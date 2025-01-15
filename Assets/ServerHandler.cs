@@ -166,14 +166,14 @@ public class ServerHandler : MonoBehaviour
             countdownText = GameObject.Find("Countdown").GetComponent<TMP_Text>();
 
             clientRpcHandler = GameObject.Find("ClientRpcHandler").GetComponent<ClientRpcHandler>();
-            clientRpcHandler.networkMediator.NetworkObject.Spawn();
 
             if (NetworkManager.Singleton.IsServer && FindObjectOfType<NetworkMediator>() == null)
             {
                 var mediatorInstance = Instantiate(networkMediator);
-                mediatorInstance.GetComponent<NetworkObject>().Spawn();
+                mediatorInstance.GetComponent<NetworkObject>().Spawn(true);
                 DontDestroyOnLoad(mediatorInstance);
             }
+            clientRpcHandler.networkMediator = FindObjectOfType<NetworkMediator>();
         }
     }
     public void SetPlayerReadyServerRpc(ulong clientId)

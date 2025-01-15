@@ -19,11 +19,12 @@ public class ClientRpcHandler : NetworkBehaviour
         var mediator = FindObjectOfType<NetworkMediator>();
         if (mediator != null)
         {
-            Debug.Log("NetworkMediator reference updated.");
+            networkMediator = mediator;
+            Debug.Log("NetworkMediator reference updated in OnNetworkSpawn.");
         }
         else
         {
-            Debug.LogError("NetworkMediator not found.");
+            Debug.LogError("NetworkMediator not found in OnNetworkSpawn.");
         }
     }
 
@@ -47,12 +48,23 @@ public class ClientRpcHandler : NetworkBehaviour
         else
         {
             Debug.LogError("NetworkMediator not found");
-            UpdateMediatorReference();
+            RequestMediatorFromServerServerRpc();
+        }
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void RequestMediatorFromServerServerRpc(ServerRpcParams rpcParams = default)
+    {
+        var mediator = FindObjectOfType<NetworkMediator>();
+        if (mediator != null)
+        {
+            mediator.NetworkObject.Spawn();
         }
     }
 
     public override void OnNetworkSpawn()
     {
+        base.OnNetworkSpawn();
         UpdateMediatorReference();
     }
 
