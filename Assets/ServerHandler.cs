@@ -95,7 +95,6 @@ public class ServerHandler : MonoBehaviour
         }
 
         var player = new PlayerProperty(nickname, (int)request.ClientNetworkId);
-        player.Color = GlobalVariableHandler.Instance.Colors[ColorCount++];
         if (GlobalVariableHandler.Instance.Players == null)
         {
             Debug.LogError("Players list is not initialized!");
@@ -105,9 +104,11 @@ public class ServerHandler : MonoBehaviour
         if (IsFirst)        // kostil?
         {
             pl = player;
+            pl.Color = GlobalVariableHandler.Instance.Colors[0];
         }
         else
         {
+            player.Color = GlobalVariableHandler.Instance.Colors[ColorCount++];
             GlobalVariableHandler.Instance.Players.Add(player);
         }
 
