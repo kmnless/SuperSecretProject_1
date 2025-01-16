@@ -25,15 +25,25 @@ public class PlayerHandlerScript : MonoBehaviour
     public PlayerProperty properties;
     public int id = GlobalVariableHandler.Instance.MyIndex;
 
-    public void createPlayer(Vector3 pos)
+    public void SpawnPlayer(Vector3 position)
     {
-        player = Instantiate(playerPrefab,pos, Quaternion.identity);
-        player.name = "Player";
-        agent = player.GetComponent<NavMeshAgent>();
+        GameObject playerObject = Instantiate(playerPrefab, position, Quaternion.identity);
+        playerObject.name = $"Player_{id}";
+        agent = playerObject.GetComponent<NavMeshAgent>();
         agent.updateRotation = false;
         agent.updateUpAxis = false;
-        //properties = GlobalVariableHandler.players[id]; kak tolko budet server budet ok!
     }
+
+
+    //public void createPlayer(Vector3 pos)
+    //{
+    //    player = Instantiate(playerPrefab,pos, Quaternion.identity);
+    //    player.name = "Player";
+    //    agent = player.GetComponent<NavMeshAgent>();
+    //    agent.updateRotation = false;
+    //    agent.updateUpAxis = false;
+    //    //properties = GlobalVariableHandler.players[id]; kak tolko budet server budet ok!
+    //}
     public void addXP(int XP)
     {
         properties.CurrentXP+=XP;
@@ -83,7 +93,7 @@ public class PlayerHandlerScript : MonoBehaviour
         {
             pos = new Vector3(GlobalVariableHandler.Instance.CellSize /200f,GlobalVariableHandler.Instance.CellSize /200f,0);
         }
-        createPlayer(pos);
+        SpawnPlayer(pos);
     }
     public void FixedUpdate()
     {
