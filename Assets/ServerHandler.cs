@@ -17,7 +17,7 @@ public class ServerHandler : MonoBehaviour
 
     private static int MaxConnections = 1;
     private static int PlayerCount;
-    private int ColorCount = 0;
+    private static int ColorCount = 0;
     private static PlayerProperty pl;
     private bool IsFirst = true;
 
@@ -104,7 +104,6 @@ public class ServerHandler : MonoBehaviour
         if (IsFirst)        // kostil?
         {
             pl = player;
-            pl.Color = GlobalVariableHandler.Instance.Colors[0];
         }
         else
         {
@@ -249,6 +248,7 @@ public class ServerHandler : MonoBehaviour
     public static void RefreshPlayerCount()
     {
         MaxConnections = GlobalVariableHandler.Instance.PlayerCount;
+        pl.Color = GlobalVariableHandler.Instance.Colors[ColorCount++];
         GlobalVariableHandler.Instance.Players.Add(pl);             // kostil??
     }
 
