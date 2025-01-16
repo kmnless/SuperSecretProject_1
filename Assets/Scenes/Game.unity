@@ -459,7 +459,6 @@ MonoBehaviour:
   bases: {fileID: 2102033614}
   animationSpeed: 0.1
   id: 0
-  client: {fileID: 0}
 --- !u!1 &1785239518
 GameObject:
   m_ObjectHideFlags: 0
@@ -743,6 +742,7 @@ MonoBehaviour:
   bases: {fileID: 2102033614}
   outposts: {fileID: 265795535}
   playerHandler: {fileID: 1477934009}
+  playerPrefab: {fileID: 1645551247277010336, guid: 34dec2160bb8818648d5cd84380b654e, type: 3}
   navigator: {fileID: 1098987428}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
