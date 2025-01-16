@@ -23,12 +23,17 @@ public class PlayerHandlerScript : MonoBehaviour
     private bool allowMove = false;
     public float animationSpeed = 0.1f;
     public PlayerProperty properties;
-    public int id = GlobalVariableHandler.Instance.MyIndex;
+    public int id;
+
+    public void Start()
+    {
+        id = GlobalVariableHandler.Instance.MyIndex;
+    }
 
     public void SpawnPlayer(Vector3 position)
     {
         GameObject playerObject = Instantiate(playerPrefab, position, Quaternion.identity);
-        playerObject.name = $"Player{id}";
+        playerObject.name = $"Player{GlobalVariableHandler.Instance.MyIndex}";
         agent = playerObject.GetComponent<NavMeshAgent>();
         agent.updateRotation = false;
         agent.updateUpAxis = false;
