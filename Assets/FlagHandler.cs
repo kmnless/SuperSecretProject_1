@@ -16,7 +16,7 @@ public class FlagHandler : MonoBehaviour
     public void Capture(int id)
     {
         ownerID = id;
-        texture.color = GlobalVariableHandler.Instance.Colors[id];
+        texture.color = GlobalVariableHandler.Instance.Colors[id];      // rework this
     }
 
     void Update()

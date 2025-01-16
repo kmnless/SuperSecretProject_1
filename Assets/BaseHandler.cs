@@ -15,22 +15,13 @@ public class BaseHandler : MonoBehaviour
     private Camera cam;
     void Start()
     {
-        spriteRenderer.color = GlobalVariableHandler.Instance.Colors[Id];
+        spriteRenderer.color = Color.white;         // temp hardcode, must be player color (probably)
         cam = GameObject.Find("Camera").GetComponent<Camera>(); 
         foreach(Canvas child in transform.GetComponentsInChildren<Canvas>(true))
         {
             child.worldCamera = cam;
         }
     }
-    public void setName(string Name)
-    {
-        this.Name = Name;
-    }
-    public void setId(int Id)
-    {
-        this.Id = Id;
-    }
-
 
     // Update is called once per frame
     void Update()

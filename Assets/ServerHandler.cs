@@ -93,7 +93,7 @@ public class ServerHandler : MonoBehaviour
             return;
         }
 
-        var player = new PlayerProperty(nickname, (int)request.ClientNetworkId);
+        var player = new PlayerProperty(nickname, (int)request.ClientNetworkId, GlobalVariableHandler.Instance.Colors[PlayerCount - 1]);
         if (GlobalVariableHandler.Instance.Players == null)
         {
             Debug.LogError("Players list is not initialized!");

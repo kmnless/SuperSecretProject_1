@@ -114,9 +114,9 @@ public class MapScript : MonoBehaviour
                         buffer.transform.parent = bases.transform;
                         buffer.name = "Base" + baseIndex.ToString();
                         BaseHandler prop = buffer.GetComponent<BaseHandler>();
-                        prop.setId(baseIndex);
-                        //prop.setName(GlobalVariableHandler.players[baseIndex++].Name); todo dobavit names ot igrokov!!!
-                        prop.setName(GlobalVariableHandler.Instance.Players[baseIndex++].Name.ToString());  // id mojet ne sovpadat, hz krch, nado testit (ya zabudu)
+                        // tut krch nado podumat, id navernoe prosto sdelat ++, a name budet name playera, kotoriy vladeet bazoy. ili hranit gde to otdelno kto kem vladeet.
+                        prop.Id = baseIndex++;
+                        //prop.Name = GlobalVariableHandler.Instance.Players[baseIndex++].Name.ToString(); // id mojet ne sovpadat, hz krch, nado testit (ya zabudu)
                         break;
                     case (int)Constants.Buildings.Flag:
                         buffer = Instantiate(GlobalVariableHandler.Instance.FlagPrefab, new Vector3((j+0.5f)*spriteSize/100.0f,(i+0.5f)*spriteSize/100.0f, -1.0f), Quaternion.identity);

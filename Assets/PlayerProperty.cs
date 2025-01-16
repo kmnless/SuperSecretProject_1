@@ -1,5 +1,6 @@
 using System;
 using Unity.Collections;
+using Unity;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -17,7 +18,7 @@ public struct PlayerProperty : INetworkSerializable, IEquatable<PlayerProperty>
     public int Money;
     public Vector4 Color; // Vector4 instead of Color
 
-    public PlayerProperty(string name, int id)
+    public PlayerProperty(string name, int id, Color color)
     {
         Id = id;
         Name = name;
@@ -28,7 +29,8 @@ public struct PlayerProperty : INetworkSerializable, IEquatable<PlayerProperty>
         NeededXP = 50;
         MultiplierXP = 1.5f;
         Money = 50;
-        Color = new Vector4(0, 0, 0, 1); // black
+        Color = color;
+        //Color = new Vector4(0, 0, 0, 1); // black
         StrengthMultiplierGain = 1.15f;
     }
 
