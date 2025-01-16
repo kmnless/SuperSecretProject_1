@@ -227,6 +227,7 @@ public class ServerHandler : MonoBehaviour
     private void StartGame()
     {
         Debug.Log("Starting game...");
+        GlobalVariableHandler.Instance.SyncAllFieldsServerRpc();
         NetworkManager.Singleton.SceneManager.LoadScene("Game", UnityEngine.SceneManagement.LoadSceneMode.Single);
     }
     private void OnDestroy()

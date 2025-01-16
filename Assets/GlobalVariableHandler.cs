@@ -6,6 +6,14 @@ using UnityEngine;
 
 public class GlobalVariableHandler : NetworkBehaviour, INetworkSerializable
 {
+    [Serializable]
+    private class SerializedArray<T>
+    {
+        public int Rows;
+        public int Cols;
+        public T[] Data;
+    }
+
     public static GlobalVariableHandler Instance { get; private set; }
     public string ServerName { get; set; }
     public const int BroadcastPort = 8888;
@@ -119,6 +127,33 @@ public class GlobalVariableHandler : NetworkBehaviour, INetworkSerializable
             }
         }
     }
+    private string SerializeToString<T>(T[,] array)
+    {
+        int rows = array.GetLength(0);
+        int cols = array.GetLength(1);
+        T[] flattened = new T[rows * cols];
+        for (int i = 0; i < rows; i++)
+        {
+            for (int j = 0; j < cols; j++)
+            {
+                flattened[i * cols + j] = array[i, j];
+            }
+        }
+        return JsonUtility.ToJson(new SerializedArray<T> { Rows = rows, Cols = cols, Data = flattened });
+    }
+    private T[,] DeserializeFromString<T>(string serializedData)
+    {
+        var data = JsonUtility.FromJson<SerializedArray<T>>(serializedData);
+        T[,] array = new T[data.Rows, data.Cols];
+        for (int i = 0; i < data.Rows; i++)
+        {
+            for (int j = 0; j < data.Cols; j++)
+            {
+                array[i, j] = data.Data[i * data.Cols + j];
+            }
+        }
+        return array;
+    }
     public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
     {
         // fields
@@ -177,4 +212,43 @@ public class GlobalVariableHandler : NetworkBehaviour, INetworkSerializable
         if (BasePrefab == null || FlagPrefab == null || OutpostPrefab == null)
             Debug.LogError("One or more prefabs failed to load.");
     }
+    [ServerRpc(RequireOwnership = false)]
+    public void SyncAllFieldsServerRpc(ServerRpcParams rpcParams = default)
+    {
+        string serializedTerrain = SerializeToString(TerrainField);
+        string serializedBuildings = SerializeToString(BuildingsField);
+
+        SyncAllFieldsClientRpc(
+            PlayerCount,
+            CellSize,
+            FieldSizeX,
+            FieldSizeY,
+            Waterline,
+            MountainLine,
+            Seed,
+            serializedTerrain,
+            serializedBuildings,
+            rpcParams.Receive.SenderClientId
+        );
+    }
+
+    [ClientRpc]
+    private void SyncAllFieldsClientRpc(int playerCount, float cellSize, int fieldSizeX, int fieldSizeY, int waterline, int mountainLine, int seed,
+    string serializedTerrain, string serializedBuildings, ulong clientId)
+    {
+        PlayerCount = playerCount;
+        CellSize = cellSize;
+        FieldSizeX = fieldSizeX;
+        FieldSizeY = fieldSizeY;
+        Waterline = waterline;
+        MountainLine = mountainLine;
+        Seed = seed;
+
+        TerrainField = DeserializeFromString<double>(serializedTerrain);
+        BuildingsField = DeserializeFromString<int>(serializedBuildings);
+
+        Debug.Log($"Fields synchronized successfully on client {clientId}.");
+    }
+
+
 }
