@@ -25,11 +25,6 @@ public class PlayerHandlerScript : MonoBehaviour
     public PlayerProperty properties;
     public int id;
 
-    public void Start()
-    {
-        id = GlobalVariableHandler.Instance.MyIndex;
-    }
-
     public void SpawnPlayer(Vector3 position)
     {
         GameObject playerObject = Instantiate(playerPrefab, position, Quaternion.identity);
@@ -71,6 +66,7 @@ public class PlayerHandlerScript : MonoBehaviour
     }
     public void Start()
     {
+        id = GlobalVariableHandler.Instance.MyIndex;
         Vector3 pos;
         field = new FieldStates[GlobalVariableHandler.Instance.FieldSizeY, GlobalVariableHandler.Instance.FieldSizeX];
         //MapScript.sprites[0,1].SetActive(false);
