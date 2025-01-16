@@ -28,7 +28,7 @@ public class PlayerHandlerScript : MonoBehaviour
     public void SpawnPlayer(Vector3 position)
     {
         GameObject playerObject = Instantiate(playerPrefab, position, Quaternion.identity);
-        playerObject.name = $"Player_{id}";
+        playerObject.name = $"Player{id}";
         agent = playerObject.GetComponent<NavMeshAgent>();
         agent.updateRotation = false;
         agent.updateUpAxis = false;
@@ -121,7 +121,8 @@ public class PlayerHandlerScript : MonoBehaviour
             path = null;
         }
     }
-    private void findPath(Vector3 worldPosition)
+
+    /*private void findPath(Vector3 worldPosition)
     {
         allowMove = false;
         counter = 1;
@@ -165,7 +166,7 @@ public class PlayerHandlerScript : MonoBehaviour
             allowMove = true;
         }
     }
-    
+    */
     void Update()
     {
         if (Input.GetMouseButtonDown(1))

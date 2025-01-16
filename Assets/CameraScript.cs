@@ -18,7 +18,7 @@ public class CameraScript : MonoBehaviour
     private bool isFollowing = false;
     void Start()
     {
-        target = GameObject.Find("Player").transform;
+        target = GameObject.Find($"Player{GlobalVariableHandler.Instance.MyIndex}").transform;
         transform.position = new Vector3(target.position.x, target.position.y, -10);
     }
     

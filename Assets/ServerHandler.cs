@@ -109,6 +109,8 @@ public class ServerHandler : MonoBehaviour
             GlobalVariableHandler.Instance.Players.Add(player);
         }
 
+        GlobalVariableHandler.Instance.MyIndex = player.Id;
+
         PlayersReadyList.Add(new PlayerReadyStatus(player.Id, nickname));
 
         IsFirst = false;
@@ -127,7 +129,7 @@ public class ServerHandler : MonoBehaviour
         UpdatePlayerListUI();
         PlayerCount = NetworkManager.Singleton.ConnectedClients.Count;
         ServerBroadcaster.PlayerCount = PlayerCount;
-        
+
         if(!NetworkManager.Singleton.IsServer)
             NetworkManager.Singleton.SceneManager.LoadScene("Lobby", LoadSceneMode.Single);
     }
