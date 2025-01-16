@@ -18,7 +18,7 @@ public struct PlayerProperty : INetworkSerializable, IEquatable<PlayerProperty>
     public int Money;
     public Vector4 Color; // Vector4 instead of Color
 
-    public PlayerProperty(string name, int id, Color color)
+    public PlayerProperty(string name, int id)
     {
         Id = id;
         Name = name;
@@ -29,8 +29,8 @@ public struct PlayerProperty : INetworkSerializable, IEquatable<PlayerProperty>
         NeededXP = 50;
         MultiplierXP = 1.5f;
         Money = 50;
-        Color = color;
-        //Color = new Vector4(0, 0, 0, 1); // black
+        //Color = color;
+        Color = new Vector4(0, 0, 0, 1); // black
         StrengthMultiplierGain = 1.15f;
     }
 

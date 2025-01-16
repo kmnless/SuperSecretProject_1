@@ -17,6 +17,7 @@ public class ServerHandler : MonoBehaviour
 
     private static int MaxConnections = 1;
     private static int PlayerCount;
+    private int ColorCount = 0;
     private static PlayerProperty pl;
     private bool IsFirst = true;
 
@@ -93,7 +94,8 @@ public class ServerHandler : MonoBehaviour
             return;
         }
 
-        var player = new PlayerProperty(nickname, (int)request.ClientNetworkId, GlobalVariableHandler.Instance.Colors[PlayerCount - 1]);
+        var player = new PlayerProperty(nickname, (int)request.ClientNetworkId);
+        player.Color = GlobalVariableHandler.Instance.Colors[ColorCount++];
         if (GlobalVariableHandler.Instance.Players == null)
         {
             Debug.LogError("Players list is not initialized!");
@@ -147,6 +149,7 @@ public class ServerHandler : MonoBehaviour
         }
         PlayerCount = NetworkManager.Singleton.ConnectedClients.Count;
         ServerBroadcaster.PlayerCount = NetworkManager.Singleton.ConnectedClients.Count;
+        ColorCount--;
         UpdatePlayerListUI();
     }
     private void UpdatePlayerListUI()
