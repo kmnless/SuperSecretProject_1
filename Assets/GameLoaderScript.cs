@@ -19,7 +19,7 @@ public class GameLoaderScript : MonoBehaviour
 
     public static List<Vector3> basePositions = new List<Vector3>();
 
-    private void Start()
+    private void Awake()
     {
         try
         {
