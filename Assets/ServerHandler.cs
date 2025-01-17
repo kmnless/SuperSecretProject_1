@@ -134,14 +134,16 @@ public class ServerHandler : MonoBehaviour
             return;
         }
         Debug.Log($"Clientid {clientId} connected. Total clients: {NetworkManager.Singleton.ConnectedClients.Count}");
-
-        clientRpcHandler.SetMyIndexClientRpc(Convert.ToInt32(clientId), new ClientRpcParams
+        if (clientRpcHandler is not null)
         {
-            Send = new ClientRpcSendParams
+            clientRpcHandler.SetMyIndexClientRpc(Convert.ToInt32(clientId), new ClientRpcParams
             {
-                TargetClientIds = new[] { clientId }
-            }
-        });
+                Send = new ClientRpcSendParams
+                {
+                    TargetClientIds = new[] { clientId }
+                }
+            });
+        }
 
         UpdatePlayerListUI();
         PlayerCount = NetworkManager.Singleton.ConnectedClients.Count;
