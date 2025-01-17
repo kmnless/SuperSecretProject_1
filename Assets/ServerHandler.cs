@@ -10,6 +10,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using static UnityEditor.PlayerSettings;
 
 public class ServerHandler : MonoBehaviour
 {
@@ -30,6 +31,8 @@ public class ServerHandler : MonoBehaviour
 
     [SerializeField] private NetworkMediator networkMediator;
     private ClientRpcHandler clientRpcHandler;
+
+    [SerializeField] private GameObject playerPrefab;
 
     private void Start()
     {
@@ -222,11 +225,12 @@ public class ServerHandler : MonoBehaviour
 
         for (float t = countdownTime; t > 0; t--)
         {
-            countdownText.text = $"{Mathf.CeilToInt(t)}";
+            //countdownText.text = $"{Mathf.CeilToInt(t)}";
+            clientRpcHandler.RequestClientSetCountdown(Mathf.CeilToInt(t).ToString());
             yield return new WaitForSeconds(1f);
         }
 
-        countdownText.text = "Starting game...";
+        clientRpcHandler.RequestClientSetCountdown("Starting game");
         StartGame();
     }
     private void StartGame()
@@ -234,6 +238,27 @@ public class ServerHandler : MonoBehaviour
         Debug.Log("Starting game...");
         GlobalVariableHandler.Instance.SyncAllFieldsServerRpc();
         NetworkManager.Singleton.SceneManager.LoadScene("Game", UnityEngine.SceneManagement.LoadSceneMode.Single);
+    }
+    public static class PlayerSpawner
+    {
+        public static void SpawnPlayers(List<Vector3> basePositions, GameObject playerPrefab)
+        {
+            if (!NetworkManager.Singleton.IsServer)
+            {
+                Debug.LogError("SpawnPlayers can only be called on the server.");
+                return;
+            }
+
+            for (int i = 0; i < basePositions.Count; i++)
+            {
+                Vector3 spawnPosition = basePositions[i];
+
+                var playerObject = GameObject.Instantiate(playerPrefab, spawnPosition, Quaternion.identity);
+                playerObject.GetComponent<NetworkObject>().SpawnWithOwnership((ulong)i);
+
+                Debug.Log($"Player {i} spawned at {spawnPosition}");
+            }
+        }
     }
     private void OnDestroy()
     {

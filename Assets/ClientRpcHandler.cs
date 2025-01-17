@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class ClientRpcHandler : NetworkBehaviour
 {
     [SerializeField] private TMP_Text playerList;
+    [SerializeField] private TMP_Text countdownText;
     [SerializeField] private Button ready;
     public NetworkMediator networkMediator;
     private void Start()
@@ -37,6 +38,17 @@ public class ClientRpcHandler : NetworkBehaviour
     public void RequestClientSetText(string message)
     {
         SetTextClientRpc(message);
+    }
+
+    [ClientRpc]
+    public void SetCountdownClientRpc(string message, ClientRpcParams rpcParams = default)
+    {
+        countdownText.SetText(message);
+    }
+
+    public void RequestClientSetCountdown(string message)
+    {
+        SetCountdownClientRpc(message);
     }
 
     public void SendRequestToServer(ulong message)

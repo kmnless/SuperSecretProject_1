@@ -95,36 +95,38 @@ public class MapScript : MonoBehaviour
             }
         }
     }
-    public static void CreateEntities(int sizeX, int sizeY,int[,] buldings, float spriteSize, GameObject bases, GameObject flags, GameObject outposts)
+    public static void CreateEntities(int sizeX, int sizeY, int[,] buldings, float spriteSize, GameObject bases, GameObject flags, GameObject outposts)
     {
         int baseIndex = 0;
         int flagIndex = 0;
         int outpostIndex = 0;
         GameObject buffer;
-        for(int i = 0; i < sizeY; ++i)
+        for (int i = 0; i < sizeY; ++i)
         {
-            for (int j = 0; j < sizeX; ++j) 
+            for (int j = 0; j < sizeX; ++j)
             {
-                switch(buldings[i,j])
+                switch (buldings[i, j])
                 {
                     case (int)Constants.Buildings.None:
                         break;
                     case (int)Constants.Buildings.Base:
-                        buffer = Instantiate(GlobalVariableHandler.Instance.BasePrefab, new Vector3((j+0.5f)*spriteSize/100.0f,(i+0.5f)*spriteSize/100.0f, -1.0f), Quaternion.identity);
+                        var pos = new Vector3((j + 0.5f) * spriteSize / 100.0f, (i + 0.5f) * spriteSize / 100.0f, -1.0f);
+                        buffer = Instantiate(GlobalVariableHandler.Instance.BasePrefab, pos, Quaternion.identity);
                         buffer.transform.parent = bases.transform;
-                        buffer.name = "Base" + baseIndex.ToString();
+                        buffer.name = "Base " + GlobalVariableHandler.Instance.Players[baseIndex];
+                        GameLoaderScript.basePositions.Add(pos);
                         BaseHandler prop = buffer.GetComponent<BaseHandler>();
                         // tut krch nado podumat, id navernoe prosto sdelat ++, a name budet name playera, kotoriy vladeet bazoy. ili hranit gde to otdelno kto kem vladeet.
                         prop.Id = baseIndex++;
                         //prop.Name = GlobalVariableHandler.Instance.Players[baseIndex++].Name.ToString(); // id mojet ne sovpadat, hz krch, nado testit (ya zabudu)
                         break;
                     case (int)Constants.Buildings.Flag:
-                        buffer = Instantiate(GlobalVariableHandler.Instance.FlagPrefab, new Vector3((j+0.5f)*spriteSize/100.0f,(i+0.5f)*spriteSize/100.0f, -1.0f), Quaternion.identity);
+                        buffer = Instantiate(GlobalVariableHandler.Instance.FlagPrefab, new Vector3((j + 0.5f) * spriteSize / 100.0f, (i + 0.5f) * spriteSize / 100.0f, -1.0f), Quaternion.identity);
                         buffer.transform.parent = flags.transform;
                         buffer.name = "Flag" + flagIndex++.ToString();
                         break;
                     case (int)Constants.Buildings.Outpost:
-                        buffer = Instantiate(GlobalVariableHandler.Instance.OutpostPrefab, new Vector3((j+0.5f)*spriteSize/100.0f,(i+0.5f)*spriteSize/100.0f, -1.0f), Quaternion.identity);
+                        buffer = Instantiate(GlobalVariableHandler.Instance.OutpostPrefab, new Vector3((j + 0.5f) * spriteSize / 100.0f, (i + 0.5f) * spriteSize / 100.0f, -1.0f), Quaternion.identity);
                         buffer.transform.parent = outposts.transform;
                         buffer.name = "Outpost" + outpostIndex++.ToString();
                         break;

@@ -67,7 +67,7 @@ public class PlayerHandlerScript : MonoBehaviour
     public void Start()
     {
         id = GlobalVariableHandler.Instance.MyIndex;
-        Vector3 pos;
+        //Vector3 pos;
         field = new FieldStates[GlobalVariableHandler.Instance.FieldSizeY, GlobalVariableHandler.Instance.FieldSizeX];
         //MapScript.sprites[0,1].SetActive(false);
         for(int y = 0; y < GlobalVariableHandler.Instance.FieldSizeY; y++)
@@ -86,15 +86,15 @@ public class PlayerHandlerScript : MonoBehaviour
             }
         }
 
-        if(bases.transform.childCount>GlobalVariableHandler.Instance.MyIndex)
-        {
-            pos = bases.transform.GetChild(GlobalVariableHandler.Instance.MyIndex).position;
-        }
-        else
-        {
-            pos = new Vector3(GlobalVariableHandler.Instance.CellSize /200f,GlobalVariableHandler.Instance.CellSize /200f,0);
-        }
-        SpawnPlayer(pos);
+        //if(bases.transform.childCount>GlobalVariableHandler.Instance.MyIndex)
+        //{
+        //    pos = bases.transform.GetChild(GlobalVariableHandler.Instance.MyIndex).position;
+        //}
+        //else
+        //{
+        //    pos = new Vector3(GlobalVariableHandler.Instance.CellSize /200f,GlobalVariableHandler.Instance.CellSize /200f,0);
+        //}
+        //SpawnPlayer(pos);
     }
     public void FixedUpdate()
     {

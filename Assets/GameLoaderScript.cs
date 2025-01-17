@@ -5,6 +5,7 @@ using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
+using static ServerHandler;
 
 public class GameLoaderScript : MonoBehaviour
 {
@@ -13,9 +14,10 @@ public class GameLoaderScript : MonoBehaviour
     [SerializeField] private GameObject flags;
     [SerializeField] private GameObject bases;
     [SerializeField] private GameObject outposts;
-    [SerializeField] private PlayerHandlerScript playerHandler;
     [SerializeField] private GameObject playerPrefab;
     [SerializeField] private NavMeshPlus.Components.NavMeshSurface navigator;
+
+    public static List<Vector3> basePositions = new List<Vector3>();
 
     private void Awake()
     {
@@ -32,23 +34,14 @@ public class GameLoaderScript : MonoBehaviour
                 GlobalVariableHandler.Instance.BuildingsField, 
                 spriteSize, bases, flags, outposts);
 
-
-            foreach (var p in GlobalVariableHandler.Instance.Players)
+            try
             {
-                Vector3 position = new Vector3(GlobalVariableHandler.Instance.CellSize / 200f, GlobalVariableHandler.Instance.CellSize / 200f, 0);
-
-                // sample
-
-                //var b = bases.GetComponents<GameObject>();
-                //for (int i = 0; i < GlobalVariableHandler.Instance.PlayerCount; i++)
-                //{
-                //    if(b[i].name == p.Name)
-                //        position = b[i].transform.position;
-                //}
-                GameObject playerObject = Instantiate(playerPrefab, position, Quaternion.identity);
-                playerObject.name = $"Player{p.Id}";
+                ServerHandler.PlayerSpawner.SpawnPlayers(basePositions, playerPrefab);
             }
-            
+            catch (Exception e)
+            {
+                Debug.LogError(e);
+            }
         }
         catch(Exception ex) 
         {
