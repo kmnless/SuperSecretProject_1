@@ -118,8 +118,14 @@ public class ServerHandler : MonoBehaviour
             player.Color = GlobalVariableHandler.Instance.Colors[ColorCount++];
             GlobalVariableHandler.Instance.Players.Add(player);
         }
-        if(GlobalVariableHandler.Instance.MyIndex is null)
-            GlobalVariableHandler.Instance.MyIndex = player.Id;
+
+        clientRpcHandler.SetMyIndexClientRpc(player.Id, new ClientRpcParams
+        {
+            Send = new ClientRpcSendParams
+            {
+                TargetClientIds = new[] { request.ClientNetworkId }
+            }
+        });
 
         PlayersReadyList.Add(new PlayerReadyStatus(player.Id, nickname));
 

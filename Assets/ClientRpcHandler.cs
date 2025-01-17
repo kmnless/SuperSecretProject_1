@@ -82,4 +82,10 @@ public class ClientRpcHandler : NetworkBehaviour
             GlobalVariableHandler.Instance.LoadResources();
     }
 
+
+    [ClientRpc]
+    public void SetMyIndexClientRpc(int index, ClientRpcParams clientRpcParams = default)
+    {
+        GlobalVariableHandler.Instance.MyIndex = index;
+    }
 }
