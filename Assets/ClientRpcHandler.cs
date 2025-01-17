@@ -86,7 +86,7 @@ public class ClientRpcHandler : NetworkBehaviour
     [ClientRpc]
     public void SetMyIndexClientRpc(int index, ClientRpcParams clientRpcParams = default)
     {
-        Debug.Log("qwewqeq");
+        Debug.Log($"SetMyIndexClientRpc called for client. Received index: {index}");
         GlobalVariableHandler.Instance.MyIndex = index;
     }
 }

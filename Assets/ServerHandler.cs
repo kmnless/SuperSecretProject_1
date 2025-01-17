@@ -117,14 +117,21 @@ public class ServerHandler : MonoBehaviour
         {
             player.Color = GlobalVariableHandler.Instance.Colors[ColorCount++];
             GlobalVariableHandler.Instance.Players.Add(player);
-            new ClientRpcParams { Send = new ClientRpcSendParams{TargetClientIds = new[] { request.ClientNetworkId } } }
-            clientRpcHandler.SetMyIndexClientRpc(player.Id, new ClientRpcParams 
-            { 
-                Send = new ClientRpcSendParams 
-                { 
-                    TargetClientIds = new[] { request.ClientNetworkId } 
-                } 
-            });
+            if (NetworkManager.Singleton.ConnectedClients.ContainsKey(request.ClientNetworkId))
+            {
+                Debug.Log($"Sending ClientRpc to client {request.ClientNetworkId}");
+                clientRpcHandler.SetMyIndexClientRpc(player.Id, new ClientRpcParams
+                {
+                    Send = new ClientRpcSendParams
+                    {
+                        TargetClientIds = new[] { request.ClientNetworkId }
+                    }
+                });
+            }
+            else
+            {
+                Debug.LogError($"Client {request.ClientNetworkId} is not connected. Skipping RPC.");
+            }
         }
 
         PlayersReadyList.Add(new PlayerReadyStatus(player.Id, nickname));
