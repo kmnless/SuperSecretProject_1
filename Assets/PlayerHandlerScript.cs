@@ -5,6 +5,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Rendering;
+using static UnityEditor.Experimental.GraphView.GraphView;
 
 public class PlayerHandlerScript : MonoBehaviour
 {
@@ -113,6 +114,11 @@ public class PlayerHandlerScript : MonoBehaviour
         //    pos = new Vector3(GlobalVariableHandler.Instance.CellSize /200f,GlobalVariableHandler.Instance.CellSize /200f,0);
         //}
         //SpawnPlayer(pos);
+        if (player == null)
+            player = GameObject.Find($"Player{id}");
+        agent = player.GetComponent<NavMeshAgent>();
+        agent.updateRotation = false;
+        agent.updateUpAxis = false;
     }
     public void FixedUpdate()
     {

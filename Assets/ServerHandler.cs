@@ -260,9 +260,6 @@ public class ServerHandler : MonoBehaviour
                 playerObject.GetComponent<NetworkObject>().SpawnWithOwnership((ulong)i);
                 if (i == GlobalVariableHandler.Instance.MyIndex)            // idk, here might be a problem
                 {
-                    PlayerHandlerScript.agent = playerObject.GetComponent<NavMeshAgent>();
-                    PlayerHandlerScript.agent.updateRotation = false;
-                    PlayerHandlerScript.agent.updateUpAxis = false;
                     PlayerHandlerScript.player = playerObject;
                 }
                 Debug.Log($"Player {i} spawned at {spawnPosition}");
