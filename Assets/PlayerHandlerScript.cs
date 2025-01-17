@@ -13,9 +13,9 @@ public class PlayerHandlerScript : MonoBehaviour
     [SerializeField] private new Camera camera;
     [SerializeField] private GameObject bases;
     private FieldStates[,] field;
-    private NavMeshAgent agent = null;
+    public static NavMeshAgent agent = null;
     private List<Vector3> path; 
-    private GameObject player;
+    public static GameObject player;
     private AStar aStar;
     private Vector3 previousStep;
     private float animationCounter = 0;
