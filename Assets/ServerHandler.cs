@@ -117,16 +117,15 @@ public class ServerHandler : MonoBehaviour
         {
             player.Color = GlobalVariableHandler.Instance.Colors[ColorCount++];
             GlobalVariableHandler.Instance.Players.Add(player);
-        }
 
-        clientRpcHandler.SetMyIndexClientRpc(player.Id, new ClientRpcParams
-        {
-            Send = new ClientRpcSendParams
+            clientRpcHandler.SetMyIndexClientRpc(player.Id, new ClientRpcParams
             {
-                TargetClientIds = new[] { request.ClientNetworkId }
-            }
-        });
-
+                Send = new ClientRpcSendParams
+                {
+                    TargetClientIds = new[] { request.ClientNetworkId }
+                }
+            });
+        }
         PlayersReadyList.Add(new PlayerReadyStatus(player.Id, nickname));
 
         IsFirst = false;
@@ -301,6 +300,7 @@ public class ServerHandler : MonoBehaviour
     {
         MaxConnections = GlobalVariableHandler.Instance.PlayerCount;
         pl.Color = GlobalVariableHandler.Instance.Colors[ColorCount++];
+        GlobalVariableHandler.Instance.MyIndex = pl.Id;
         GlobalVariableHandler.Instance.Players.Add(pl);             // kostil??
     }
 
