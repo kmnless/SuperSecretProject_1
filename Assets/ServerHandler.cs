@@ -33,8 +33,8 @@ public class ServerHandler : MonoBehaviour
     [SerializeField] private NetworkMediator networkMediator;
     private ClientRpcHandler clientRpcHandler;
 
-    [SerializeField] private static GameObject playerPrefab;
-    [SerializeField] private static GameObject clientPrefab;
+    [SerializeField] public static GameObject playerPrefab;
+    [SerializeField] public static GameObject clientPrefab;
 
     private void Start()
     {
@@ -43,6 +43,9 @@ public class ServerHandler : MonoBehaviour
         NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
         NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnected;
         NetworkManager.Singleton.ConnectionApprovalCallback += OnConnectionApproval;
+
+        playerPrefab = Resources.Load<GameObject>("Prefabs/PlayerPrefab");
+        clientPrefab = Resources.Load<GameObject>("Prefabs/ClientPrefab");
 
         if (NetworkManager.Singleton.StartHost())
         {
