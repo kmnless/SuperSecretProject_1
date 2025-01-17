@@ -62,20 +62,16 @@ public class PlayerHandlerScript : MonoBehaviour
     }
     public void Awake()
     {
-
-    }
-    public void Start()
-    {
         id = GlobalVariableHandler.Instance.MyIndex;
         //Vector3 pos;
         field = new FieldStates[GlobalVariableHandler.Instance.FieldSizeY, GlobalVariableHandler.Instance.FieldSizeX];
         //MapScript.sprites[0,1].SetActive(false);
-        for(int y = 0; y < GlobalVariableHandler.Instance.FieldSizeY; y++)
+        for (int y = 0; y < GlobalVariableHandler.Instance.FieldSizeY; y++)
         {
-            for(int x = 0; x < GlobalVariableHandler.Instance.FieldSizeX; x++)
+            for (int x = 0; x < GlobalVariableHandler.Instance.FieldSizeX; x++)
             {
-               // Debug.Log($"{GlobalVariableHandler.terrainField[y, x]} on x={x} on y={y}");
-                if(GlobalVariableHandler.Instance.TerrainField[y, x]>=-moveAllowance && GlobalVariableHandler.Instance.TerrainField[y, x]<=moveAllowance)
+                // Debug.Log($"{GlobalVariableHandler.terrainField[y, x]} on x={x} on y={y}");
+                if (GlobalVariableHandler.Instance.TerrainField[y, x] >= -moveAllowance && GlobalVariableHandler.Instance.TerrainField[y, x] <= moveAllowance)
                 {
                     field[y, x] = FieldStates.Empty;
                 }
@@ -85,6 +81,28 @@ public class PlayerHandlerScript : MonoBehaviour
                 }
             }
         }
+    }
+    public void Start()
+    {
+        //id = GlobalVariableHandler.Instance.MyIndex;
+        ////Vector3 pos;
+        //field = new FieldStates[GlobalVariableHandler.Instance.FieldSizeY, GlobalVariableHandler.Instance.FieldSizeX];
+        ////MapScript.sprites[0,1].SetActive(false);
+        //for(int y = 0; y < GlobalVariableHandler.Instance.FieldSizeY; y++)
+        //{
+        //    for(int x = 0; x < GlobalVariableHandler.Instance.FieldSizeX; x++)
+        //    {
+        //       // Debug.Log($"{GlobalVariableHandler.terrainField[y, x]} on x={x} on y={y}");
+        //        if(GlobalVariableHandler.Instance.TerrainField[y, x]>=-moveAllowance && GlobalVariableHandler.Instance.TerrainField[y, x]<=moveAllowance)
+        //        {
+        //            field[y, x] = FieldStates.Empty;
+        //        }
+        //        else
+        //        {
+        //            field[y, x] = FieldStates.Wall;
+        //        }
+        //    }
+        //}
 
         //if(bases.transform.childCount>GlobalVariableHandler.Instance.MyIndex)
         //{

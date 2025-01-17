@@ -19,7 +19,7 @@ public class GameLoaderScript : MonoBehaviour
 
     public static List<Vector3> basePositions = new List<Vector3>();
 
-    private void Awake()
+    private void Start()
     {
         try
         {
@@ -33,6 +33,8 @@ public class GameLoaderScript : MonoBehaviour
                 GlobalVariableHandler.Instance.FieldSizeY, 
                 GlobalVariableHandler.Instance.BuildingsField, 
                 spriteSize, bases, flags, outposts);
+
+            navigator.BuildNavMeshAsync();
 
             try
             {
@@ -49,9 +51,9 @@ public class GameLoaderScript : MonoBehaviour
         };
 
     }
-    private void Start()
-    {
-        navigator.BuildNavMeshAsync();
+    //private void Start()
+    //{
 
-    }
+
+    //}
 }
