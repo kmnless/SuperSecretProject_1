@@ -33,7 +33,8 @@ public class ServerHandler : MonoBehaviour
     [SerializeField] private NetworkMediator networkMediator;
     private ClientRpcHandler clientRpcHandler;
 
-    [SerializeField] private GameObject playerPrefab;
+    [SerializeField] private static GameObject playerPrefab;
+    [SerializeField] private static GameObject clientPrefab;
 
     private void Start()
     {
@@ -242,7 +243,7 @@ public class ServerHandler : MonoBehaviour
     }
     public static class PlayerSpawner
     {
-        public static void SpawnPlayers(List<Vector3> basePositions, GameObject playerPrefab)
+        public static void SpawnPlayers(List<Vector3> basePositions)
         {
             if (!NetworkManager.Singleton.IsServer)
             {
@@ -253,16 +254,25 @@ public class ServerHandler : MonoBehaviour
             for (int i = 0; i < basePositions.Count; i++)
             {
                 Vector3 spawnPosition = basePositions[i];
-
-                var playerObject = GameObject.Instantiate(playerPrefab, spawnPosition, Quaternion.identity);
-                playerObject.transform.rotation = Quaternion.identity;
-                playerObject.name = $"Player{i}";
-                Debug.Log($"Player{i} spawned");
-                playerObject.GetComponent<NetworkObject>().SpawnWithOwnership((ulong)i);
-                Debug.Log($"Player{i} network spawned");
                 if (i == GlobalVariableHandler.Instance.MyIndex)            // idk, here might be a problem
                 {
+                    var playerObject = GameObject.Instantiate(playerPrefab, spawnPosition, Quaternion.identity);
+                    playerObject.transform.rotation = Quaternion.identity;
+                    playerObject.name = $"Player{i}";
+                    Debug.Log($"Player{i} spawned");
+                    playerObject.GetComponent<NetworkObject>().SpawnWithOwnership((ulong)i);
+                    Debug.Log($"Player{i} network spawned");
+
                     PlayerHandlerScript.player = playerObject;
+                }
+                else
+                {
+                    var playerObject = GameObject.Instantiate(clientPrefab, spawnPosition, Quaternion.identity);
+                    playerObject.transform.rotation = Quaternion.identity;
+                    playerObject.name = $"Player{i}";
+                    Debug.Log($"Client{i} spawned");
+                    playerObject.GetComponent<NetworkObject>().SpawnWithOwnership((ulong)i);
+                    Debug.Log($"Client{i} network spawned");
                 }
                 Debug.Log($"Player {i} spawned at {spawnPosition}");
             }

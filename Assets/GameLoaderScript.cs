@@ -38,7 +38,7 @@ public class GameLoaderScript : MonoBehaviour
 
             try
             {
-                ServerHandler.PlayerSpawner.SpawnPlayers(basePositions, playerPrefab);
+                ServerHandler.PlayerSpawner.SpawnPlayers(basePositions);
             }
             catch (Exception e)
             {
