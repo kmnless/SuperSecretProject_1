@@ -30,7 +30,7 @@ public class GlobalVariableHandler : NetworkBehaviour, INetworkSerializable
     public GameObject FlagPrefab { get; set; }
     public GameObject OutpostPrefab { get; set; }
     public NetworkList<PlayerProperty> Players { get; set; } = new NetworkList<PlayerProperty>();
-    public int MyIndex { get; set; } = 0;
+    public int? MyIndex { get; set; } = null;
 
     // Syncing fields
     public int PlayerCount;

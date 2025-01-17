@@ -114,8 +114,8 @@ public class ServerHandler : MonoBehaviour
             player.Color = GlobalVariableHandler.Instance.Colors[ColorCount++];
             GlobalVariableHandler.Instance.Players.Add(player);
         }
-
-        GlobalVariableHandler.Instance.MyIndex = player.Id;
+        if(GlobalVariableHandler.Instance.MyIndex is null)
+            GlobalVariableHandler.Instance.MyIndex = player.Id;
 
         PlayersReadyList.Add(new PlayerReadyStatus(player.Id, nickname));
 
