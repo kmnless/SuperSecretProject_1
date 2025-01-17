@@ -62,7 +62,7 @@ public class PlayerHandlerScript : MonoBehaviour
     }
     public void Awake()
     {
-        id = GlobalVariableHandler.Instance.MyIndex;
+        id = GlobalVariableHandler.Instance.MyIndex.Value;
         //Vector3 pos;
         field = new FieldStates[GlobalVariableHandler.Instance.FieldSizeY, GlobalVariableHandler.Instance.FieldSizeX];
         //MapScript.sprites[0,1].SetActive(false);
