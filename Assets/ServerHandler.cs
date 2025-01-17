@@ -257,7 +257,9 @@ public class ServerHandler : MonoBehaviour
                 var playerObject = GameObject.Instantiate(playerPrefab, spawnPosition, Quaternion.identity);
                 playerObject.transform.rotation = Quaternion.identity;
                 playerObject.name = $"Player{i}";
+                Debug.Log($"Player{i} spawned");
                 playerObject.GetComponent<NetworkObject>().SpawnWithOwnership((ulong)i);
+                Debug.Log($"Player{i} network spawned");
                 if (i == GlobalVariableHandler.Instance.MyIndex)            // idk, here might be a problem
                 {
                     PlayerHandlerScript.player = playerObject;
