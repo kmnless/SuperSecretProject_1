@@ -266,26 +266,46 @@ public class ServerHandler : MonoBehaviour
             for (int i = 0; i < basePositions.Count; i++)
             {
                 Vector3 spawnPosition = basePositions[i];
-                if (i == GlobalVariableHandler.Instance.MyIndex)            // idk, here might be a problem
-                {
-                    var playerObject = GameObject.Instantiate(playerPrefab, spawnPosition, Quaternion.identity);
-                    playerObject.transform.rotation = Quaternion.identity;
-                    playerObject.name = $"Player{i}";
-                    Debug.Log($"Player{i} spawned");
-                    playerObject.GetComponent<NetworkObject>().SpawnWithOwnership((ulong)i);
-                    Debug.Log($"Player{i} network spawned");
+                //if (i == GlobalVariableHandler.Instance.MyIndex)            // idk, here might be a problem
+                //{
+                //    var playerObject = GameObject.Instantiate(playerPrefab, spawnPosition, Quaternion.identity);
+                //    playerObject.transform.rotation = Quaternion.identity;
+                //    playerObject.name = $"Player{i}";
+                //    Debug.Log($"Player{i} spawned");
+                //    playerObject.GetComponent<NetworkObject>().SpawnWithOwnership((ulong)i);
+                //    Debug.Log($"Player{i} network spawned");
 
-                    PlayerHandlerScript.player = playerObject;
+                //    PlayerHandlerScript.player = playerObject;
+                //}
+                //else
+                //{
+                //    var playerObject = GameObject.Instantiate(clientPrefab, spawnPosition, Quaternion.identity);
+                //    playerObject.transform.rotation = Quaternion.identity;
+                //    playerObject.name = $"Player{i}";
+                //    Debug.Log($"Client{i} spawned");
+                //    playerObject.GetComponent<NetworkObject>().SpawnWithOwnership((ulong)i);
+                //    Debug.Log($"Client{i} network spawned");
+                //}
+                //Debug.Log($"Player {i} spawned at {spawnPosition}");
+
+                GameObject playerObject;
+                if (i == GlobalVariableHandler.Instance.MyIndex)
+                {
+                    playerObject = GameObject.Instantiate(playerPrefab, spawnPosition, Quaternion.identity);
+                    Debug.Log($"Spawning player for local client: Player{i}");
                 }
                 else
                 {
-                    var playerObject = GameObject.Instantiate(clientPrefab, spawnPosition, Quaternion.identity);
-                    playerObject.transform.rotation = Quaternion.identity;
-                    playerObject.name = $"Player{i}";
-                    Debug.Log($"Client{i} spawned");
-                    playerObject.GetComponent<NetworkObject>().SpawnWithOwnership((ulong)i);
-                    Debug.Log($"Client{i} network spawned");
+                    playerObject = GameObject.Instantiate(clientPrefab, spawnPosition, Quaternion.identity);
+                    Debug.Log($"Spawning client object: Client{i}");
                 }
+                playerObject.transform.rotation = Quaternion.identity;
+                playerObject.name = $"Player{i}";
+
+                var networkObject = playerObject.GetComponent<NetworkObject>();
+                networkObject.SpawnWithOwnership((ulong)i);
+                Debug.Log($"{playerObject.name} network spawned.");
+
                 Debug.Log($"Player {i} spawned at {spawnPosition}");
             }
         }

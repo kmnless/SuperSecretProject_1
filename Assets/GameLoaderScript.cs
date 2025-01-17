@@ -35,14 +35,16 @@ public class GameLoaderScript : MonoBehaviour
                 spriteSize, bases, flags, outposts);
 
             navigator.BuildNavMeshAsync();
-
-            try
+            if (ServerHandler.Instance is not null)
             {
-                ServerHandler.PlayerSpawner.SpawnPlayers(basePositions);
-            }
-            catch (Exception e)
-            {
-                Debug.LogError(e);
+                try
+                {
+                    ServerHandler.PlayerSpawner.SpawnPlayers(basePositions);
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError(e);
+                }
             }
         }
         catch(Exception ex) 
