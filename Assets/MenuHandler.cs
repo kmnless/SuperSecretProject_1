@@ -14,8 +14,8 @@ public class MenuHandler : MonoBehaviour
     [SerializeField] private FlagHandler handler;
     void Start()
     {
-        player = GameObject.Find("Player");
-        playerScript = GameObject.Find("PlayerHandler").GetComponent<PlayerHandlerScript>();
+        player = GameObject.Find($"Player{GlobalVariableHandler.Instance.MyIndex}");
+        playerScript = player.GetComponent<PlayerHandlerScript>();
     }
     public void Close()
     {
@@ -27,10 +27,6 @@ public class MenuHandler : MonoBehaviour
     }
     public void Capture()
     {
-        if(handler.unitCount < playerScript.properties.Strength)
-        {
-            handler.Capture(playerScript.id);
-        }
     }
     // Update is called once per frame
     void FixedUpdate()

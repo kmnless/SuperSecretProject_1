@@ -11,8 +11,8 @@ public class CameraScript : MonoBehaviour
     public float maxZoom = 10.0f;
     public float zoomSpeed = 1.0f;
 
-    private float mapSizeX = (float)GlobalVariableHandler.Instance.FieldSizeX *GlobalVariableHandler.Instance.CellSize /100f;
-    private float mapSizeY = (float)GlobalVariableHandler.Instance.FieldSizeY *GlobalVariableHandler.Instance.CellSize /100f;
+    private float mapSizeX = (float)GlobalVariableHandler.Instance.FieldSizeX * GlobalVariableHandler.Instance.CellSize / 100f;
+    private float mapSizeY = (float)GlobalVariableHandler.Instance.FieldSizeY * GlobalVariableHandler.Instance.CellSize / 100f;
 
     private Transform target;
     private bool isFollowing = false;
@@ -22,7 +22,7 @@ public class CameraScript : MonoBehaviour
         target = GameObject.Find($"Player{GlobalVariableHandler.Instance.MyIndex}").transform;
         transform.position = new Vector3(target.position.x, target.position.y, -10);
     }
-    
+
     void unBind()
     {
         isFollowing = false;
@@ -78,7 +78,7 @@ public class CameraScript : MonoBehaviour
         {
             bind();
         }
-        else if(Input.GetKey(KeyCode.Z))
+        else if (Input.GetKey(KeyCode.Z))
         {
             unBind();
         }

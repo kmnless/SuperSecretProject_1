@@ -292,12 +292,11 @@ public class ServerHandler : MonoBehaviour
                 if (i == GlobalVariableHandler.Instance.MyIndex)
                 {
                     playerObject = GameObject.Instantiate(playerPrefab, spawnPosition, Quaternion.identity);
-                    Debug.Log($"Spawning player for local client: Player{i}");
+                    playerObject.GetComponent<PlayerHandlerScript>().SetPlayerName(playerObject.name);
                 }
                 else
                 {
                     playerObject = GameObject.Instantiate(clientPrefab, spawnPosition, Quaternion.identity);
-                    Debug.Log($"Spawning client object: Client{i}");
                 }
                 playerObject.transform.rotation = Quaternion.identity;
                 playerObject.name = $"Player{i}";

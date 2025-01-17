@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 6024236347588355632}
   - component: {fileID: 3107090594209996517}
   - component: {fileID: 2744583495915905821}
+  - component: {fileID: 5711941711924284544}
   m_Layer: 0
   m_Name: PlayerPrefab
   m_TagString: Untagged
@@ -107,6 +108,24 @@ MonoBehaviour:
   InLocalSpace: 0
   Interpolate: 1
   SlerpPosition: 0
+--- !u!114 &5711941711924284544
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1645551247277010336}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2663c1d6adaaabcd89eaf85fe4f44682, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  moveAllowance: 0
+  playerPrefab: {fileID: 0}
+  camera: {fileID: 0}
+  bases: {fileID: 0}
+  animationSpeed: 0.1
+  id: 0
 --- !u!1 &6274098991778366898
 GameObject:
   m_ObjectHideFlags: 0

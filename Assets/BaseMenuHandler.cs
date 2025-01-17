@@ -44,15 +44,6 @@ public class BaseMenuHandler : MonoBehaviour
     }
     public void Attack()
     {
-        if(playerScript.properties.Strength*playerScript.properties.StrengthMultiplier > handler.unitCout)
-        {
-            handler.timesAttacked++;
-            if(handler.timesAttacked>=GlobalVariableHandler.AttacksToDefeat)
-            {
-                grave.SetActive(true);
-                transform.gameObject.SetActive(false);
-                dead = true;
-            }
-        }
+        
     }
 }
