@@ -7,6 +7,7 @@ using TMPro;
 using Unity.Collections;
 using Unity.Netcode;
 using Unity.VisualScripting;
+using UnityEditor.PackageManager.Requests;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.SceneManagement;
@@ -117,19 +118,6 @@ public class ServerHandler : MonoBehaviour
         {
             player.Color = GlobalVariableHandler.Instance.Colors[ColorCount++];
             GlobalVariableHandler.Instance.Players.Add(player);
-            if (!NetworkManager.Singleton.ConnectedClients.ContainsKey(request.ClientNetworkId))
-            {
-                Debug.LogError($"Client {request.ClientNetworkId} is not connected.");
-                return;
-            }
-            Debug.Log($"Sending ClientRpc to client {request.ClientNetworkId} with index {player.Id}");
-            clientRpcHandler.SetMyIndexClientRpc(player.Id, new ClientRpcParams
-            {
-                Send = new ClientRpcSendParams
-                {
-                    TargetClientIds = new[] { request.ClientNetworkId }
-                }
-            });
         }
 
         PlayersReadyList.Add(new PlayerReadyStatus(player.Id, nickname));
@@ -146,6 +134,14 @@ public class ServerHandler : MonoBehaviour
             return;
         }
         Debug.Log($"Clientid {clientId} connected. Total clients: {NetworkManager.Singleton.ConnectedClients.Count}");
+
+        clientRpcHandler.SetMyIndexClientRpc(clientId, new ClientRpcParams
+        {
+            Send = new ClientRpcSendParams
+            {
+                TargetClientIds = new[] { clientId }
+            }
+        });
 
         UpdatePlayerListUI();
         PlayerCount = NetworkManager.Singleton.ConnectedClients.Count;
