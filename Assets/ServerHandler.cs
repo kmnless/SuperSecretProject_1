@@ -135,7 +135,7 @@ public class ServerHandler : MonoBehaviour
         }
         Debug.Log($"Clientid {clientId} connected. Total clients: {NetworkManager.Singleton.ConnectedClients.Count}");
 
-        clientRpcHandler.SetMyIndexClientRpc(clientId, new ClientRpcParams
+        clientRpcHandler.SetMyIndexClientRpc(Convert.ToInt32(clientId), new ClientRpcParams
         {
             Send = new ClientRpcSendParams
             {
