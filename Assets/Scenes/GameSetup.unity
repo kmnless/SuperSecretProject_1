@@ -3045,7 +3045,6 @@ MonoBehaviour:
   countdownText: {fileID: 0}
   countdownTime: 3
   networkMediator: {fileID: 8234090399389528743, guid: ef11b7623a690e043884e3606f1b65e8, type: 3}
-  playerPrefab: {fileID: 0}
 --- !u!4 &1585055248
 Transform:
   m_ObjectHideFlags: 0
