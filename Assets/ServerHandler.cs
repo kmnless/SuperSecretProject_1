@@ -117,6 +117,12 @@ public class ServerHandler : MonoBehaviour
         {
             player.Color = GlobalVariableHandler.Instance.Colors[ColorCount++];
             GlobalVariableHandler.Instance.Players.Add(player);
+            if (!NetworkManager.Singleton.ConnectedClients.ContainsKey(request.ClientNetworkId))
+            {
+                Debug.LogError($"Client {request.ClientNetworkId} is not connected.");
+                return;
+            }
+            Debug.Log($"Sending ClientRpc to client {request.ClientNetworkId} with index {player.Id}");
             clientRpcHandler.SetMyIndexClientRpc(player.Id, new ClientRpcParams
             {
                 Send = new ClientRpcSendParams
