@@ -31,11 +31,7 @@ public class PlayerHandlerScript : MonoBehaviour
 
     private void Awake()
     {
-        if (camera == null)
-        {
-            camera = Camera.main;
-        }
-
+        camera = Camera.main;
 
         id = GlobalVariableHandler.Instance.MyIndex ?? 0;
         field = new FieldStates[GlobalVariableHandler.Instance.FieldSizeY, GlobalVariableHandler.Instance.FieldSizeX];
