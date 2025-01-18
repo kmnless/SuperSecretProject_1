@@ -34,7 +34,7 @@ public class GameLoaderScript : MonoBehaviour
                 GlobalVariableHandler.Instance.BuildingsField, 
                 spriteSize, bases, flags, outposts);
 
-            navigator.BuildNavMesh();
+            navigator.BuildNavMeshAsync();
 
             if (ServerHandler.Instance is not null)
             {

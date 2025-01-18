@@ -1,27 +1,22 @@
-using System;
 using System.Collections.Generic;
-using System.IO;
-using UnityEngine;
+using System.Globalization;
+using Unity.Netcode;
 using UnityEngine.AI;
-using static UnityEditor.Experimental.AssetDatabaseExperimental.AssetDatabaseCounters;
+using UnityEngine;
 
-public class PlayerHandlerScript : MonoBehaviour
+public class PlayerHandlerScript : NetworkBehaviour
 {
     [SerializeField] private float moveAllowance = 0.1f;
     [SerializeField] private Camera camera;
     private FieldStates[,] field;
-    public static NavMeshAgent agent = null;
-    public static GameObject player;
-    public int id { get; set; }
-    public string playerName { get; set; }
-
+    public NavMeshAgent agent { get; private set; }
+    public string playerName { get; private set; }
     private List<Vector3> path;
     private Vector3 previousStep;
     private float animationCounter = 0;
     private int counter = 1;
     private bool allowMove = false;
     public float animationSpeed = 0.1f;
-
 
     public void SetPlayerName(string name)
     {
@@ -33,9 +28,13 @@ public class PlayerHandlerScript : MonoBehaviour
     {
         camera = Camera.main;
 
-        id = GlobalVariableHandler.Instance.MyIndex ?? 0;
-        field = new FieldStates[GlobalVariableHandler.Instance.FieldSizeY, GlobalVariableHandler.Instance.FieldSizeX];
+        if (camera == null)
+        {
+            Debug.LogError("Main Camera not found. Ensure a Camera exists and is tagged as 'MainCamera'.");
+        }
 
+        // Поле инициализируется для всех
+        field = new FieldStates[GlobalVariableHandler.Instance.FieldSizeY, GlobalVariableHandler.Instance.FieldSizeX];
         for (int y = 0; y < GlobalVariableHandler.Instance.FieldSizeY; y++)
         {
             for (int x = 0; x < GlobalVariableHandler.Instance.FieldSizeX; x++)
@@ -47,45 +46,61 @@ public class PlayerHandlerScript : MonoBehaviour
         }
     }
 
-    private void Start()
+    public override void OnNetworkSpawn()
+    {
+        if (IsOwner)
+        {
+            InitializeLocalPlayer();
+        }
+        else
+        {
+            DisableRemotePlayerComponents();
+        }
+    }
+
+    private void InitializeLocalPlayer()
     {
         agent = GetComponent<NavMeshAgent>();
+        if (agent == null)
+        {
+            Debug.LogError("NavMeshAgent is missing on this object.");
+            return;
+        }
+
         agent.updateRotation = false;
         agent.updateUpAxis = false;
 
         if (string.IsNullOrEmpty(playerName))
         {
-            SetPlayerName($"Player{id}");
+            SetPlayerName($"Player{OwnerClientId}");
         }
+
+        Debug.Log($"Local player initialized: {gameObject.name}");
     }
-    public void FixedUpdate()
+
+    private void DisableRemotePlayerComponents()
     {
-        Vector3 intermediate = new Vector3();
-
-
-        if (path != null && path.Count > counter && allowMove)
+        // Отключение управления для других объектов
+        if (TryGetComponent(out NavMeshAgent navAgent))
         {
-            intermediate = path[counter] - previousStep;
-
-            player.transform.position = previousStep + intermediate * animationCounter;
-            animationCounter += animationSpeed;
-            if (animationCounter > 1f)
-            {
-                previousStep = path[counter];
-                animationCounter = 0;
-                counter++;
-            }
-
+            navAgent.enabled = false;
         }
-        else
+
+        if (TryGetComponent(out Renderer renderer))
         {
-            counter = 1;
-            animationCounter = 0;
-            path = null;
+            renderer.material.color = Color.gray; // Отметка для других игроков
         }
+
+        Debug.Log($"Remote player initialized: {gameObject.name}");
     }
+
     private void Update()
     {
+        if (!IsOwner || agent == null)
+        {
+            return; // Только владелец управляет объектом
+        }
+
         if (Input.GetMouseButtonDown(1))
         {
             HandleMouseClick();
@@ -97,16 +112,14 @@ public class PlayerHandlerScript : MonoBehaviour
         if (camera == null)
         {
             camera = Camera.main;
-
             if (camera == null)
             {
-                Debug.LogError("Main Camera still not found. Ensure a Camera exists and is tagged as 'MainCamera'.");
+                Debug.LogError("Main Camera not found.");
                 return;
             }
         }
 
         Vector3 mousePosition = Input.mousePosition;
-
         Vector3 worldPosition = camera.ScreenToWorldPoint(mousePosition);
 
         if (worldPosition.x > 0 && worldPosition.y > 0 &&
@@ -120,7 +133,6 @@ public class PlayerHandlerScript : MonoBehaviour
             {
                 Vector3 destination = new Vector3((targetX + 0.5f) * GameLoaderScript.spriteSize / 100f,
                                                   (targetY + 0.5f) * GameLoaderScript.spriteSize / 100f, 10f);
-                //Debug.Log("Destination: " + destination);
                 agent.SetDestination(destination);
             }
         }

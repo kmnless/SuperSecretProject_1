@@ -255,6 +255,16 @@ public class ServerHandler : MonoBehaviour
     }
     public static class PlayerSpawner
     {
+        private static Vector3 GetValidPosition(Vector3 desiredPosition)
+        {
+            if (NavMesh.SamplePosition(desiredPosition, out NavMeshHit hit, 1.0f, NavMesh.AllAreas))
+            {
+                return hit.position;
+            }
+
+            Debug.LogError($"Position {desiredPosition} is not on NavMesh!");
+            return desiredPosition;
+        }
         public static void SpawnPlayers(List<Vector3> basePositions)
         {
             if (!NetworkManager.Singleton.IsServer)
@@ -265,47 +275,16 @@ public class ServerHandler : MonoBehaviour
 
             for (int i = 0; i < basePositions.Count; i++)
             {
-                Vector3 spawnPosition = basePositions[i];
-                //if (i == GlobalVariableHandler.Instance.MyIndex)            // idk, here might be a problem
-                //{
-                //    var playerObject = GameObject.Instantiate(playerPrefab, spawnPosition, Quaternion.identity);
-                //    playerObject.transform.rotation = Quaternion.identity;
-                //    playerObject.name = $"Player{i}";
-                //    Debug.Log($"Player{i} spawned");
-                //    playerObject.GetComponent<NetworkObject>().SpawnWithOwnership((ulong)i);
-                //    Debug.Log($"Player{i} network spawned");
+                Vector3 spawnPosition = GetValidPosition(basePositions[i]);
 
-                //    PlayerHandlerScript.player = playerObject;
-                //}
-                //else
-                //{
-                //    var playerObject = GameObject.Instantiate(clientPrefab, spawnPosition, Quaternion.identity);
-                //    playerObject.transform.rotation = Quaternion.identity;
-                //    playerObject.name = $"Player{i}";
-                //    Debug.Log($"Client{i} spawned");
-                //    playerObject.GetComponent<NetworkObject>().SpawnWithOwnership((ulong)i);
-                //    Debug.Log($"Client{i} network spawned");
-                //}
-                //Debug.Log($"Player {i} spawned at {spawnPosition}");
-
-                GameObject playerObject;
-                if (i == GlobalVariableHandler.Instance.MyIndex)
-                {
-                    playerObject = GameObject.Instantiate(playerPrefab, spawnPosition, Quaternion.identity);
-                    playerObject.GetComponent<PlayerHandlerScript>().SetPlayerName(playerObject.name);
-                }
-                else
-                {
-                    playerObject = GameObject.Instantiate(clientPrefab, spawnPosition, Quaternion.identity);
-                }
+                GameObject playerObject = GameObject.Instantiate(playerPrefab, spawnPosition, Quaternion.identity);
                 playerObject.transform.rotation = Quaternion.identity;
                 playerObject.name = $"Player{i}";
 
                 var networkObject = playerObject.GetComponent<NetworkObject>();
                 networkObject.SpawnWithOwnership((ulong)i);
-                Debug.Log($"{playerObject.name} network spawned.");
 
-                Debug.Log($"Player {i} spawned at {spawnPosition}");
+                Debug.Log($"Player {i} network spawned at {spawnPosition}");
             }
         }
     }
