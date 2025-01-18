@@ -34,23 +34,22 @@ public class GameLoaderScript : MonoBehaviour
                 GlobalVariableHandler.Instance.BuildingsField,
                 spriteSize, bases, flags, outposts);
 
-            StartCoroutine(BuildNavMeshAndSpawnPlayers(basePositions));
+            //StartCoroutine(BuildNavMeshAndSpawnPlayers(basePositions));
 
-            //navigator.BuildNavMeshAsync();
+            navigator.BuildNavMeshAsync();
 
-            //if (ServerHandler.Instance is not null)
-            //{
-            //    try
-            //    {
-            //        ServerHandler.PlayerSpawner.SpawnPlayers(basePositions);
-            //    }
-            //    catch (Exception e)
-            //    {
-            //        Debug.LogError(e);
-            //    }
-            //
+            if (ServerHandler.Instance is not null)
+            {
+                try
+                {
+                    ServerHandler.PlayerSpawner.SpawnPlayers(basePositions);
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError(e);
+                }
+            }
         }
-
         catch (Exception ex)
         {
             Debug.LogException(ex);
