@@ -261,9 +261,7 @@ public class ServerHandler : MonoBehaviour
             {
                 return hit.position;
             }
-
-            Debug.LogError($"Position {desiredPosition} is not on NavMesh!");
-            return desiredPosition;
+            return new Vector3(desiredPosition.x, desiredPosition.y, 0);
         }
         public static void SpawnPlayers(List<Vector3> basePositions)
         {

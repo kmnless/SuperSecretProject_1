@@ -111,12 +111,14 @@ public class PlayerHandlerScript : NetworkBehaviour
     {
         if (camera == null)
         {
-            camera = Camera.main;
-            if (camera == null)
-            {
-                Debug.LogError("Main Camera not found.");
-                return;
-            }
+            Debug.LogError("Camera is not initialized.");
+            return;
+        }
+
+        if (agent == null || !agent.isOnNavMesh)
+        {
+            Debug.LogError("NavMeshAgent is not active or not on NavMesh.");
+            return;
         }
 
         Vector3 mousePosition = Input.mousePosition;
@@ -132,11 +134,21 @@ public class PlayerHandlerScript : NetworkBehaviour
             if (GlobalVariableHandler.Instance.BuildingsField[targetY, targetX] != (int)Constants.Buildings.None)
             {
                 Vector3 destination = new Vector3((targetX + 0.5f) * GameLoaderScript.spriteSize / 100f,
-                                                  (targetY + 0.5f) * GameLoaderScript.spriteSize / 100f, 10f);
-                agent.SetDestination(destination);
+                                                  (targetY + 0.5f) * GameLoaderScript.spriteSize / 100f, 0);
+
+                if (NavMesh.SamplePosition(destination, out NavMeshHit hit, 1.0f, NavMesh.AllAreas))
+                {
+                    agent.SetDestination(hit.position);
+                    Debug.Log($"Moving to: {hit.position}");
+                }
+                else
+                {
+                    Debug.LogError($"Target destination {destination} is not on NavMesh.");
+                }
             }
         }
     }
+
 }
 
 

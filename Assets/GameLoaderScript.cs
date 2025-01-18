@@ -23,36 +23,47 @@ public class GameLoaderScript : MonoBehaviour
     {
         try
         {
-            MapScript.CreateSpriteMap(GlobalVariableHandler.Instance.FieldSizeX, 
-                GlobalVariableHandler.Instance.FieldSizeY, 
-                GlobalVariableHandler.Instance.TerrainField, 
-                GlobalVariableHandler.Instance.BuildingsField, 
+            MapScript.CreateSpriteMap(GlobalVariableHandler.Instance.FieldSizeX,
+                GlobalVariableHandler.Instance.FieldSizeY,
+                GlobalVariableHandler.Instance.TerrainField,
+                GlobalVariableHandler.Instance.BuildingsField,
                 spriteSize, map);
 
-            MapScript.CreateEntities(GlobalVariableHandler.Instance.FieldSizeX, 
-                GlobalVariableHandler.Instance.FieldSizeY, 
-                GlobalVariableHandler.Instance.BuildingsField, 
+            MapScript.CreateEntities(GlobalVariableHandler.Instance.FieldSizeX,
+                GlobalVariableHandler.Instance.FieldSizeY,
+                GlobalVariableHandler.Instance.BuildingsField,
                 spriteSize, bases, flags, outposts);
 
-            navigator.BuildNavMeshAsync();
+            StartCoroutine(BuildNavMeshAndSpawnPlayers(basePositions));
 
-            if (ServerHandler.Instance is not null)
-            {
-                try
-                {
-                    ServerHandler.PlayerSpawner.SpawnPlayers(basePositions);
-                }
-                catch (Exception e)
-                {
-                    Debug.LogError(e);
-                }
-            }
+            //navigator.BuildNavMeshAsync();
+
+            //if (ServerHandler.Instance is not null)
+            //{
+            //    try
+            //    {
+            //        ServerHandler.PlayerSpawner.SpawnPlayers(basePositions);
+            //    }
+            //    catch (Exception e)
+            //    {
+            //        Debug.LogError(e);
+            //    }
+            //
         }
-        catch(Exception ex) 
+
+        catch (Exception ex)
         {
             Debug.LogException(ex);
         };
 
+    }
+
+    private IEnumerator BuildNavMeshAndSpawnPlayers(List<Vector3> basePositions)
+    {
+        yield return navigator.BuildNavMeshAsync();
+        Debug.Log("NavMesh built successfully.");
+
+        ServerHandler.PlayerSpawner.SpawnPlayers(basePositions);
     }
     //private void Start()
     //{
