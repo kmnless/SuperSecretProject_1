@@ -94,6 +94,17 @@ public class PlayerHandlerScript : MonoBehaviour
 
     private void HandleMouseClick()
     {
+        if (camera == null)
+        {
+            camera = Camera.main;
+
+            if (camera == null)
+            {
+                Debug.LogError("Main Camera still not found. Ensure a Camera exists and is tagged as 'MainCamera'.");
+                return;
+            }
+        }
+
         Vector3 mousePosition = Input.mousePosition;
 
         Vector3 worldPosition = camera.ScreenToWorldPoint(mousePosition);
