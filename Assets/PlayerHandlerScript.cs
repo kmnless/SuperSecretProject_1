@@ -30,10 +30,17 @@ public class PlayerHandlerScript : NetworkBehaviour
 
         if (camera == null)
         {
-            Debug.LogError("Main Camera not found. Ensure a Camera exists and is tagged as 'MainCamera'.");
+            camera = FindObjectOfType<Camera>();
+            if (camera == null)
+            {
+                Debug.LogError("No Camera found in the scene. Ensure a Camera exists and is tagged as 'MainCamera'.");
+            }
+            else
+            {
+                Debug.Log("Camera found via FindObjectOfType.");
+            }
         }
 
-        // Поле инициализируется для всех
         field = new FieldStates[GlobalVariableHandler.Instance.FieldSizeY, GlobalVariableHandler.Instance.FieldSizeX];
         for (int y = 0; y < GlobalVariableHandler.Instance.FieldSizeY; y++)
         {
@@ -67,6 +74,21 @@ public class PlayerHandlerScript : NetworkBehaviour
             return;
         }
 
+        if (!agent.isOnNavMesh)
+        {
+            Debug.LogError($"Agent is not on NavMesh at {transform.position}. Adjusting position.");
+            if (NavMesh.SamplePosition(transform.position, out NavMeshHit hit, 1.0f, NavMesh.AllAreas))
+            {
+                agent.Warp(hit.position);
+                Debug.Log($"Agent repositioned to {hit.position}");
+            }
+            else
+            {
+                Debug.LogError("Could not find a valid position on NavMesh.");
+                return;
+            }
+        }
+
         agent.updateRotation = false;
         agent.updateUpAxis = false;
 
@@ -80,7 +102,6 @@ public class PlayerHandlerScript : NetworkBehaviour
 
     private void DisableRemotePlayerComponents()
     {
-        // Отключение управления для других объектов
         if (TryGetComponent(out NavMeshAgent navAgent))
         {
             navAgent.enabled = false;
@@ -88,7 +109,7 @@ public class PlayerHandlerScript : NetworkBehaviour
 
         if (TryGetComponent(out Renderer renderer))
         {
-            renderer.material.color = Color.gray; // Отметка для других игроков
+            renderer.material.color = Color.gray;
         }
 
         Debug.Log($"Remote player initialized: {gameObject.name}");
@@ -98,7 +119,7 @@ public class PlayerHandlerScript : NetworkBehaviour
     {
         if (!IsOwner || agent == null)
         {
-            return; // Только владелец управляет объектом
+            return;
         }
 
         if (Input.GetMouseButtonDown(1))
@@ -124,29 +145,31 @@ public class PlayerHandlerScript : NetworkBehaviour
         Vector3 mousePosition = Input.mousePosition;
         Vector3 worldPosition = camera.ScreenToWorldPoint(mousePosition);
 
-        if (worldPosition.x > 0 && worldPosition.y > 0 &&
-            worldPosition.x * 100 < MapScript.sprites.GetLength(1) * GameLoaderScript.spriteSize &&
-            worldPosition.y * 100 < MapScript.sprites.GetLength(0) * GameLoaderScript.spriteSize)
+        if (IsPositionValid(worldPosition))
         {
             int targetX = (int)(worldPosition.x * 100 / GameLoaderScript.spriteSize);
             int targetY = (int)(worldPosition.y * 100 / GameLoaderScript.spriteSize);
 
-            if (GlobalVariableHandler.Instance.BuildingsField[targetY, targetX] != (int)Constants.Buildings.None)
-            {
-                Vector3 destination = new Vector3((targetX + 0.5f) * GameLoaderScript.spriteSize / 100f,
-                                                  (targetY + 0.5f) * GameLoaderScript.spriteSize / 100f, 0);
+            Vector3 destination = new Vector3((targetX + 0.5f) * GameLoaderScript.spriteSize / 100f,
+                                              (targetY + 0.5f) * GameLoaderScript.spriteSize / 100f, 0);
 
-                if (NavMesh.SamplePosition(destination, out NavMeshHit hit, 1.0f, NavMesh.AllAreas))
-                {
-                    agent.SetDestination(hit.position);
-                    Debug.Log($"Moving to: {hit.position}");
-                }
-                else
-                {
-                    Debug.LogError($"Target destination {destination} is not on NavMesh.");
-                }
+            if (NavMesh.SamplePosition(destination, out NavMeshHit hit, 1.0f, NavMesh.AllAreas))
+            {
+                agent.SetDestination(hit.position);
+                Debug.Log($"Moving to: {hit.position}");
+            }
+            else
+            {
+                Debug.LogError($"Target destination {destination} is not on NavMesh.");
             }
         }
+    }
+
+    private bool IsPositionValid(Vector3 position)
+    {
+        return position.x > 0 && position.y > 0 &&
+               position.x * 100 < MapScript.sprites.GetLength(1) * GameLoaderScript.spriteSize &&
+               position.y * 100 < MapScript.sprites.GetLength(0) * GameLoaderScript.spriteSize;
     }
 
 }
