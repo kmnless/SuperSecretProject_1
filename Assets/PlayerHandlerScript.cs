@@ -50,7 +50,18 @@ public class PlayerHandlerScript : NetworkBehaviour
         cam = assignedCamera;
         Debug.Log($"Camera assigned: {cam.name}");
     }
+    private void InitializeServerAgent()
+    {
+        if (IsServer)
+        {
+            if(agent == null)
+                agent = gameObject.AddComponent<NavMeshAgent>();
 
+            agent.areaMask = NavMesh.AllAreas;
+            agent.speed = 10;
+            Debug.Log($"NavMeshAgent initialized on server for {gameObject.name}");
+        }
+    }
     public override void OnNetworkSpawn()
     {
         if (IsServer)
@@ -190,28 +201,25 @@ public class PlayerHandlerScript : NetworkBehaviour
     [ServerRpc]
     public void MoveToDestinationServerRpc(Vector3 destination, ServerRpcParams serverRpcParams = default)
     {
-        // Проверяем, что компонент NavMeshAgent существует
         if (agent == null)
         {
             Debug.LogError($"NavMeshAgent is null for {gameObject.name}. Ensure it is properly initialized.");
             return;
         }
 
-        // Проверяем, что объект находится на NavMesh
         if (!agent.isOnNavMesh)
         {
             Debug.LogError($"NavMeshAgent is not on NavMesh for {gameObject.name} at position {transform.position}.");
+            InitializeServerAgent();
             return;
         }
 
-        // Проверяем, является ли клиент владельцем объекта
         if (serverRpcParams.Receive.SenderClientId != OwnerClientId)
         {
             Debug.LogError($"Unauthorized movement request from client {serverRpcParams.Receive.SenderClientId} for {gameObject.name}.");
             return;
         }
 
-        // Проверяем, что цель находится на NavMesh
         if (NavMesh.SamplePosition(destination, out NavMeshHit hit, 1.0f, NavMesh.AllAreas))
         {
             agent.SetDestination(hit.position);
