@@ -93,8 +93,6 @@ public class PlayerHandlerScript : NetworkBehaviour
         {
             SetPlayerName($"Player{OwnerClientId}");
         }
-
-        Debug.Log($"Local player initialized: {gameObject.name}");
     }
 
     private void DisableRemotePlayerComponents()
@@ -108,8 +106,6 @@ public class PlayerHandlerScript : NetworkBehaviour
         {
             renderer.material.color = Color.gray;
         }
-
-        Debug.Log($"Remote player initialized: {gameObject.name}");
     }
 
     private void Update()
@@ -127,7 +123,8 @@ public class PlayerHandlerScript : NetworkBehaviour
 
     private void HandleMouseClick()
     {
-        if(cam == null)
+
+        if (cam == null)
         {
             AssignCamera(Camera.main);
             return;
@@ -136,13 +133,23 @@ public class PlayerHandlerScript : NetworkBehaviour
         if (agent == null || !agent.isOnNavMesh)
         {
             Debug.Log("NavMeshAgent is not active or not on NavMesh.");
-            //return;
+            return;
+        }
+
+        if (!agent.enabled)
+        {
+            Debug.LogError("NavMeshAgent is not enabled.");
+            return;
         }
 
         Vector3 mousePosition = Input.mousePosition;
         Vector3 worldPosition = cam.ScreenToWorldPoint(mousePosition);
 
-        if (IsPositionValid(worldPosition))
+        Vector3 destination = new Vector3(worldPosition.x, worldPosition.y, 0);
+
+        MoveToDestinationServerRpc(destination);
+
+        /*if (IsPositionValid(worldPosition))
         {
             int targetX = (int)(worldPosition.x * 100 / GameLoaderScript.spriteSize);
             int targetY = (int)(worldPosition.y * 100 / GameLoaderScript.spriteSize);
@@ -159,8 +166,30 @@ public class PlayerHandlerScript : NetworkBehaviour
             {
                 Debug.LogError($"Target destination {destination} is not on NavMesh.");
             }
+        }*/
+    }
+
+    [ServerRpc]
+    public void MoveToDestinationServerRpc(Vector3 destination, ServerRpcParams serverRpcParams = default)
+    {
+        if (NavMesh.SamplePosition(destination, out NavMeshHit hit, 1.0f, NavMesh.AllAreas))
+        {
+            if (serverRpcParams.Receive.SenderClientId == OwnerClientId)
+            {
+                agent.SetDestination(hit.position);
+                Debug.Log($"Server moving player {OwnerClientId} to: {hit.position}");
+            }
+            else
+            {
+                Debug.LogError("Unauthorized movement request.");
+            }
+        }
+        else
+        {
+            Debug.LogError($"Target destination {destination} is not on NavMesh.");
         }
     }
+
 
     private bool IsPositionValid(Vector3 position)
     {
