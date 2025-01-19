@@ -57,8 +57,11 @@ public class PlayerHandlerScript : NetworkBehaviour
             if(agent == null)
                 agent = gameObject.AddComponent<NavMeshAgent>();
 
+            agent.enabled = true;
             agent.areaMask = NavMesh.AllAreas;
             agent.speed = 10;
+            agent.updateRotation = false;
+            agent.updateUpAxis = false;
             Debug.Log($"NavMeshAgent initialized on server for {gameObject.name}");
         }
     }
@@ -201,17 +204,9 @@ public class PlayerHandlerScript : NetworkBehaviour
     [ServerRpc]
     public void MoveToDestinationServerRpc(Vector3 destination, ServerRpcParams serverRpcParams = default)
     {
-        if (agent == null)
+        if (agent == null || !agent.isOnNavMesh)
         {
-            Debug.LogError($"NavMeshAgent is null for {gameObject.name}. Ensure it is properly initialized.");
-            return;
-        }
-
-        if (!agent.isOnNavMesh)
-        {
-            Debug.LogError($"NavMeshAgent is not on NavMesh for {gameObject.name} at position {transform.position}.");
             InitializeServerAgent();
-            return;
         }
 
         if (serverRpcParams.Receive.SenderClientId != OwnerClientId)
@@ -223,7 +218,6 @@ public class PlayerHandlerScript : NetworkBehaviour
         if (NavMesh.SamplePosition(destination, out NavMeshHit hit, 1.0f, NavMesh.AllAreas))
         {
             agent.SetDestination(hit.position);
-            transform.rotation = Quaternion.identity;
             Debug.Log($"Server moving player {OwnerClientId} to: {hit.position}");
         }
         else
