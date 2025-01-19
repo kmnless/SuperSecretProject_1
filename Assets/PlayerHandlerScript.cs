@@ -53,6 +53,16 @@ public class PlayerHandlerScript : NetworkBehaviour
 
     public override void OnNetworkSpawn()
     {
+        if (IsServer)
+        {
+            Debug.Log($"Server spawning player: {gameObject.name}");
+            agent = GetComponent<NavMeshAgent>();
+            if (agent == null)
+            {
+                Debug.LogError($"NavMeshAgent is null for {gameObject.name} on server.");
+            }
+        }
+
         if (IsOwner)
         {
             InitializeLocalPlayer();
@@ -97,6 +107,11 @@ public class PlayerHandlerScript : NetworkBehaviour
 
     private void DisableRemotePlayerComponents()
     {
+        if (TryGetComponent(out NavMeshAgent navAgent))
+        {
+            navAgent.enabled = false;
+        }
+
         if (TryGetComponent(out Renderer renderer))
         {
             renderer.material.color = Color.gray;
