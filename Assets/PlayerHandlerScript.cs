@@ -27,7 +27,7 @@ public class PlayerHandlerScript : NetworkBehaviour
 
     private void Awake()
     {
-        cam = Camera.main;
+        AssignCamera(Camera.main);
 
         field = new FieldStates[GlobalVariableHandler.Instance.FieldSizeY, GlobalVariableHandler.Instance.FieldSizeX];
         for (int y = 0; y < GlobalVariableHandler.Instance.FieldSizeY; y++)
@@ -223,6 +223,7 @@ public class PlayerHandlerScript : NetworkBehaviour
         if (NavMesh.SamplePosition(destination, out NavMeshHit hit, 1.0f, NavMesh.AllAreas))
         {
             agent.SetDestination(hit.position);
+            transform.rotation = Quaternion.identity;
             Debug.Log($"Server moving player {OwnerClientId} to: {hit.position}");
         }
         else
