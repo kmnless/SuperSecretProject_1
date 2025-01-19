@@ -76,7 +76,7 @@ public class PlayerHandlerScript : NetworkBehaviour
 
         if (!agent.isOnNavMesh)
         {
-            Debug.LogError($"Agent is not on NavMesh at {transform.position}. Adjusting position.");
+            Debug.Log($"Agent is not on NavMesh at {transform.position}. Adjusting position.");
             if (NavMesh.SamplePosition(transform.position, out NavMeshHit hit, 1.0f, NavMesh.AllAreas))
             {
                 transform.position = hit.position;
@@ -84,7 +84,7 @@ public class PlayerHandlerScript : NetworkBehaviour
             }
             else
             {
-                Debug.LogError($"Could not find a valid position on NavMesh.");
+                Debug.Log($"Could not find a valid position on NavMesh.");
             }
         }
 
@@ -137,8 +137,8 @@ public class PlayerHandlerScript : NetworkBehaviour
 
         if (agent == null || !agent.isOnNavMesh)
         {
-            Debug.LogError("NavMeshAgent is not active or not on NavMesh.");
-            return;
+            Debug.Log("NavMeshAgent is not active or not on NavMesh.");
+            //return;
         }
 
         Vector3 mousePosition = Input.mousePosition;
