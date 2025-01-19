@@ -127,6 +127,12 @@ public class PlayerHandlerScript : NetworkBehaviour
 
     private void HandleMouseClick()
     {
+        if(cam == null)
+        {
+            AssignCamera(Camera.main);
+            return;
+        }
+
         if (agent == null || !agent.isOnNavMesh)
         {
             Debug.Log("NavMeshAgent is not active or not on NavMesh.");
