@@ -34,10 +34,8 @@ public class GameLoaderScript : MonoBehaviour
                 GlobalVariableHandler.Instance.BuildingsField,
                 spriteSize, bases, flags, outposts);
 
-            //StartCoroutine(BuildNavMeshAndSpawnPlayers(basePositions));
-
-            //StartCoroutine(BuildNavMesh());
-            navigator.BuildNavMeshAsync();
+            StartCoroutine(BuildNavMesh());
+            //navigator.BuildNavMeshAsync();
 
             if (ServerHandler.Instance is not null)
             {
@@ -63,9 +61,10 @@ public class GameLoaderScript : MonoBehaviour
         yield return navigator.BuildNavMeshAsync();
         Debug.Log("NavMesh built successfully.");
     }
-    //private void Start()
-    //{
+    private void Start()
+    {
+        navigator.BuildNavMeshAsync();
+        navigator.UpdateNavMesh(navigator.navMeshData);
 
-
-    //}
+    }
 }

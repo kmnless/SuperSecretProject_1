@@ -264,7 +264,7 @@ MonoBehaviour:
   m_OverrideByGrid: 0
   m_UseMeshPrefab: {fileID: 0}
   m_CompressBounds: 1
-  m_OverrideVector: {x: 1, y: 1, z: 1}
+  m_OverrideVector: {x: 1, y: 1, z: 0}
 --- !u!114 &1098987428
 MonoBehaviour:
   m_ObjectHideFlags: 0
