@@ -44,7 +44,10 @@ public class PlayerHandlerScript : NetworkBehaviour
             }
         }
     }
-
+    private void Start()
+    {
+        cam = Camera.main;
+    }
     public override void OnNetworkSpawn()
     {
         if (IsOwner)
