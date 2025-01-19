@@ -31,16 +31,16 @@ public class BaseMenuHandler : MonoBehaviour
 
     void FixedUpdate()
     {
-        if(transform.gameObject.activeSelf&&(baseVisual.transform.position - player.transform.position- new Vector3(0f,0f,10f)).magnitude<GlobalVariableHandler.CaptureDistance*GlobalVariableHandler.Instance.CellSize /100f)
-        {
-            attackButton.interactable = true;
-        }
-        else if (transform.gameObject.activeSelf)
-        {
-            attackButton.interactable = false;
-            //Debug.Log(GlobalVariableHandler.captureDistance*GlobalVariableHandler.cellSize/100f);
-            //Debug.Log((flagVisual.transform.position - player.transform.position- new Vector3(0f,0f,10f)).magnitude);
-        }
+        //if(transform.gameObject.activeSelf&&(baseVisual.transform.position - player.transform.position- new Vector3(0f,0f,10f)).magnitude<GlobalVariableHandler.CaptureDistance*GlobalVariableHandler.Instance.CellSize /100f)
+        //{
+        //    attackButton.interactable = true;
+        //}
+        //else if (transform.gameObject.activeSelf)
+        //{
+        //    attackButton.interactable = false;
+        //    Debug.Log(GlobalVariableHandler.captureDistance*GlobalVariableHandler.cellSize/100f);
+        //    Debug.Log((flagVisual.transform.position - player.transform.position- new Vector3(0f,0f,10f)).magnitude);
+        //}
     }
     public void Attack()
     {
