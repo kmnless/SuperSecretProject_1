@@ -45,20 +45,12 @@ public class PlayerHandlerScript : NetworkBehaviour
             }
         }
     }
-    private void Start()
+    public void AssignCamera(Camera assignedCamera)
     {
-        StartCoroutine(InitializeCamera());
+        cam = assignedCamera;
+        Debug.Log($"Camera assigned: {cam.name}");
     }
 
-    private IEnumerator InitializeCamera()
-    {
-        while (Camera.main == null)
-        {
-            yield return null; // ∆дЄм следующий кадр, пока камера не станет доступной
-        }
-        cam = Camera.main;
-        Debug.Log("Camera initialized successfully.");
-    }
     public override void OnNetworkSpawn()
     {
         if (IsOwner)
@@ -135,12 +127,6 @@ public class PlayerHandlerScript : NetworkBehaviour
 
     private void HandleMouseClick()
     {
-        if (cam == null)
-        {
-            Debug.LogError("Camera is not initialized.");
-            return;
-        }
-
         if (agent == null || !agent.isOnNavMesh)
         {
             Debug.Log("NavMeshAgent is not active or not on NavMesh.");
