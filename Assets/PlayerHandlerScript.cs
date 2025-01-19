@@ -3,6 +3,7 @@ using System.Globalization;
 using Unity.Netcode;
 using UnityEngine.AI;
 using UnityEngine;
+using System.Collections;
 
 public class PlayerHandlerScript : NetworkBehaviour
 {
@@ -46,7 +47,17 @@ public class PlayerHandlerScript : NetworkBehaviour
     }
     private void Start()
     {
+        StartCoroutine(InitializeCamera());
+    }
+
+    private IEnumerator InitializeCamera()
+    {
+        while (Camera.main == null)
+        {
+            yield return null; // ∆дЄм следующий кадр, пока камера не станет доступной
+        }
         cam = Camera.main;
+        Debug.Log("Camera initialized successfully.");
     }
     public override void OnNetworkSpawn()
     {
