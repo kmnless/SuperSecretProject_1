@@ -145,9 +145,17 @@ public class PlayerHandlerScript : NetworkBehaviour
         Vector3 mousePosition = Input.mousePosition;
         Vector3 worldPosition = cam.ScreenToWorldPoint(mousePosition);
 
-        Vector3 destination = new Vector3(worldPosition.x, worldPosition.y, 0);
+        if (IsPositionValid(worldPosition))
+        {
+            int targetX = (int)(worldPosition.x * 100 / GameLoaderScript.spriteSize);
+            int targetY = (int)(worldPosition.y * 100 / GameLoaderScript.spriteSize);
 
-        MoveToDestinationServerRpc(destination);
+            Vector3 destination = new Vector3((targetX + 0.5f) * GameLoaderScript.spriteSize / 100f,
+                                              (targetY + 0.5f) * GameLoaderScript.spriteSize / 100f, 0);
+
+            Debug.Log($"ServerRpc called for {gameObject.name}, agent: {agent}, position: {transform.position}");
+            MoveToDestinationServerRpc(destination);
+        }
 
         /*if (IsPositionValid(worldPosition))
         {
@@ -172,17 +180,32 @@ public class PlayerHandlerScript : NetworkBehaviour
     [ServerRpc]
     public void MoveToDestinationServerRpc(Vector3 destination, ServerRpcParams serverRpcParams = default)
     {
+        // Проверяем, что компонент NavMeshAgent существует
+        if (agent == null)
+        {
+            Debug.LogError($"NavMeshAgent is null for {gameObject.name}. Ensure it is properly initialized.");
+            return;
+        }
+
+        // Проверяем, что объект находится на NavMesh
+        if (!agent.isOnNavMesh)
+        {
+            Debug.LogError($"NavMeshAgent is not on NavMesh for {gameObject.name} at position {transform.position}.");
+            return;
+        }
+
+        // Проверяем, является ли клиент владельцем объекта
+        if (serverRpcParams.Receive.SenderClientId != OwnerClientId)
+        {
+            Debug.LogError($"Unauthorized movement request from client {serverRpcParams.Receive.SenderClientId} for {gameObject.name}.");
+            return;
+        }
+
+        // Проверяем, что цель находится на NavMesh
         if (NavMesh.SamplePosition(destination, out NavMeshHit hit, 1.0f, NavMesh.AllAreas))
         {
-            if (serverRpcParams.Receive.SenderClientId == OwnerClientId)
-            {
-                agent.SetDestination(hit.position);
-                Debug.Log($"Server moving player {OwnerClientId} to: {hit.position}");
-            }
-            else
-            {
-                Debug.LogError("Unauthorized movement request.");
-            }
+            agent.SetDestination(hit.position);
+            Debug.Log($"Server moving player {OwnerClientId} to: {hit.position}");
         }
         else
         {
