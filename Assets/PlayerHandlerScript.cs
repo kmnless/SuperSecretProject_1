@@ -222,7 +222,7 @@ public class PlayerHandlerScript : NetworkBehaviour
         }
         else
         {
-            Debug.LogError($"Target destination {destination} is not on NavMesh.");
+            Debug.Log($"Target destination {destination} is not on NavMesh.");
         }
     }
 
