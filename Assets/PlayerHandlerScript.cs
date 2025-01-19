@@ -79,13 +79,12 @@ public class PlayerHandlerScript : NetworkBehaviour
             Debug.LogError($"Agent is not on NavMesh at {transform.position}. Adjusting position.");
             if (NavMesh.SamplePosition(transform.position, out NavMeshHit hit, 1.0f, NavMesh.AllAreas))
             {
+                transform.position = hit.position;
                 agent.Warp(hit.position);
-                Debug.Log($"Agent repositioned to {hit.position}");
             }
             else
             {
-                Debug.LogError("Could not find a valid position on NavMesh.");
-                return;
+                Debug.LogError($"Could not find a valid position on NavMesh.");
             }
         }
 

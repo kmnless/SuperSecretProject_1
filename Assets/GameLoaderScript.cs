@@ -36,7 +36,7 @@ public class GameLoaderScript : MonoBehaviour
 
             //StartCoroutine(BuildNavMeshAndSpawnPlayers(basePositions));
 
-            navigator.BuildNavMeshAsync();
+            BuildNavMesh();
 
             if (ServerHandler.Instance is not null)
             {
@@ -57,12 +57,9 @@ public class GameLoaderScript : MonoBehaviour
 
     }
 
-    private IEnumerator BuildNavMeshAndSpawnPlayers(List<Vector3> basePositions)
+    private IEnumerator BuildNavMesh()
     {
         yield return navigator.BuildNavMeshAsync();
-        Debug.Log("NavMesh built successfully.");
-
-        ServerHandler.PlayerSpawner.SpawnPlayers(basePositions);
     }
     //private void Start()
     //{
