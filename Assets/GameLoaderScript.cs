@@ -38,6 +38,7 @@ public class GameLoaderScript : MonoBehaviour
 
             //StartCoroutine(BuildNavMesh());
             navigator.BuildNavMeshAsync();
+
             if (ServerHandler.Instance is not null)
             {
                 try
