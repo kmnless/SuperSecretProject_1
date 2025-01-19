@@ -97,11 +97,6 @@ public class PlayerHandlerScript : NetworkBehaviour
 
     private void DisableRemotePlayerComponents()
     {
-        if (TryGetComponent(out NavMeshAgent navAgent))
-        {
-            navAgent.enabled = false;
-        }
-
         if (TryGetComponent(out Renderer renderer))
         {
             renderer.material.color = Color.gray;
