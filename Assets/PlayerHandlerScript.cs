@@ -7,7 +7,7 @@ using UnityEngine;
 public class PlayerHandlerScript : NetworkBehaviour
 {
     [SerializeField] private float moveAllowance = 0.1f;
-    [SerializeField] private Camera camera;
+    private Camera cam;
     private FieldStates[,] field;
     public NavMeshAgent agent { get; private set; }
     public string playerName { get; private set; }
@@ -26,29 +26,21 @@ public class PlayerHandlerScript : NetworkBehaviour
 
     private void Awake()
     {
-        camera = Camera.main;
-
-        if (camera == null)
-        {
-            camera = FindObjectOfType<Camera>();
-            if (camera == null)
-            {
-                Debug.LogError("No Camera found in the scene. Ensure a Camera exists and is tagged as 'MainCamera'.");
-            }
-            else
-            {
-                Debug.Log("Camera found via FindObjectOfType.");
-            }
-        }
+        cam = Camera.main;
 
         field = new FieldStates[GlobalVariableHandler.Instance.FieldSizeY, GlobalVariableHandler.Instance.FieldSizeX];
         for (int y = 0; y < GlobalVariableHandler.Instance.FieldSizeY; y++)
         {
             for (int x = 0; x < GlobalVariableHandler.Instance.FieldSizeX; x++)
             {
-                field[y, x] = (GlobalVariableHandler.Instance.TerrainField[y, x] >= -moveAllowance &&
-                               GlobalVariableHandler.Instance.TerrainField[y, x] <= moveAllowance)
-                               ? FieldStates.Empty : FieldStates.Wall;
+                if (GlobalVariableHandler.Instance.TerrainField[y, x] >= -moveAllowance && GlobalVariableHandler.Instance.TerrainField[y, x] <= moveAllowance)
+                {
+                    field[y, x] = FieldStates.Empty;
+                }
+                else
+                {
+                    field[y, x] = FieldStates.Wall;
+                }
             }
         }
     }
@@ -129,7 +121,7 @@ public class PlayerHandlerScript : NetworkBehaviour
 
     private void HandleMouseClick()
     {
-        if (camera == null)
+        if (cam == null)
         {
             Debug.LogError("Camera is not initialized.");
             return;
@@ -142,7 +134,7 @@ public class PlayerHandlerScript : NetworkBehaviour
         }
 
         Vector3 mousePosition = Input.mousePosition;
-        Vector3 worldPosition = camera.ScreenToWorldPoint(mousePosition);
+        Vector3 worldPosition = cam.ScreenToWorldPoint(mousePosition);
 
         if (IsPositionValid(worldPosition))
         {
