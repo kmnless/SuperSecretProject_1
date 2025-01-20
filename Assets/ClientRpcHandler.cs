@@ -91,7 +91,6 @@ public class ClientRpcHandler : NetworkBehaviour
     [ClientRpc]
     public void UpdatePlayerUIClientRpc()
     {
-        Debug.Log("3");
         UIManager.Instance.UpdatePlayerStats();
     }
 

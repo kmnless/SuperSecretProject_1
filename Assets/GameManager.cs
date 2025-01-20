@@ -55,7 +55,6 @@ public class GameManager : NetworkBehaviour
     }
     private void UpdateUIForAllPlayers()
     {
-        Debug.Log("111");
         clientRpcHandler.UpdatePlayerUIClientRpc();
     }
     private void StartPassiveIncome()
@@ -81,7 +80,6 @@ public class GameManager : NetworkBehaviour
     }
     public void InitUI()
     {
-        UpdateUIForAllPlayers();
     }
     public IEnumerator PreGameCountdown()
     {
