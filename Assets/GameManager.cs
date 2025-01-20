@@ -66,7 +66,7 @@ public class GameManager : NetworkBehaviour
             yield return new WaitForSeconds(1f);
         }
         isStarted = true;
-        if(ServerHandler.Instance != null && IsServer)
+        if(ServerHandler.Instance != null)
         {
             ServerHandler.Instance.StartGameClient();
         }
