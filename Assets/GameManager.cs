@@ -1,5 +1,6 @@
 using NavMeshPlus.Components;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
 using Unity.VisualScripting;
@@ -18,6 +19,8 @@ public class GameManager : NetworkBehaviour
     public GameObject outposts;
     public GameObject playerPrefab;
     public NavMeshSurface navigator;
+
+    public bool isStarted = false;
 
     public UIManager uiManager;
 
@@ -55,6 +58,20 @@ public class GameManager : NetworkBehaviour
         GlobalVariableHandler.Instance.Players.OnListChanged += OnPlayersListChanged;
         UpdateUI();
     }
+    public IEnumerator PreGameCountdown()
+    {
+        const int countdownDuration = 5;
+        for (int i = countdownDuration; i > 0; i--)
+        {
+            yield return new WaitForSeconds(1f);
+        }
+        isStarted = true;
+        if(ServerHandler.Instance != null)
+        {
+            ServerHandler.StartGameClient();
+        }
+    }
+
     public void SpawnPlayers()
     {
         for (int i = 0; i < basePositions.Count; i++)

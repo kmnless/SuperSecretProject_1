@@ -309,5 +309,8 @@ public class ServerHandler : MonoBehaviour
         GlobalVariableHandler.Instance.MyIndex = pl.Id;
         GlobalVariableHandler.Instance.Players.Add(pl);             // kostil??
     }
-
+    public static void StartGameClient()
+    {
+        ClientRpcHandler.StartGameClientRpc();
+    }
 }

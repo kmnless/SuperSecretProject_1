@@ -16,6 +16,8 @@ public class PlayerHandlerScript : NetworkBehaviour
     private Vector3 previousStep;
     public float animationSpeed = 0.1f;
 
+    public static bool IsStarted = false;
+
     public void SetPlayerName(string name)
     {
         playerName = name;
@@ -139,7 +141,6 @@ public class PlayerHandlerScript : NetworkBehaviour
     }
     private void HandleMouseClick()
     {
-
         if (cam == null)
         {
             AssignCamera(Camera.main);
@@ -154,6 +155,11 @@ public class PlayerHandlerScript : NetworkBehaviour
         if (!agent.enabled)
         {
             Debug.LogError("NavMeshAgent is not enabled.");
+            return;
+        }
+
+        if (!IsStarted)
+        {
             return;
         }
 
@@ -209,11 +215,10 @@ public class PlayerHandlerScript : NetworkBehaviour
         if (NavMesh.SamplePosition(destination, out NavMeshHit hit, 1.0f, NavMesh.AllAreas))
         {
             agent.SetDestination(hit.position);
-            Debug.Log($"Server moving player {OwnerClientId} to: {hit.position}");
         }
         else
         {
-            Debug.Log($"Target destination {destination} is not on NavMesh.");
+            //Debug.Log($"Target destination {destination} is not on NavMesh.");
         }
     }
 

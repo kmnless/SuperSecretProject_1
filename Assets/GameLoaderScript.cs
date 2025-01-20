@@ -15,6 +15,7 @@ public class GameLoaderScript : MonoBehaviour
     [SerializeField] private NavMeshPlus.Components.NavMeshSurface navigator;
     [SerializeField] private UIManager uiManager;
     public static List<Vector3> basePositions = new List<Vector3>();
+
     private void Awake()
     {
         try
@@ -62,6 +63,7 @@ public class GameLoaderScript : MonoBehaviour
         GameManager.Instance.navigator = this.navigator;
         GameManager.Instance.uiManager = this.uiManager;
         GameManager.Instance.InitUI();
+        GameManager.Instance.PreGameCountdown();
     }
     private IEnumerator BuildNavMesh()
     {

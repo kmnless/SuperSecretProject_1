@@ -73,7 +73,11 @@ public class ClientRpcHandler : NetworkBehaviour
             mediator.NetworkObject.Spawn();
         }
     }
-
+    [ClientRpc]
+    public static void StartGameClientRpc()
+    {
+        PlayerHandlerScript.IsStarted = true;
+    }
     public override void OnNetworkSpawn()
     {
         base.OnNetworkSpawn();
