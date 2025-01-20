@@ -24,8 +24,6 @@ public class GameManager : NetworkBehaviour
 
     public bool isStarted = false;
 
-    public UIManager uiManager;
-
     public static List<Vector3> basePositions = new List<Vector3>();
 
     private Coroutine passiveIncomeCoroutine;
@@ -49,7 +47,7 @@ public class GameManager : NetworkBehaviour
         if (GlobalVariableHandler.Instance.MyIndex.HasValue)
         {
             int myIndex = GlobalVariableHandler.Instance.MyIndex.Value;
-            uiManager.UpdatePlayerStats();
+            UIManager.UpdatePlayerStats();
         }
     }
     private void UpdateUIForAllPlayers()
@@ -79,7 +77,6 @@ public class GameManager : NetworkBehaviour
     }
     public void InitUI()
     {
-        clientRpcHandler.InitUIManagerClientRpc(uiManager);
     }
     public IEnumerator PreGameCountdown()
     {

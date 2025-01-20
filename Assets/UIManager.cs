@@ -4,18 +4,13 @@ using TMPro;
 using Unity.Netcode;
 using UnityEngine;
 
-public class UIManager : MonoBehaviour, INetworkSerializable
+public class UIManager : MonoBehaviour
 {
-    [SerializeField] private GameObject playerStatsPrefab;
-    [SerializeField] private GameObject otherPlayerStatsPrefab;
-    [SerializeField] private Transform playerStatsContainer;
+    [SerializeField] private static GameObject playerStatsPrefab;
+    [SerializeField] private static GameObject otherPlayerStatsPrefab;
+    [SerializeField] private static Transform playerStatsContainer;
 
-    public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
-    {
-        
-    }
-
-    public void UpdatePlayerStats()
+    public static void UpdatePlayerStats()
     {
         foreach (Transform child in playerStatsContainer)
         {

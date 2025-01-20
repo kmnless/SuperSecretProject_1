@@ -11,7 +11,6 @@ public class ClientRpcHandler : NetworkBehaviour
     [SerializeField] private Button ready;
     public NetworkMediator networkMediator;
     
-    public UIManager UIManager;
     private void Start()
     {
         ready.onClick.AddListener(() => {
@@ -96,11 +95,6 @@ public class ClientRpcHandler : NetworkBehaviour
         UIManager.UpdatePlayerStats();
     }
 
-    [ClientRpc]
-    public void InitUIManagerClientRpc(UIManager obj)
-    {
-        this.UIManager = obj;
-    }
 
     [ClientRpc]
     public void SetMyIndexClientRpc(int index, ClientRpcParams clientRpcParams = default)
