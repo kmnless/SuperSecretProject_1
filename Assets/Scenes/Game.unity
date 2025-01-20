@@ -261,7 +261,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerStatsPrefab: {fileID: 4922815869427153246, guid: d59469494fa2a304e8eec052bbffb97a, type: 3}
-  otherPlayerStatsPrefab: {fileID: 1444198036930055968, guid: ec4ca947913312b4c95f5c810907393d, type: 3}
+  otherPlayerStatsPrefab: {fileID: 4922815869427153246, guid: d7dfaaf78d1a53849a8340419370b08d, type: 3}
   playerStatsContainer: {fileID: 1316049420}
 --- !u!4 &1027481364
 Transform:
