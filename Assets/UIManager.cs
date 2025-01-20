@@ -18,20 +18,20 @@ public class UIManager : MonoBehaviour
 
         foreach (var player in players)
         {
-            GameObject playerStats = Instantiate(playerStatsPrefab, playerStatsContainer);
-
             if (player.Id == myIndex)
             {
+                GameObject playerStats = Instantiate(playerStatsPrefab, playerStatsContainer);
                 TMP_Text[] textFields = playerStats.GetComponentsInChildren<TMP_Text>();
-                textFields[0].text = $"{player.Name} {player.Level} Lvl\t{player.CurrentXP}/{player.NeededXP}";
+                textFields[0].text = $"{player.Name} Lvl {player.Level}\t{player.CurrentXP}/{player.NeededXP}";
                 textFields[1].text = $"Money: {player.Money}";
                 textFields[2].text = $"Diamonds: {player.Diamonds}";
-                textFields[2].text = $"Strength: {player.Strength} x {Math.Round(player.StrengthMultiplier, 2)}";
+                textFields[3].text = $"Strength: {player.Strength} x {Math.Round(player.StrengthMultiplier, 2)}";
             }
             else
             {
-                TMP_Text[] textFields = otherPlayerStatsPrefab.GetComponentsInChildren<TMP_Text>();
-                textFields[0].text = $"{player.Name} {player.Level} Lvl\t{player.CurrentXP}/{player.NeededXP}"; ;
+                GameObject otherPlayerStats = Instantiate(playerStatsPrefab, playerStatsContainer);
+                TMP_Text[] textFields = otherPlayerStats.GetComponentsInChildren<TMP_Text>();
+                textFields[0].text = $"{player.Name} Lvl {player.Level}\t{player.CurrentXP}/{player.NeededXP}";
                 textFields[1].text = $"Money: {player.Money}";
             }
         }
