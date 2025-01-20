@@ -24,8 +24,6 @@ public class PlayerHandlerScript : NetworkBehaviour
 
     private void Awake()
     {
-        AssignCamera(Camera.main);
-
         field = new FieldStates[GlobalVariableHandler.Instance.FieldSizeY, GlobalVariableHandler.Instance.FieldSizeX];
         for (int y = 0; y < GlobalVariableHandler.Instance.FieldSizeY; y++)
         {
@@ -45,7 +43,6 @@ public class PlayerHandlerScript : NetworkBehaviour
     public void AssignCamera(Camera assignedCamera)
     {
         cam = assignedCamera;
-        Debug.Log($"Camera assigned: {cam.name}");
     }
     private void InitializeServerAgent()
     {
@@ -89,21 +86,16 @@ public class PlayerHandlerScript : NetworkBehaviour
         agent = GetComponent<NavMeshAgent>();
         if (agent == null)
         {
-            Debug.LogError("NavMeshAgent is missing on this object.");
+            Debug.LogError("NavMeshAgent is missing.");
             return;
         }
 
         if (!agent.isOnNavMesh)
         {
-            Debug.Log($"Agent is not on NavMesh at {transform.position}. Adjusting position.");
             if (NavMesh.SamplePosition(transform.position, out NavMeshHit hit, 1.0f, NavMesh.AllAreas))
             {
                 transform.position = hit.position;
                 agent.Warp(hit.position);
-            }
-            else
-            {
-                Debug.Log($"Could not find a valid position on NavMesh.");
             }
         }
 
@@ -141,14 +133,16 @@ public class PlayerHandlerScript : NetworkBehaviour
             HandleMouseClick();
         }
     }
-
+    private void Start()
+    {
+        AssignCamera(Camera.main);
+    }
     private void HandleMouseClick()
     {
 
         if (cam == null)
         {
             AssignCamera(Camera.main);
-            return;
         }
 
         if (agent == null || !agent.isOnNavMesh)
@@ -174,7 +168,7 @@ public class PlayerHandlerScript : NetworkBehaviour
             Vector3 destination = new Vector3((targetX + 0.5f) * GameManager.spriteSize / 100f,
                                               (targetY + 0.5f) * GameManager.spriteSize / 100f, 0);
 
-            Debug.Log($"ServerRpc called for {gameObject.name}, agent: {agent}, position: {transform.position}");
+            //Debug.Log($"{gameObject.name}, position: {transform.position}");
             MoveToDestinationServerRpc(destination);
         }
 

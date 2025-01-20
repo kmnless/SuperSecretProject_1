@@ -16,8 +16,8 @@ public class BaseMenuHandler : MonoBehaviour
     private bool dead = false;
     void Start()
     {
-        player = GameObject.Find("Player");
-        playerScript = GameObject.Find("PlayerHandler").GetComponent<PlayerHandlerScript>();
+        player = GameObject.Find($"Player{GlobalVariableHandler.Instance.MyIndex}");
+        playerScript = player.GetComponent<PlayerHandlerScript>();
     }
     public void Close()
     {

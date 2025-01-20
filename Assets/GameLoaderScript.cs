@@ -13,6 +13,7 @@ public class GameLoaderScript : MonoBehaviour
     [SerializeField] private GameObject outposts;
     [SerializeField] private GameObject playerPrefab;
     [SerializeField] private NavMeshPlus.Components.NavMeshSurface navigator;
+    [SerializeField] private UIManager uiManager;
     public static List<Vector3> basePositions = new List<Vector3>();
     private void Awake()
     {
@@ -59,6 +60,7 @@ public class GameLoaderScript : MonoBehaviour
         GameManager.Instance.outposts = this.outposts;
         GameManager.Instance.playerPrefab = this.playerPrefab;
         GameManager.Instance.navigator = this.navigator;
+        GameManager.Instance.uiManager = this.uiManager;
     }
     private IEnumerator BuildNavMesh()
     {

@@ -9,17 +9,17 @@ public class GameManager : NetworkBehaviour
 {
     public static GameManager Instance { get; private set; }
 
-    [Header("Game Settings")]
     public static float spriteSize = 128.0f;
     public int winConditionPoints = 1000;
 
-    [Header("Prefabs and References")]
     public GameObject map;
     public GameObject flags;
     public GameObject bases;
     public GameObject outposts;
     public GameObject playerPrefab;
     public NavMeshSurface navigator;
+
+    public UIManager uiManager;
 
     public static List<Vector3> basePositions = new List<Vector3>();
 
@@ -40,7 +40,23 @@ public class GameManager : NetworkBehaviour
         navigator.BuildNavMeshAsync();
         navigator.UpdateNavMesh(navigator.navMeshData);
     }
-
+    private void Start()
+    {
+        GlobalVariableHandler.Instance.Players.OnListChanged += OnPlayersListChanged;
+        UpdateUI();
+    }
+    private void OnPlayersListChanged(NetworkListEvent<PlayerProperty> changeEvent)
+    {
+        UpdateUI();
+    }
+    private void UpdateUI()
+    {
+        if (GlobalVariableHandler.Instance.MyIndex.HasValue)
+        {
+            int myIndex = GlobalVariableHandler.Instance.MyIndex.Value;
+            uiManager.UpdatePlayerStats(GlobalVariableHandler.Instance.Players, myIndex);
+        }
+    }
     public void SpawnPlayers()
     {
         for (int i = 0; i < basePositions.Count; i++)
@@ -54,5 +70,14 @@ public class GameManager : NetworkBehaviour
 
             Debug.Log($"Player {i} spawned at {spawnPosition}");
         }
+    }
+    public override void OnDestroy()
+    {
+        base.OnDestroy();
+        if (GlobalVariableHandler.Instance.Players != null)
+        {
+            GlobalVariableHandler.Instance.Players.OnListChanged -= OnPlayersListChanged;
+        }
+        Debug.Log("GameManager destroyed.");
     }
 }
