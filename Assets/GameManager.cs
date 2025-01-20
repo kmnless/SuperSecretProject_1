@@ -45,10 +45,6 @@ public class GameManager : NetworkBehaviour
     private void Start()
     {
     }
-    private void OnPlayersListChanged(NetworkListEvent<PlayerProperty> changeEvent)
-    {
-        UpdateUI();
-    }
     private void UpdateUI()
     {
         if (GlobalVariableHandler.Instance.MyIndex.HasValue)
@@ -87,8 +83,7 @@ public class GameManager : NetworkBehaviour
     }
     public void InitUI()
     {
-        GlobalVariableHandler.Instance.Players.OnListChanged += OnPlayersListChanged;
-        UpdateUI();
+        UpdateUIForAllPlayers();
     }
     public IEnumerator PreGameCountdown()
     {
@@ -102,6 +97,7 @@ public class GameManager : NetworkBehaviour
         {
             ServerHandler.Instance.StartGameClient();
         }
+        StartPassiveIncome();
     }
 
     public void SpawnPlayers()
@@ -123,7 +119,6 @@ public class GameManager : NetworkBehaviour
         base.OnDestroy();
         if (GlobalVariableHandler.Instance.Players != null)
         {
-            GlobalVariableHandler.Instance.Players.OnListChanged -= OnPlayersListChanged;
         }
         Debug.Log("GameManager destroyed.");
     }
