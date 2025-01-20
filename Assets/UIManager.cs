@@ -1,16 +1,29 @@
 using System;
 using System.Collections.Generic;
 using TMPro;
-using Unity.Netcode;
 using UnityEngine;
 
 public class UIManager : MonoBehaviour
 {
-    [SerializeField] private static GameObject playerStatsPrefab;
-    [SerializeField] private static GameObject otherPlayerStatsPrefab;
-    [SerializeField] private static Transform playerStatsContainer;
+    public static UIManager Instance { get; private set; }
 
-    public static void UpdatePlayerStats()
+    [SerializeField] private GameObject playerStatsPrefab;
+    [SerializeField] private GameObject otherPlayerStatsPrefab;
+    [SerializeField] private Transform playerStatsContainer;
+
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+
+    public void UpdatePlayerStats()
     {
         foreach (Transform child in playerStatsContainer)
         {

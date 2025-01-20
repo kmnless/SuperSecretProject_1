@@ -42,17 +42,12 @@ public class GameManager : NetworkBehaviour
     private void Start()
     {
     }
-    private void UpdateUI()
-    {
-        if (GlobalVariableHandler.Instance.MyIndex.HasValue)
-        {
-            int myIndex = GlobalVariableHandler.Instance.MyIndex.Value;
-            UIManager.UpdatePlayerStats();
-        }
-    }
     private void UpdateUIForAllPlayers()
     {
-        clientRpcHandler.UpdatePlayerUIClientRpc();
+        if (clientRpcHandler != null)
+        {
+            clientRpcHandler.UpdatePlayerUIClientRpc();
+        }
     }
     private void StartPassiveIncome()
     {

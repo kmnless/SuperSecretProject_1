@@ -92,7 +92,11 @@ public class ClientRpcHandler : NetworkBehaviour
     [ClientRpc]
     public void UpdatePlayerUIClientRpc()
     {
-        UIManager.UpdatePlayerStats();
+        if (UIManager.Instance != null)
+        {
+            Debug.Log("Обновление UI на клиенте");
+            UIManager.Instance.UpdatePlayerStats();
+        }
     }
 
 
