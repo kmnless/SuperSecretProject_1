@@ -77,7 +77,6 @@ public class ClientRpcHandler : NetworkBehaviour
     [ClientRpc]
     public void StartGameClientRpc()
     {
-        Debug.Log("Call");
         PlayerHandlerScript.IsStarted = true;
     }
     public override void OnNetworkSpawn()
@@ -87,7 +86,14 @@ public class ClientRpcHandler : NetworkBehaviour
         if (IsClient && !IsServer)
             GlobalVariableHandler.Instance.LoadResources();
     }
-
+    [ClientRpc]
+    public void UpdatePlayerUI(NetworkList<PlayerProperty> players)
+    {
+        if (UIManager.Instance != null)
+        { 
+            UIManager.Instance.UpdatePlayerStats(players, GlobalVariableHandler.Instance.MyIndex.Value);
+        }
+    }
 
     [ClientRpc]
     public void SetMyIndexClientRpc(int index, ClientRpcParams clientRpcParams = default)

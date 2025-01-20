@@ -10,6 +10,8 @@ public class GameManager : NetworkBehaviour
 {
     public static GameManager Instance { get; private set; }
 
+    public ClientRpcHandler clientRpcHandler { get; set; }
+
     public static float spriteSize = 128.0f;
     public int winConditionPoints = 1000;
 
@@ -26,6 +28,7 @@ public class GameManager : NetworkBehaviour
 
     public static List<Vector3> basePositions = new List<Vector3>();
 
+    private Coroutine passiveIncomeCoroutine;
     private void Awake()
     {
         if (Instance == null)
@@ -53,6 +56,34 @@ public class GameManager : NetworkBehaviour
             uiManager.UpdatePlayerStats(GlobalVariableHandler.Instance.Players, myIndex);
         }
     }
+    private void UpdateUIForAllPlayers()
+    {
+        if (clientRpcHandler != null)
+        {
+            clientRpcHandler.UpdatePlayerUI(GlobalVariableHandler.Instance.Players);
+        }
+    }
+    private void StartPassiveIncome()
+    {
+        passiveIncomeCoroutine = StartCoroutine(PassiveIncomeRoutine());
+    }
+
+    private IEnumerator PassiveIncomeRoutine()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(1f);
+
+            for (int i = 0; i < GlobalVariableHandler.Instance.Players.Count; i++)
+            {
+                var player = GlobalVariableHandler.Instance.Players[i];
+                player.Money += Convert.ToInt32(player.PassiveIncome / 60f);
+                GlobalVariableHandler.Instance.Players[i] = player;
+            }
+
+            UpdateUIForAllPlayers();
+        }
+    }
     public void InitUI()
     {
         GlobalVariableHandler.Instance.Players.OnListChanged += OnPlayersListChanged;
@@ -66,7 +97,7 @@ public class GameManager : NetworkBehaviour
             yield return new WaitForSeconds(1f);
         }
         isStarted = true;
-        if(ServerHandler.Instance != null)
+        if (ServerHandler.Instance != null)
         {
             ServerHandler.Instance.StartGameClient();
         }

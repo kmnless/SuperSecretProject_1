@@ -200,7 +200,8 @@ public class ServerHandler : MonoBehaviour
             if (FindObjectOfType<GameManager>() == null)
             {
                 var gameManagerObject = new GameObject("GameManager");
-                gameManagerObject.AddComponent<GameManager>();
+                var a = gameManagerObject.AddComponent<GameManager>();
+                a.clientRpcHandler = this.clientRpcHandler;
             }
         }
     }

@@ -16,7 +16,7 @@ public struct PlayerProperty : INetworkSerializable, IEquatable<PlayerProperty>
     public float MultiplierXP;                  // From items (might be deleted)
     public float StrengthMultiplierGain;        // From items
     public int Money;                           // Money == points. Money is target to win. Items purchased by money
-    public int PassiveIncome;                   // Money per minute
+    public float PassiveIncome;                 // Money per minute
     public int Diamonds;                        // Diamonds can be uptained from outposts
     public Vector4 Color; // Vector4 instead of Color
 
