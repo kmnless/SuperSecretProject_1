@@ -97,6 +97,12 @@ public class ClientRpcHandler : NetworkBehaviour
     }
 
     [ClientRpc]
+    public void InitUIManagerClientRpc(UIManager obj)
+    {
+        this.UIManager = obj;
+    }
+
+    [ClientRpc]
     public void SetMyIndexClientRpc(int index, ClientRpcParams clientRpcParams = default)
     {
         Debug.Log($"SetMyIndexClientRpc called for client. Received index: {index}");

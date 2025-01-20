@@ -79,7 +79,7 @@ public class GameManager : NetworkBehaviour
     }
     public void InitUI()
     {
-        clientRpcHandler.UIManager = uiManager;
+        clientRpcHandler.InitUIManagerClientRpc(uiManager);
     }
     public IEnumerator PreGameCountdown()
     {
