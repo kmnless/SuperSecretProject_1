@@ -24,7 +24,7 @@ public class ServerHandler : MonoBehaviour
     private static PlayerProperty pl;
     private bool IsFirst = true;
 
-    private List<PlayerReadyStatus> PlayersReadyList;
+    private List<PlayerReadyStatus> ConnectedPlayers;
 
     public TMP_Text countdownText;
     private Coroutine countdownCoroutine;
@@ -68,7 +68,7 @@ public class ServerHandler : MonoBehaviour
             Destroy(gameObject);
         }
 
-        PlayersReadyList = new List<PlayerReadyStatus>();
+        ConnectedPlayers = new List<PlayerReadyStatus>();
         DontDestroyOnLoad(gameObject);
     }
     private void OnConnectionApproval(NetworkManager.ConnectionApprovalRequest request, NetworkManager.ConnectionApprovalResponse response)
@@ -120,7 +120,7 @@ public class ServerHandler : MonoBehaviour
             GlobalVariableHandler.Instance.Players.Add(player);
         }
 
-        PlayersReadyList.Add(new PlayerReadyStatus(player.Id, nickname));
+        ConnectedPlayers.Add(new PlayerReadyStatus(player.Id, nickname));
 
         IsFirst = false;
         response.Approved = true;
@@ -161,7 +161,7 @@ public class ServerHandler : MonoBehaviour
             {
                 GlobalVariableHandler.Instance.Players.Remove(player);
                 var p = new PlayerReadyStatus(player.Id, player.Name);
-                PlayersReadyList.Remove(p);
+                ConnectedPlayers.Remove(p);
             }
         }
         PlayerCount = NetworkManager.Singleton.ConnectedClients.Count;
@@ -175,7 +175,7 @@ public class ServerHandler : MonoBehaviour
             return;
         
         string playerListTextContent = "";
-        foreach (var player in PlayersReadyList)
+        foreach (var player in ConnectedPlayers)
         {
             playerListTextContent += $"{player.Nickname} - {(player.IsReady ? "Ready" : "Not Ready")}\n";
         }
@@ -196,22 +196,28 @@ public class ServerHandler : MonoBehaviour
                 DontDestroyOnLoad(mediatorInstance);
             }
             clientRpcHandler.networkMediator = FindObjectOfType<NetworkMediator>();
+
+            if (FindObjectOfType<GameManager>() == null)
+            {
+                var gameManagerObject = new GameObject("GameManager");
+                gameManagerObject.AddComponent<GameManager>();
+            }
         }
     }
     public void SetPlayerReadyServerRpc(ulong clientId)
     {
-        for(int i = 0; i < PlayersReadyList.Count; i++)
+        for(int i = 0; i < ConnectedPlayers.Count; i++)
         {
-            if (PlayersReadyList[i].Id == (int)clientId)
+            if (ConnectedPlayers[i].Id == (int)clientId)
             {
-                var status = PlayersReadyList[i];
+                var status = ConnectedPlayers[i];
 
                 if (status.IsReady)
                     status.IsReady = false;
                 else
                     status.IsReady = true;
 
-                PlayersReadyList[i] = status;
+                ConnectedPlayers[i] = status;
                 break;
             }
         }
@@ -227,7 +233,7 @@ public class ServerHandler : MonoBehaviour
     {
         if(PlayerCount != MaxConnections)
             return false;
-        foreach (var player in PlayersReadyList)
+        foreach (var player in ConnectedPlayers)
         {
             if (!player.IsReady) return false;
         }
@@ -249,43 +255,44 @@ public class ServerHandler : MonoBehaviour
     }
     private void StartGame()
     {
-        Debug.Log("Starting game...");
         GlobalVariableHandler.Instance.SyncAllFieldsServerRpc();
         NetworkManager.Singleton.SceneManager.LoadScene("Game", UnityEngine.SceneManagement.LoadSceneMode.Single);
+        GameManager.Instance.InitializeMap();
     }
-    public static class PlayerSpawner
-    {
-        private static Vector3 GetValidPosition(Vector3 desiredPosition)
-        {
-            if (NavMesh.SamplePosition(desiredPosition, out NavMeshHit hit, 1.0f, NavMesh.AllAreas))
-            {
-                return hit.position;
-            }
-            return new Vector3(desiredPosition.x, desiredPosition.y, 0);
-        }
-        public static void SpawnPlayers(List<Vector3> basePositions)
-        {
-            if (!NetworkManager.Singleton.IsServer)
-            {
-                Debug.LogError("SpawnPlayers can only be called on the server.");
-                return;
-            }
 
-            for (int i = 0; i < basePositions.Count; i++)
-            {
-                Vector3 spawnPosition = GetValidPosition(basePositions[i]);
+    //public static class PlayerSpawner
+    //{
+    //    private static Vector3 GetValidPosition(Vector3 desiredPosition)
+    //    {
+    //        if (NavMesh.SamplePosition(desiredPosition, out NavMeshHit hit, 1.0f, NavMesh.AllAreas))
+    //        {
+    //            return hit.position;
+    //        }
+    //        return new Vector3(desiredPosition.x, desiredPosition.y, 0);
+    //    }
+    //    public static void SpawnPlayers(List<Vector3> basePositions)
+    //    {
+    //        if (!NetworkManager.Singleton.IsServer)
+    //        {
+    //            Debug.LogError("SpawnPlayers can only be called on the server.");
+    //            return;
+    //        }
 
-                GameObject playerObject = GameObject.Instantiate(playerPrefab, spawnPosition, Quaternion.identity);
-                playerObject.transform.rotation = Quaternion.identity;
-                playerObject.name = $"Player{i}";
+    //        for (int i = 0; i < basePositions.Count; i++)
+    //        {
+    //            Vector3 spawnPosition = GetValidPosition(basePositions[i]);
 
-                var networkObject = playerObject.GetComponent<NetworkObject>();
-                networkObject.SpawnWithOwnership((ulong)i);
+    //            GameObject playerObject = GameObject.Instantiate(playerPrefab, spawnPosition, Quaternion.identity);
+    //            playerObject.transform.rotation = Quaternion.identity;
+    //            playerObject.name = $"Player{i}";
 
-                Debug.Log($"Player {i} network spawned at {spawnPosition}");
-            }
-        }
-    }
+    //            var networkObject = playerObject.GetComponent<NetworkObject>();
+    //            networkObject.SpawnWithOwnership((ulong)i);
+
+    //            Debug.Log($"Player {i} network spawned at {spawnPosition}");
+    //        }
+    //    }
+    //}
     private void OnDestroy()
     {
         if (NetworkManager.Singleton != null)

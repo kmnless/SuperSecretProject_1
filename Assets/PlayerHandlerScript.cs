@@ -14,9 +14,6 @@ public class PlayerHandlerScript : NetworkBehaviour
     public string playerName { get; private set; }
     private List<Vector3> path;
     private Vector3 previousStep;
-    private float animationCounter = 0;
-    private int counter = 1;
-    private bool allowMove = false;
     public float animationSpeed = 0.1f;
 
     public void SetPlayerName(string name)
@@ -171,11 +168,11 @@ public class PlayerHandlerScript : NetworkBehaviour
 
         if (IsPositionValid(worldPosition))
         {
-            int targetX = (int)(worldPosition.x * 100 / GameLoaderScript.spriteSize);
-            int targetY = (int)(worldPosition.y * 100 / GameLoaderScript.spriteSize);
+            int targetX = (int)(worldPosition.x * 100 / GameManager.spriteSize);
+            int targetY = (int)(worldPosition.y * 100 / GameManager.spriteSize);
 
-            Vector3 destination = new Vector3((targetX + 0.5f) * GameLoaderScript.spriteSize / 100f,
-                                              (targetY + 0.5f) * GameLoaderScript.spriteSize / 100f, 0);
+            Vector3 destination = new Vector3((targetX + 0.5f) * GameManager.spriteSize / 100f,
+                                              (targetY + 0.5f) * GameManager.spriteSize / 100f, 0);
 
             Debug.Log($"ServerRpc called for {gameObject.name}, agent: {agent}, position: {transform.position}");
             MoveToDestinationServerRpc(destination);
@@ -230,8 +227,8 @@ public class PlayerHandlerScript : NetworkBehaviour
     private bool IsPositionValid(Vector3 position)
     {
         return position.x > 0 && position.y > 0 &&
-               position.x * 100 < MapScript.sprites.GetLength(1) * GameLoaderScript.spriteSize &&
-               position.y * 100 < MapScript.sprites.GetLength(0) * GameLoaderScript.spriteSize;
+               position.x * 100 < MapScript.sprites.GetLength(1) * GameManager.spriteSize &&
+               position.y * 100 < MapScript.sprites.GetLength(0) * GameManager.spriteSize;
     }
 
 }

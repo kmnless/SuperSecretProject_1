@@ -114,7 +114,7 @@ public class MapScript : MonoBehaviour
                         buffer = Instantiate(GlobalVariableHandler.Instance.BasePrefab, pos, Quaternion.identity);
                         buffer.transform.parent = bases.transform;
                         buffer.name = "Base " + GlobalVariableHandler.Instance.Players[baseIndex];
-                        GameLoaderScript.basePositions.Add(pos);
+                        GameManager.basePositions.Add(pos);
                         BaseHandler prop = buffer.GetComponent<BaseHandler>();
                         // tut krch nado podumat, id navernoe prosto sdelat ++, a name budet name playera, kotoriy vladeet bazoy. ili hranit gde to otdelno kto kem vladeet.
                         prop.Id = baseIndex++;
