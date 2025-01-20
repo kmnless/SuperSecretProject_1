@@ -42,8 +42,6 @@ public class GameManager : NetworkBehaviour
     }
     private void Start()
     {
-        GlobalVariableHandler.Instance.Players.OnListChanged += OnPlayersListChanged;
-        UpdateUI();
     }
     private void OnPlayersListChanged(NetworkListEvent<PlayerProperty> changeEvent)
     {
@@ -56,6 +54,11 @@ public class GameManager : NetworkBehaviour
             int myIndex = GlobalVariableHandler.Instance.MyIndex.Value;
             uiManager.UpdatePlayerStats(GlobalVariableHandler.Instance.Players, myIndex);
         }
+    }
+    public void InitUI()
+    {
+        GlobalVariableHandler.Instance.Players.OnListChanged += OnPlayersListChanged;
+        UpdateUI();
     }
     public void SpawnPlayers()
     {
