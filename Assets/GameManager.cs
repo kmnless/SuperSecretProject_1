@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using Unity.Netcode;
 using Unity.VisualScripting;
 using UnityEngine;
-using System.Linq;
 
 public class GameManager : NetworkBehaviour
 {
@@ -80,6 +79,7 @@ public class GameManager : NetworkBehaviour
     }
     public void InitUI()
     {
+        clientRpcHandler.UIManager = uiManager;
     }
     public IEnumerator PreGameCountdown()
     {

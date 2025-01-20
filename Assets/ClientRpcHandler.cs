@@ -10,6 +10,8 @@ public class ClientRpcHandler : NetworkBehaviour
     [SerializeField] private TMP_Text countdownText;
     [SerializeField] private Button ready;
     public NetworkMediator networkMediator;
+    
+    public UIManager UIManager;
     private void Start()
     {
         ready.onClick.AddListener(() => {
@@ -91,7 +93,7 @@ public class ClientRpcHandler : NetworkBehaviour
     [ClientRpc]
     public void UpdatePlayerUIClientRpc()
     {
-        UIManager.Instance.UpdatePlayerStats();
+        UIManager.UpdatePlayerStats();
     }
 
     [ClientRpc]
