@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using Unity.Netcode;
 using Unity.VisualScripting;
 using UnityEngine;
+using System.Linq;
 
 public class GameManager : NetworkBehaviour
 {
@@ -53,14 +54,14 @@ public class GameManager : NetworkBehaviour
         if (GlobalVariableHandler.Instance.MyIndex.HasValue)
         {
             int myIndex = GlobalVariableHandler.Instance.MyIndex.Value;
-            uiManager.UpdatePlayerStats(GlobalVariableHandler.Instance.Players, myIndex);
+            uiManager.UpdatePlayerStats(myIndex);
         }
     }
     private void UpdateUIForAllPlayers()
     {
         if (clientRpcHandler != null)
         {
-            clientRpcHandler.UpdatePlayerUIClientRpc(GlobalVariableHandler.Instance.Players);
+            clientRpcHandler.UpdatePlayerUIClientRpc();
         }
     }
     private void StartPassiveIncome()

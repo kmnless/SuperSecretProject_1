@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using TMPro;
 using Unity.Netcode;
 using UnityEngine;
@@ -11,14 +12,14 @@ public class UIManager : MonoBehaviour
     [SerializeField] private GameObject otherPlayerStatsPrefab;
     [SerializeField] private Transform playerStatsContainer;
     
-    public void UpdatePlayerStats(NetworkList<PlayerProperty> players, int myIndex)
+    public void UpdatePlayerStats(int myIndex)
     {
         foreach (Transform child in playerStatsContainer)
         {
             Destroy(child.gameObject);
         }
 
-        foreach (var player in players)
+        foreach (var player in GlobalVariableHandler.Instance.Players)
         {
             if (player.Id == myIndex)
             {

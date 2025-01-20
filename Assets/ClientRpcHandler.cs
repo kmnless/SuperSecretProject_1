@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using TMPro;
 using Unity.Netcode;
 using UnityEngine;
@@ -88,11 +89,11 @@ public class ClientRpcHandler : NetworkBehaviour
     }
 
     [ClientRpc]
-    public void UpdatePlayerUIClientRpc(NetworkList<PlayerProperty> players)
+    public void UpdatePlayerUIClientRpc()
     {
         if (UIManager.Instance != null)
         {
-            UIManager.Instance.UpdatePlayerStats(players, GlobalVariableHandler.Instance.MyIndex.Value);
+            UIManager.Instance.UpdatePlayerStats(GlobalVariableHandler.Instance.MyIndex.Value);
         }
     }
 
