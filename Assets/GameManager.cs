@@ -35,11 +35,6 @@ public class GameManager : NetworkBehaviour
             Destroy(gameObject);
         }
     }
-    private void BuildNavMesh()
-    {
-        navigator.BuildNavMeshAsync();
-        navigator.UpdateNavMesh(navigator.navMeshData);
-    }
     private void Start()
     {
     }
