@@ -1,6 +1,8 @@
+using NavMeshPlus.Components;
 using System;
 using System.Collections.Generic;
 using Unity.Netcode;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class GameManager : NetworkBehaviour
@@ -17,7 +19,7 @@ public class GameManager : NetworkBehaviour
     [SerializeField] private GameObject bases;
     [SerializeField] private GameObject outposts;
     [SerializeField] private GameObject playerPrefab;
-    [SerializeField] private NavMeshPlus.Components.NavMeshSurface navigator;
+    [SerializeField] private NavMeshSurface navigator;
 
     public static List<Vector3> basePositions = new List<Vector3>();
 
@@ -40,7 +42,7 @@ public class GameManager : NetworkBehaviour
         if (flags == null) flags = GameObject.Find("Flags");
         if (bases == null) bases = GameObject.Find("Bases");
         if (outposts == null) outposts = GameObject.Find("Outposts");
-        if (navigator == null) navigator = FindObjectOfType<NavMeshPlus.Components.NavMeshSurface>();
+        if (navigator == null) navigator = GameObject.Find("Navigator").GetComponent<NavMeshSurface>();
 
         if (map == null || flags == null || bases == null || outposts == null || navigator == null)
         {
@@ -48,7 +50,7 @@ public class GameManager : NetworkBehaviour
         }
 
     }
-
+    [ClientRpc]
     public void InitializeMap()
     {
         InitializeSceneObjects();
