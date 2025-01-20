@@ -257,7 +257,6 @@ public class ServerHandler : MonoBehaviour
     {
         GlobalVariableHandler.Instance.SyncAllFieldsServerRpc();
         NetworkManager.Singleton.SceneManager.LoadScene("Game", UnityEngine.SceneManagement.LoadSceneMode.Single);
-        GameManager.Instance.InitUI();
     }
 
     //public static class PlayerSpawner

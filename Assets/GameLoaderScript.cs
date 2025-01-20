@@ -61,6 +61,7 @@ public class GameLoaderScript : MonoBehaviour
         GameManager.Instance.playerPrefab = this.playerPrefab;
         GameManager.Instance.navigator = this.navigator;
         GameManager.Instance.uiManager = this.uiManager;
+        GameManager.Instance.InitUI();
     }
     private IEnumerator BuildNavMesh()
     {
