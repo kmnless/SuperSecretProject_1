@@ -77,6 +77,7 @@ public class ClientRpcHandler : NetworkBehaviour
     [ClientRpc]
     public void StartGameClientRpc()
     {
+        Debug.Log("Call");
         PlayerHandlerScript.IsStarted = true;
     }
     public override void OnNetworkSpawn()
