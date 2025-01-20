@@ -93,7 +93,8 @@ public class ClientRpcHandler : NetworkBehaviour
     {
         if (UIManager.Instance != null)
         {
-            UIManager.Instance.UpdatePlayerStats(GlobalVariableHandler.Instance.MyIndex.Value);
+            Debug.Log("3");
+            UIManager.Instance.UpdatePlayerStats();
         }
     }
 

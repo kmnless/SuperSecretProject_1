@@ -11,8 +11,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] private GameObject playerStatsPrefab;
     [SerializeField] private GameObject otherPlayerStatsPrefab;
     [SerializeField] private Transform playerStatsContainer;
-    
-    public void UpdatePlayerStats(int myIndex)
+    public void UpdatePlayerStats()
     {
         foreach (Transform child in playerStatsContainer)
         {
@@ -21,7 +20,7 @@ public class UIManager : MonoBehaviour
 
         foreach (var player in GlobalVariableHandler.Instance.Players)
         {
-            if (player.Id == myIndex)
+            if (player.Id == GlobalVariableHandler.Instance.MyIndex.Value)
             {
                 GameObject playerStats = Instantiate(playerStatsPrefab, playerStatsContainer);
                 TMP_Text[] textFields = playerStats.GetComponentsInChildren<TMP_Text>();
