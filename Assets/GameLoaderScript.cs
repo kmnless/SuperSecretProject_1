@@ -63,7 +63,7 @@ public class GameLoaderScript : MonoBehaviour
         GameManager.Instance.navigator = this.navigator;
         GameManager.Instance.uiManager = this.uiManager;
         GameManager.Instance.InitUI();
-        GameManager.Instance.PreGameCountdown();
+        StartCoroutine(GameManager.Instance.PreGameCountdown());
     }
     private IEnumerator BuildNavMesh()
     {
