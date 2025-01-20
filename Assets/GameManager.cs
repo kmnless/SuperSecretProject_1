@@ -60,7 +60,7 @@ public class GameManager : NetworkBehaviour
     {
         if (clientRpcHandler != null)
         {
-            clientRpcHandler.UpdatePlayerUI(GlobalVariableHandler.Instance.Players);
+            clientRpcHandler.UpdatePlayerUIClientRpc(GlobalVariableHandler.Instance.Players);
         }
     }
     private void StartPassiveIncome()

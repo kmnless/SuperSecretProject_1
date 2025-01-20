@@ -86,11 +86,12 @@ public class ClientRpcHandler : NetworkBehaviour
         if (IsClient && !IsServer)
             GlobalVariableHandler.Instance.LoadResources();
     }
+
     [ClientRpc]
-    public void UpdatePlayerUI(NetworkList<PlayerProperty> players)
+    public void UpdatePlayerUIClientRpc(NetworkList<PlayerProperty> players)
     {
         if (UIManager.Instance != null)
-        { 
+        {
             UIManager.Instance.UpdatePlayerStats(players, GlobalVariableHandler.Instance.MyIndex.Value);
         }
     }
