@@ -29,7 +29,7 @@ public class UIManager : MonoBehaviour
             }
             else
             {
-                GameObject otherPlayerStats = Instantiate(playerStatsPrefab, playerStatsContainer);
+                GameObject otherPlayerStats = Instantiate(otherPlayerStatsPrefab, playerStatsContainer);
                 TMP_Text[] textFields = otherPlayerStats.GetComponentsInChildren<TMP_Text>();
                 textFields[0].text = $"{player.Name} Lvl {player.Level}\t{player.CurrentXP}/{player.NeededXP}";
                 textFields[1].text = $"Money: {player.Money}";
