@@ -14,6 +14,7 @@ public class ClientRpcHandler : NetworkBehaviour
         ready.onClick.AddListener(() => {
             SendRequestToServer(NetworkManager.Singleton.LocalClientId);
         });
+        DontDestroyOnLoad(gameObject);
     }
     private void UpdateMediatorReference()
     {
@@ -74,7 +75,7 @@ public class ClientRpcHandler : NetworkBehaviour
         }
     }
     [ClientRpc]
-    public static void StartGameClientRpc()
+    public void StartGameClientRpc()
     {
         PlayerHandlerScript.IsStarted = true;
     }
