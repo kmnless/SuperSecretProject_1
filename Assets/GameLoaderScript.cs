@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System;
 using UnityEngine;
 using System.Collections;
+using Unity.Netcode;
 
 public class GameLoaderScript : MonoBehaviour
 {
@@ -50,6 +51,8 @@ public class GameLoaderScript : MonoBehaviour
 
     private void InitializeGameManager()
     {
+        if (!NetworkManager.Singleton.IsServer)
+            return;
         GameManager.Instance.map = this.map;
         GameManager.Instance.flags = this.flags;
         GameManager.Instance.bases = this.bases;

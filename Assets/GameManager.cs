@@ -14,12 +14,12 @@ public class GameManager : NetworkBehaviour
     public int winConditionPoints = 1000;
 
     [Header("Prefabs and References")]
-    [SerializeField] public GameObject map;
-    [SerializeField] public GameObject flags;
-    [SerializeField] public GameObject bases;
-    [SerializeField] public GameObject outposts;
-    [SerializeField] public GameObject playerPrefab;
-    [SerializeField] public NavMeshSurface navigator;
+    public GameObject map;
+    public GameObject flags;
+    public GameObject bases;
+    public GameObject outposts;
+    public GameObject playerPrefab;
+    public NavMeshSurface navigator;
 
     public static List<Vector3> basePositions = new List<Vector3>();
 
@@ -43,12 +43,6 @@ public class GameManager : NetworkBehaviour
 
     public void SpawnPlayers()
     {
-        if (!IsServer)
-        {
-            Debug.LogError("Player spawn can only be initiated by the server.");
-            return;
-        }
-
         for (int i = 0; i < basePositions.Count; i++)
         {
             Vector3 spawnPosition = basePositions[i];
