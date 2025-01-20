@@ -55,11 +55,8 @@ public class GameManager : NetworkBehaviour
     }
     private void UpdateUIForAllPlayers()
     {
-        if (clientRpcHandler != null)
-        {
-            Debug.Log("2");
-            clientRpcHandler.UpdatePlayerUIClientRpc();
-        }
+        Debug.Log("111");
+        clientRpcHandler.UpdatePlayerUIClientRpc();
     }
     private void StartPassiveIncome()
     {
@@ -77,7 +74,6 @@ public class GameManager : NetworkBehaviour
                 var player = GlobalVariableHandler.Instance.Players[i];
                 player.Money += Convert.ToInt32(player.PassiveIncome / 60f);
                 GlobalVariableHandler.Instance.Players[i] = player;
-                Debug.Log($"p: {GlobalVariableHandler.Instance.Players[i].Name} m: {GlobalVariableHandler.Instance.Players[i].Money}");
             }
 
             UpdateUIForAllPlayers();
@@ -85,7 +81,6 @@ public class GameManager : NetworkBehaviour
     }
     public void InitUI()
     {
-        Debug.Log("1");
         UpdateUIForAllPlayers();
     }
     public IEnumerator PreGameCountdown()
