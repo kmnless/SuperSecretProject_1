@@ -14,12 +14,12 @@ public class GameManager : NetworkBehaviour
     public int winConditionPoints = 1000;
 
     [Header("Prefabs and References")]
-    [SerializeField] private GameObject map;
-    [SerializeField] private GameObject flags;
-    [SerializeField] private GameObject bases;
-    [SerializeField] private GameObject outposts;
-    [SerializeField] private GameObject playerPrefab;
-    [SerializeField] private NavMeshSurface navigator;
+    [SerializeField] public GameObject map;
+    [SerializeField] public GameObject flags;
+    [SerializeField] public GameObject bases;
+    [SerializeField] public GameObject outposts;
+    [SerializeField] public GameObject playerPrefab;
+    [SerializeField] public NavMeshSurface navigator;
 
     public static List<Vector3> basePositions = new List<Vector3>();
 
@@ -35,54 +35,13 @@ public class GameManager : NetworkBehaviour
             Destroy(gameObject);
         }
     }
-
-    void InitializeSceneObjects()
-    {
-        if (map == null) map = GameObject.Find("Map");
-        if (flags == null) flags = GameObject.Find("Flags");
-        if (bases == null) bases = GameObject.Find("Bases");
-        if (outposts == null) outposts = GameObject.Find("Outposts");
-        if (navigator == null) navigator = GameObject.Find("Navigator").GetComponent<NavMeshSurface>();
-
-        if (map == null || flags == null || bases == null || outposts == null || navigator == null)
-        {
-            Debug.LogError("One or more required objects could not be found in the scene.");
-        }
-
-    }
-    [ClientRpc]
-    public void InitializeMap()
-    {
-        InitializeSceneObjects();
-        try
-        {
-            MapScript.CreateSpriteMap(GlobalVariableHandler.Instance.FieldSizeX,
-                GlobalVariableHandler.Instance.FieldSizeY,
-                GlobalVariableHandler.Instance.TerrainField,
-                GlobalVariableHandler.Instance.BuildingsField,
-                spriteSize, map);
-
-            MapScript.CreateEntities(GlobalVariableHandler.Instance.FieldSizeX,
-                GlobalVariableHandler.Instance.FieldSizeY,
-                GlobalVariableHandler.Instance.BuildingsField,
-                spriteSize, bases, flags, outposts);
-
-            BuildNavMesh();
-            SpawnPlayers();
-        }
-        catch (Exception ex)
-        {
-            Debug.LogError($"Error initializing map: {ex}");
-        }
-    }
-
     private void BuildNavMesh()
     {
         navigator.BuildNavMeshAsync();
         navigator.UpdateNavMesh(navigator.navMeshData);
     }
 
-    private void SpawnPlayers()
+    public void SpawnPlayers()
     {
         if (!IsServer)
         {
