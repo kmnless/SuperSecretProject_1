@@ -68,4 +68,12 @@ public class UIManager : MonoBehaviour
         text.color = Color.green;
     }
 
+    public void DisplayFlagProgressbar(FlagHandler flag)
+    {
+        flag.StartCapture();
+    }
+    public void DisplayOutpostProgressbar(OutpostHandler outpost)
+    {
+        outpost.StartCapture();
+    }
 }

@@ -143,6 +143,17 @@ public class ClientRpcHandler : NetworkBehaviour
         }
     }
 
+    [ClientRpc]
+    public void NotifyFlagAnimationClientRpc(FlagHandler flag)
+    {
+        UIManager.Instance.DisplayFlagProgressbar(flag);
+    }
+    [ClientRpc]
+    public void NotifyOutpostAnimationClientRpc(OutpostHandler outpost)
+    {
+        UIManager.Instance.DisplayOutpostProgressbar(outpost);
+    }
+
     [ServerRpc(RequireOwnership = false)]
     public void RequestCaptureFlagServerRpc(int flagId, int playerId, ServerRpcParams rpcParams = default)
     {
