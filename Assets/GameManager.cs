@@ -85,8 +85,8 @@ public class GameManager : NetworkBehaviour
                 //        diamondIncome += outpost.DiamondEarning;
                 //    }
                 //}
-                player.Money += Convert.ToInt32(player.MoneyIncome / 60f);
-                player.Diamonds += Convert.ToInt32(player.DiamondsIncome / 60f);
+                player.Money += (player.MoneyIncome / 60f);
+                player.Diamonds += (player.DiamondsIncome / 60f);
 
                 GlobalVariableHandler.Instance.Players[i] = player;
             }
