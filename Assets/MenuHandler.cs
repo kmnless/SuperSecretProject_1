@@ -24,7 +24,7 @@ public class MenuHandler : MonoBehaviour
         }
         if (flagTransform == null)
         {
-            flagTransform = transform;
+            flagTransform = GetComponentInParent<FlagHandler>().transform;
         }
 
         if (playerTransform != null && flagTransform != null)
