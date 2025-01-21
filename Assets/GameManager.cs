@@ -72,6 +72,25 @@ public class GameManager : NetworkBehaviour
             UpdateUIForAllPlayers();
         }
     }
+    //private void InitializeFlags()
+    //{
+    //    flagList.Clear();
+
+    //    var flagHandlers = FindObjectsOfType<FlagHandler>();
+    //    for (int i = 0; i < flagHandlers.Length; i++)
+    //    {
+    //        flagHandlers[i].Initialize(i);
+    //        flagList.Add(new Flag
+    //        {
+    //            Index = i,
+    //            OwnerId = -1,
+    //            Income = flagHandlers[i].Income
+    //        });
+    //    }
+
+    //    Debug.Log("Flags initialized and synchronized.");
+    //}
+
     public void InitUI()
     {
     }
@@ -108,6 +127,7 @@ public class GameManager : NetworkBehaviour
         if (flagList == null) flagList = new List<FlagHandler>();
         if (!flagList.Contains(flag))
         {
+            Debug.Log($"{flag} init");
             flagList.Add(flag);
         }
     }
@@ -122,10 +142,7 @@ public class GameManager : NetworkBehaviour
         var flag = flagList[flagIndex];
         flag.ownerID = playerId;
 
-        if (clientRpcHandler != null)
-        {
-            clientRpcHandler.NotifyFlagCapturedClientRpc(flagIndex, playerId);
-        }
+        clientRpcHandler.NotifyFlagCapturedClientRpc(flagIndex, playerId);
     }
     public override void OnDestroy()
     {

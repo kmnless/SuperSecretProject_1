@@ -23,10 +23,7 @@ public class MenuHandler : MonoBehaviour
         if (currentFlag != null && GameManager.Instance != null)
         {
             int flagIndex = GameManager.Instance.flagList.IndexOf(currentFlag);
-            if (flagIndex != -1)
-            {
-                GameManager.Instance.CaptureFlag(flagIndex, playerId);
-            }
+            GameManager.Instance.CaptureFlag(flagIndex, playerId);
         }
     }
 
