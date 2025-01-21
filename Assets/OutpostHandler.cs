@@ -6,7 +6,7 @@ public class OutpostHandler : MonoBehaviour
     public int outpostId;
     public int ownerID { get; set; } = -1;
     [SerializeField] private SpriteRenderer texture;
-
+    [SerializeField] public int captureCost = 50;
     public float DiamondEarning = 10;
     private void Start()
     {
@@ -34,10 +34,14 @@ public class OutpostHandler : MonoBehaviour
             Debug.LogError($"Player with ID {playerId} not found.");
         }
     }
-
+    public void SetOwner(int playerId)
+    {
+        if (ownerID == playerId) return;
+        ownerID = playerId;
+    }
     public void UpdateOutpostInfo(int playerId)
     {
-        var text = GetComponentInChildren<TMP_Text>();
+        var text = GetComponent<TMP_Text>();
         text.text = playerId.ToString();
     }
 }

@@ -62,14 +62,32 @@ public class GameManager : NetworkBehaviour
         while (true)
         {
             yield return new WaitForSeconds(1f);
-
             for (int i = 0; i < GlobalVariableHandler.Instance.Players.Count; i++)
             {
                 var player = GlobalVariableHandler.Instance.Players[i];
-                player.Money += Convert.ToInt32(player.PassiveIncome / 60f);
+                float income = 0;
+                float diamondIncome = 0;
+                foreach (var flag in flagCache.Values)
+                {
+                    if (flag.ownerID == player.Id)
+                    {
+                        income += flag.MoneyEarning;
+                    }
+                }
+
+                foreach (var outpost in outpostCache.Values)
+                {
+                    if (outpost.ownerID == player.Id)
+                    {
+                        diamondIncome += outpost.DiamondEarning;
+                    }
+                }
+                income += player.PassiveIncome;
+                player.Money += Convert.ToInt32(income / 60f);
+                player.Diamonds += Convert.ToInt32(diamondIncome / 60f);
+
                 GlobalVariableHandler.Instance.Players[i] = player;
             }
-
             UpdateUIForAllPlayers();
         }
     }
@@ -161,7 +179,22 @@ public class GameManager : NetworkBehaviour
             Debug.LogError($"Player with ID {playerId} not found.");
             return;
         }
-        clientRpcHandler.NotifyFlagCapturedClientRpc(flagId, playerId);
+        var p = capturingPlayer.Value;
+        if (p.Money >= flag.captureCost)
+        {
+            p.Money -= flag.captureCost;
+            flag.SetOwner(playerId);
+            for(int i = 0; i < GlobalVariableHandler.Instance.Players.Count; i++)
+            {
+                if (GlobalVariableHandler.Instance.Players[i].Id == playerId)
+                {
+                    GlobalVariableHandler.Instance.Players[i] = p;
+                    break;
+                }
+            }
+
+            clientRpcHandler.NotifyFlagCapturedClientRpc(flagId, playerId);
+        }
     }
     public void HandleOutpostCapture(int outpostId, int playerId)
     {
@@ -188,7 +221,21 @@ public class GameManager : NetworkBehaviour
             Debug.LogError($"Player with ID {playerId} not found.");
             return;
         }
-        clientRpcHandler.NotifyOutpostCapturedClientRpc(outpostId, playerId);
+        var p = capturingPlayer.Value;
+        if (p.Money >= outpost.captureCost)
+        {
+            p.Money -= outpost.captureCost;
+            outpost.SetOwner(playerId);
+            for (int i = 0; i < GlobalVariableHandler.Instance.Players.Count; i++)
+            {
+                if (GlobalVariableHandler.Instance.Players[i].Id == playerId)
+                {
+                    GlobalVariableHandler.Instance.Players[i] = p;
+                    break;
+                }
+            }
+            clientRpcHandler.NotifyOutpostCapturedClientRpc(outpostId, playerId);
+        }
     }
     private FlagHandler FindFlagById(int flagId)
     {

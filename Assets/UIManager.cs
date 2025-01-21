@@ -41,6 +41,7 @@ public class UIManager : MonoBehaviour
                 textFields[1].text = $"Money: {myPlayer.Money}";
                 textFields[2].text = $"Diamonds: {myPlayer.Diamonds}";
                 textFields[3].text = $"Strength: {myPlayer.Strength} x {Math.Round(myPlayer.StrengthMultiplier, 2)}";
+                break;
             }
         }
 
