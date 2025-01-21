@@ -55,7 +55,7 @@ public class UIManager : MonoBehaviour
             GameObject otherPlayerStats = Instantiate(otherPlayerStatsPrefab, playerStatsContainer);
             TMP_Text[] textFields = otherPlayerStats.GetComponentsInChildren<TMP_Text>();
             textFields[0].text = $"{player.Name} Lvl {player.Level}\t{player.CurrentXP}/{player.NeededXP}";
-            textFields[1].text = $"Money: {player.Money}";
+            textFields[1].text = $"Money: {Math.Round(player.Money)}";
         }
     }
     public void DisplayVictoryScreen(string winnerName)
