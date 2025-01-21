@@ -6,6 +6,7 @@ public class FlagHandler : MonoBehaviour
     public int ownerID { get; set; } = -1;
     [SerializeField] private SpriteRenderer texture;
 
+    public float MoneyEarning = 5;
     private void Start()
     {
         

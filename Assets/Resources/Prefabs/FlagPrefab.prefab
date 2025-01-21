@@ -803,6 +803,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   flagId: 0
   texture: {fileID: 9015352658563253747}
+  MoneyEarning: 5
 --- !u!1 &8427216024441233231
 GameObject:
   m_ObjectHideFlags: 0
@@ -926,7 +927,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 816324223388333579}
         m_TargetAssemblyTypeName: MenuHandler, Assembly-CSharp
-        m_MethodName: Capture
+        m_MethodName: CaptureFlag
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

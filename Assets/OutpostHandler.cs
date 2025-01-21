@@ -7,6 +7,7 @@ public class OutpostHandler : MonoBehaviour
     public int ownerID { get; set; } = -1;
     [SerializeField] private SpriteRenderer texture;
 
+    public float DiamondEarning = 10;
     private void Start()
     {
         

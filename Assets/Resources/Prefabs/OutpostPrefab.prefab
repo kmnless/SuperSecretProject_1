@@ -733,7 +733,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 2578472824285283587}
         m_TargetAssemblyTypeName: MenuHandler, Assembly-CSharp
-        m_MethodName: Capture
+        m_MethodName: CaptureOutpost
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -951,6 +951,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   outpostId: 0
   texture: {fileID: 9015352658563253747}
+  DiamondEarning: 10
 --- !u!1 &8761258842249161850
 GameObject:
   m_ObjectHideFlags: 0

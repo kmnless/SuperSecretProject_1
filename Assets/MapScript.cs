@@ -130,7 +130,9 @@ public class MapScript : MonoBehaviour
                     case (int)Constants.Buildings.Outpost:
                         buffer = Instantiate(GlobalVariableHandler.Instance.OutpostPrefab, new Vector3((j + 0.5f) * spriteSize / 100.0f, (i + 0.5f) * spriteSize / 100.0f, -1.0f), Quaternion.identity);
                         buffer.transform.parent = outposts.transform;
-                        buffer.name = "Outpost" + outpostIndex++.ToString();
+                        buffer.name = "Outpost" + outpostIndex.ToString();
+                        OutpostHandler outpostProp = buffer.GetComponent<OutpostHandler>();
+                        outpostProp.outpostId = outpostIndex++;
                         break;
                 }
             }
