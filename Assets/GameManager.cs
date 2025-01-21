@@ -169,7 +169,7 @@ public class GameManager : NetworkBehaviour
         flag.isBeingCaptured = true;
 
         PlayerHandlerScript targetPlayer = FindPlayerHandler(player.Id);
-        clientRpcHandler.NotifyFlagAnimationClientRpc(flag);
+        clientRpcHandler.NotifyFlagAnimationClientRpc(flag.flagId);
         if (targetPlayer != null) targetPlayer.IsAllowedToMove = false;
         yield return new WaitForSeconds(3f);
 
@@ -196,7 +196,7 @@ public class GameManager : NetworkBehaviour
         outpost.isBeingCaptured = true;
 
         PlayerHandlerScript targetPlayer = FindPlayerHandler(player.Id);
-        clientRpcHandler.NotifyOutpostAnimationClientRpc(outpost);
+        clientRpcHandler.NotifyOutpostAnimationClientRpc(outpost.outpostId);
         if (targetPlayer != null) targetPlayer.IsAllowedToMove = false;
         yield return new WaitForSeconds(3f);
 

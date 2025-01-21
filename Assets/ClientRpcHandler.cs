@@ -144,14 +144,14 @@ public class ClientRpcHandler : NetworkBehaviour
     }
 
     [ClientRpc]
-    public void NotifyFlagAnimationClientRpc(FlagHandler flag)
+    public void NotifyFlagAnimationClientRpc(int flagId)
     {
-        UIManager.Instance.DisplayFlagProgressbar(flag);
+        UIManager.Instance.DisplayFlagProgressbar(flagId);
     }
     [ClientRpc]
-    public void NotifyOutpostAnimationClientRpc(OutpostHandler outpost)
+    public void NotifyOutpostAnimationClientRpc(int outpostId)
     {
-        UIManager.Instance.DisplayOutpostProgressbar(outpost);
+        UIManager.Instance.DisplayOutpostProgressbar(outpostId);
     }
 
     [ServerRpc(RequireOwnership = false)]

@@ -68,12 +68,38 @@ public class UIManager : MonoBehaviour
         text.color = Color.green;
     }
 
-    public void DisplayFlagProgressbar(FlagHandler flag)
+    public void DisplayFlagProgressbar(int flagId)
     {
-        flag.StartCapture();
+        FindFlagById(flagId).StartCapture();
     }
-    public void DisplayOutpostProgressbar(OutpostHandler outpost)
+    public void DisplayOutpostProgressbar(int outpostId)
     {
-        outpost.StartCapture();
+        FindOutpostById(outpostId).StartCapture();
     }
+
+    private FlagHandler FindFlagById(int flagId)
+    {
+        FlagHandler[] flags = FindObjectsOfType<FlagHandler>();
+        foreach (var flag in flags)
+        {
+            if (flag.flagId == flagId)
+            {
+                return flag;
+            }
+        }
+        return null;
+    }
+    private OutpostHandler FindOutpostById(int outpostId)
+    {
+        OutpostHandler[] outposts = FindObjectsOfType<OutpostHandler>();
+        foreach (var o in outposts)
+        {
+            if (o.outpostId == outpostId)
+            {
+                return o;
+            }
+        }
+        return null;
+    }
+
 }
