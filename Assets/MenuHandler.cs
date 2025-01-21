@@ -24,28 +24,45 @@ public class MenuHandler : MonoBehaviour
         menuUI.SetActive(true);
     }
 
-    public void CaptureFlag()
+    //public void CaptureFlag()
+    //{
+    //    int playerId = GlobalVariableHandler.Instance.MyIndex ?? -1;
+    //    int flagId = GetComponentInParent<FlagHandler>().flagId;
+
+    //    if (playerId >= 0)
+    //    {
+    //        CaptureHandler.SendRequestCaptureFlag(flagId, playerId);
+    //    }
+    //}
+    //public void CaptureOutpost()
+    //{
+    //    int playerId = GlobalVariableHandler.Instance.MyIndex ?? -1;
+    //    int outpostId = GetComponentInParent<OutpostHandler>().outpostId;
+
+    //    if (playerId >= 0)
+    //    {
+    //        CaptureHandler.SendRequestCaptureOutpost(outpostId, playerId);
+    //    }
+    //}
+    public void Capture()
     {
         int playerId = GlobalVariableHandler.Instance.MyIndex ?? -1;
-        int flagId = GetComponentInParent<FlagHandler>().flagId;
 
-        if (playerId >= 0)
+        if (currentFlag != null)
         {
-            CaptureHandler.SendRequestCaptureFlag(flagId, playerId);
+            CaptureHandler.SendRequestCaptureFlag(currentFlag.flagId, playerId);
         }
-    }
-    public void CaptureOutpost()
-    {
-        int playerId = GlobalVariableHandler.Instance.MyIndex ?? -1;
-        int outpostId = GetComponentInParent<OutpostHandler>().outpostId;
+        else if (currentOutpost != null)
+        {
+            CaptureHandler.SendRequestCaptureOutpost(currentOutpost.outpostId, playerId);
+        }
 
-        if (playerId >= 0)
-        {
-            CaptureHandler.SendRequestCaptureOutpost(outpostId, playerId);
-        }
+        Close();
     }
     public void Close()
     {
         menuUI.SetActive(false);
+        currentFlag = null;
+        currentOutpost = null;
     }
 }

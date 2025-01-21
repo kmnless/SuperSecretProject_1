@@ -27,6 +27,8 @@ public class GameManager : NetworkBehaviour
     public bool isStarted = false;
 
     public static List<Vector3> basePositions = new List<Vector3>();
+    private Dictionary<int, FlagHandler> flagCache = new();
+    private Dictionary<int, OutpostHandler> outpostCache = new();
 
     private Coroutine passiveIncomeCoroutine;
     private void Awake()
@@ -89,7 +91,20 @@ public class GameManager : NetworkBehaviour
 
     //    Debug.Log("Flags initialized and synchronized.");
     //}
+    public void InitializeCaches()
+    {
+        foreach (var flag in FindObjectsOfType<FlagHandler>())
+        {
+            flagCache[flag.flagId] = flag;
+        }
 
+        foreach (var outpost in FindObjectsOfType<OutpostHandler>())
+        {
+            outpostCache[outpost.outpostId] = outpost;
+        }
+
+        Debug.Log("Flag and Outpost caches initialized.");
+    }
     public void InitUI()
     {
     }
@@ -123,11 +138,14 @@ public class GameManager : NetworkBehaviour
     }
     public void HandleFlagCapture(int flagId, int playerId)
     {
-        FlagHandler flag = FindFlagById(flagId);
-        if (flag == null)
+        if (!flagCache.TryGetValue(flagId, out FlagHandler flag))
         {
-            Debug.LogError($"Flag with ID {flagId} not found.");
-            return;
+            FlagHandler f = FindFlagById(flagId);
+            if (f == null)
+            {
+                Debug.LogError($"Flag with ID {flagId} not found.");
+                return;
+            }
         }
         PlayerProperty? capturingPlayer = null;
         foreach (var player in GlobalVariableHandler.Instance.Players)
@@ -147,11 +165,14 @@ public class GameManager : NetworkBehaviour
     }
     public void HandleOutpostCapture(int outpostId, int playerId)
     {
-        OutpostHandler outpost = FindOutpostById(outpostId);
-        if (outpost == null)
+        if (!outpostCache.TryGetValue(outpostId, out OutpostHandler outpost))
         {
-            Debug.LogError($"Flag with ID {outpostId} not found.");
-            return;
+            OutpostHandler o = FindOutpostById(outpostId);
+            if (o == null)
+            {
+                Debug.LogError($"Flag with ID {outpostId} not found.");
+                return;
+            }
         }
         PlayerProperty? capturingPlayer = null;
         foreach (var player in GlobalVariableHandler.Instance.Players)
