@@ -4,6 +4,7 @@ public class MenuHandler : MonoBehaviour
 {
     [SerializeField] private GameObject menuUI;
     private FlagHandler currentFlag;
+    private OutpostHandler currentOutpost;
     private int playerId;
 
     private void Start()
@@ -17,8 +18,13 @@ public class MenuHandler : MonoBehaviour
         currentFlag = flag;
         menuUI.SetActive(true);
     }
+    public void Open(OutpostHandler outpost)
+    {
+        currentOutpost = outpost;
+        menuUI.SetActive(true);
+    }
 
-    public void Capture()
+    public void CaptureFlag()
     {
         int playerId = GlobalVariableHandler.Instance.MyIndex ?? -1;
         int flagId = GetComponentInParent<FlagHandler>().flagId;
@@ -28,7 +34,16 @@ public class MenuHandler : MonoBehaviour
             CaptureHandler.SendRequestCaptureFlag(flagId, playerId);
         }
     }
+    public void CaptureOutpost()
+    {
+        int playerId = GlobalVariableHandler.Instance.MyIndex ?? -1;
+        int flagId = GetComponentInParent<OutpostHandler>().outpostId;
 
+        if (playerId >= 0)
+        {
+            CaptureHandler.SendRequestCaptureFlag(flagId, playerId);
+        }
+    }
     public void Close()
     {
         menuUI.SetActive(false);

@@ -88,6 +88,18 @@ public class ClientRpcHandler : NetworkBehaviour
         }
         return null;
     }
+    private OutpostHandler FindOutpostById(int outpostId)
+    {
+        OutpostHandler[] outposts = FindObjectsOfType<OutpostHandler>();
+        foreach (var o in outposts)
+        {
+            if (o.outpostId == outpostId)
+            {
+                return o;
+            }
+        }
+        return null;
+    }
 
     [ClientRpc]
     public void StartGameClientRpc()
@@ -121,7 +133,17 @@ public class ClientRpcHandler : NetworkBehaviour
             flag.UpdateFlagInfo(playerId);
         }
     }
-
+    [ClientRpc]
+    public void NotifyOutpostCapturedClientRpc(int outpostId, int playerId)
+    {
+        Debug.Log($"Flag {outpostId} captured by Player {playerId} on all clients.");
+        OutpostHandler outpost = FindOutpostById(outpostId);
+        if (outpost != null)
+        {
+            outpost.UpdateOutpostAppearance(playerId);
+            outpost.UpdateOutpostInfo(playerId);
+        }
+    }
 
     [ServerRpc(RequireOwnership = false)]
     public void RequestCaptureFlagServerRpc(int flagId, int playerId, ServerRpcParams rpcParams = default)
@@ -129,6 +151,14 @@ public class ClientRpcHandler : NetworkBehaviour
         if (GameManager.Instance != null)
         {
             GameManager.Instance.HandleFlagCapture(flagId, playerId);
+        }
+    }
+    [ServerRpc(RequireOwnership = false)]
+    public void RequestCaptureOutpostServerRpc(int flagId, int playerId, ServerRpcParams rpcParams = default)
+    {
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.HandleOutpostCapture(flagId, playerId);
         }
     }
 

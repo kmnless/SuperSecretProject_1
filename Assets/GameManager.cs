@@ -6,6 +6,7 @@ using Unity.Netcode;
 using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
+using static UnityEditor.Rendering.CameraUI;
 
 public class GameManager : NetworkBehaviour
 {
@@ -144,6 +145,30 @@ public class GameManager : NetworkBehaviour
         }
         clientRpcHandler.NotifyFlagCapturedClientRpc(flagId, playerId);
     }
+    public void HandleOutpostCapture(int outpostId, int playerId)
+    {
+        OutpostHandler outpost = FindOutpostById(outpostId);
+        if (outpost == null)
+        {
+            Debug.LogError($"Flag with ID {outpostId} not found.");
+            return;
+        }
+        PlayerProperty? capturingPlayer = null;
+        foreach (var player in GlobalVariableHandler.Instance.Players)
+        {
+            if (player.Id == playerId)
+            {
+                capturingPlayer = player;
+                break;
+            }
+        }
+        if (capturingPlayer == null)
+        {
+            Debug.LogError($"Player with ID {playerId} not found.");
+            return;
+        }
+        clientRpcHandler.NotifyOutpostCapturedClientRpc(outpostId, playerId);
+    }
     private FlagHandler FindFlagById(int flagId)
     {
         FlagHandler[] flags = FindObjectsOfType<FlagHandler>();
@@ -152,6 +177,18 @@ public class GameManager : NetworkBehaviour
             if (flag.flagId == flagId)
             {
                 return flag;
+            }
+        }
+        return null;
+    }
+    private OutpostHandler FindOutpostById(int outpostId)
+    {
+        OutpostHandler[] outposts = FindObjectsOfType<OutpostHandler>();
+        foreach (var o in outposts)
+        {
+            if (o.outpostId == outpostId)
+            {
+                return o;
             }
         }
         return null;
