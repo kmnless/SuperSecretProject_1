@@ -113,11 +113,17 @@ public class GameManager : NetworkBehaviour
     }
     public void CaptureFlag(int flagIndex, int playerId)
     {
-        FlagHandler flag = flagList[flagIndex];
-        if (flag.ownerID != playerId)
+        if (flagIndex < 0 || flagIndex >= flagList.Count)
         {
-            flag.ownerID = playerId;
-            flag.UpdateFlagAppearance(playerId);
+            Debug.LogError("Invalid flag index.");
+            return;
+        }
+
+        var flag = flagList[flagIndex];
+        flag.ownerID = playerId;
+
+        if (clientRpcHandler != null)
+        {
             clientRpcHandler.NotifyFlagCapturedClientRpc(flagIndex, playerId);
         }
     }

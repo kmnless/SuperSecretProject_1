@@ -100,15 +100,22 @@ public class ClientRpcHandler : NetworkBehaviour
     [ClientRpc]
     public void NotifyFlagCapturedClientRpc(int flagIndex, int playerId)
     {
-        if (GameManager.Instance.flagList == null || flagIndex < 0 || flagIndex >= GameManager.Instance.flagList.Count)
+        if (GameObject.FindObjectsOfType<FlagHandler>() is not FlagHandler[] flagHandlers)
         {
-            Debug.LogError("Invalid flagList or flagIndex in NotifyFlagCapturedClientRpc.");
+            Debug.LogError("FlagHandlers not found on the scene!");
             return;
         }
 
-        var flag = GameManager.Instance.flagList[flagIndex];
-        flag.UpdateFlagAppearance(playerId);
+        if (flagIndex < 0 || flagIndex >= flagHandlers.Length)
+        {
+            Debug.LogError("Invalid flag index in NotifyFlagCapturedClientRpc.");
+            return;
+        }
+
+        // Обновить внешний вид флага на клиенте
+        flagHandlers[flagIndex].UpdateFlagAppearance(playerId);
     }
+
 
     [ClientRpc]
     public void SetMyIndexClientRpc(int index, ClientRpcParams clientRpcParams = default)
