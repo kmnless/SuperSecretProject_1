@@ -13,9 +13,7 @@ public class OutpostHandler : MonoBehaviour
     public float DiamondEarning = 10;
     public bool isBeingCaptured = false;
 
-    [SerializeField] private GameObject progressBarPrefab;
-    private GameObject progressBarInstance;
-    private Slider progressBarSlider;
+    [SerializeField] private Slider progressBarSlider;
     private void Start()
     {
         UpdateStatusText();
@@ -61,18 +59,13 @@ public class OutpostHandler : MonoBehaviour
 
         statusText.text = $"Owner: {ownerName}\nDiamond Earning: {DiamondEarning}\nCapture Cost: {captureCost}";
     }
-
-
     public void StartCapture()
     {
-        progressBarInstance = Instantiate(progressBarPrefab, transform.position, Quaternion.identity, transform);
-        progressBarSlider = progressBarInstance.GetComponentInChildren<Slider>();
-
-        StartCoroutine(CaptureOutpostRoutine());
+        StartCoroutine(CaptureFlagRoutine());
     }
-
-    private IEnumerator CaptureOutpostRoutine()
+    private IEnumerator CaptureFlagRoutine()
     {
+        progressBarSlider.enabled = true;
         float captureTime = 3f;
         float elapsed = 0f;
 
@@ -83,21 +76,6 @@ public class OutpostHandler : MonoBehaviour
 
             yield return null;
         }
-        CompleteCapture();
-    }
-
-    private void CancelCapture()
-    {
-        Destroy(progressBarInstance);
-        progressBarInstance = null;
-    }
-
-    private void CompleteCapture()
-    {
-        if (progressBarInstance != null)
-        {
-            Destroy(progressBarInstance);
-            progressBarInstance = null;
-        }
+        progressBarSlider.enabled = false;
     }
 }
