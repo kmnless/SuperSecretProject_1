@@ -32,8 +32,6 @@ public class GameManager : NetworkBehaviour
     private const int delayBeforeMenu = 5;
 
     public static List<Vector3> basePositions = new List<Vector3>();
-    private Dictionary<int, FlagHandler> flagCache = new();
-    private Dictionary<int, OutpostHandler> outpostCache = new();
 
     private Coroutine passiveIncomeCoroutine;
     private void Awake()
@@ -70,21 +68,26 @@ public class GameManager : NetworkBehaviour
             for (int i = 0; i < GlobalVariableHandler.Instance.Players.Count; i++)
             {
                 var player = GlobalVariableHandler.Instance.Players[i];
-                //foreach (var flag in flagCache.Values)
-                //{
-                //    if (flag.ownerID == player.Id)
-                //    {
-                //        income += flag.moneyEarning;
-                //    }
-                //}
+                float income = 0;
+                float diamondIncome = 0;
+                foreach (var flag in FindObjectsOfType<FlagHandler>())
+                {
+                    if (flag.ownerID == player.Id)
+                    {
+                        income += flag.moneyEarning;
+                    }
+                }
 
-                //foreach (var outpost in outpostCache.Values)
-                //{
-                //    if (outpost.ownerID == player.Id)
-                //    {
-                //        diamondIncome += outpost.DiamondEarning;
-                //    }
-                //}
+                foreach (var outpost in FindObjectsOfType<OutpostHandler>())
+                {
+                    if (outpost.ownerID == player.Id)
+                    {
+                        diamondIncome += outpost.DiamondEarning;
+                    }
+                }
+                player.MoneyIncome = income;
+                player.DiamondsIncome = diamondIncome;
+
                 player.Money += (player.MoneyIncome / 60f);
                 player.Diamonds += (player.DiamondsIncome / 60f);
 
@@ -171,7 +174,6 @@ public class GameManager : NetworkBehaviour
         yield return new WaitForSeconds(3f);
 
         player.Money -= flag.captureCost;
-        player.MoneyIncome += flag.moneyEarning;
         flag.SetOwner(player.Id);
 
         flag.isBeingCaptured = false;
@@ -199,7 +201,6 @@ public class GameManager : NetworkBehaviour
         yield return new WaitForSeconds(3f);
 
         player.Money -= outpost.captureCost;
-        player.DiamondsIncome += outpost.DiamondEarning; 
         outpost.SetOwner(player.Id);
 
         outpost.isBeingCaptured = false;
@@ -217,28 +218,27 @@ public class GameManager : NetworkBehaviour
 
         clientRpcHandler.NotifyOutpostCapturedClientRpc(outpost.outpostId, player.Id);
     }
-    public void InitializeCaches()
-    {
-        foreach (var flag in FindObjectsOfType<FlagHandler>())
-        {
-            flagCache[flag.flagId] = flag;
-        }
-
-        foreach (var outpost in FindObjectsOfType<OutpostHandler>())
-        {
-            outpostCache[outpost.outpostId] = outpost;
-        }
-
-        Debug.Log("Flag and Outpost caches initialized.");
-    }
     public IEnumerator PreGameCountdown()
     {
+        var players = FindObjectsOfType<PlayerHandlerScript>();
+
+        foreach (var player in players)
+        {
+            player.IsAllowedToMove = false;
+        }
+
         const int countdownDuration = 5;
         for (int i = countdownDuration; i > 0; i--)
         {
             yield return new WaitForSeconds(1f);
         }
+
         isStarted = true;
+
+        foreach (var player in players)
+        {
+            player.IsAllowedToMove = true;
+        }
         if (ServerHandler.Instance != null)
         {
             ServerHandler.Instance.StartGameClient();
@@ -261,14 +261,11 @@ public class GameManager : NetworkBehaviour
     }
     public void HandleFlagCapture(int flagId, int playerId)
     {
-        if (!flagCache.TryGetValue(flagId, out FlagHandler flag))
+        FlagHandler flag = FindFlagById(flagId);
+        if (flag == null)
         {
-            FlagHandler f = FindFlagById(flagId);
-            if (f == null)
-            {
-                Debug.LogError($"Flag with ID {flagId} not found.");
-                return;
-            }
+            Debug.LogError($"Flag with ID {flagId} not found.");
+            return;
         }
         PlayerProperty? capturingPlayer = null;
         foreach (var player in GlobalVariableHandler.Instance.Players)
@@ -287,19 +284,16 @@ public class GameManager : NetworkBehaviour
         var p = capturingPlayer.Value;
         if (p.Money >= flag.captureCost)
         {
-            StartCoroutine(CaptureFlagCoroutine(p,flag));
+            StartCoroutine(CaptureFlagCoroutine(p, flag));
         }
     }
     public void HandleOutpostCapture(int outpostId, int playerId)
     {
-        if (!outpostCache.TryGetValue(outpostId, out OutpostHandler outpost))
+        OutpostHandler outpost = FindOutpostById(outpostId);
+        if (outpost == null)
         {
-            OutpostHandler o = FindOutpostById(outpostId);
-            if (o == null)
-            {
-                Debug.LogError($"Flag with ID {outpostId} not found.");
-                return;
-            }
+            Debug.LogError($"Flag with ID {outpostId} not found.");
+            return;
         }
         PlayerProperty? capturingPlayer = null;
         foreach (var player in GlobalVariableHandler.Instance.Players)
