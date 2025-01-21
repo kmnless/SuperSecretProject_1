@@ -2,56 +2,41 @@ using UnityEngine;
 
 public class FlagHandler : MonoBehaviour
 {
+    public int flagId;
     public int ownerID { get; set; } = -1;
     [SerializeField] private SpriteRenderer texture;
 
     private void Start()
     {
-        if (GameManager.Instance != null)
-        {
-            GameManager.Instance.RegisterFlag(this);
-        }
-        else
-        {
-            Debug.LogError("GameManager is not initialized.");
-        }
+        
     }
 
     public void UpdateFlagAppearance(int playerId)
     {
-        if (playerId < 0)
+        PlayerProperty? player = null;
+        foreach (var p in GlobalVariableHandler.Instance.Players)
         {
-            Debug.LogError("Invalid player ID.");
-            return;
+            if (p.Id == playerId)
+            {
+                player = p;
+                break;
+            }
         }
 
-        if (TryGetComponent(out Renderer renderer))
+        if (player != null)
         {
-            PlayerProperty? player = null;
-            foreach (var p in GlobalVariableHandler.Instance.Players)
-            {
-                if (p.Id == playerId)
-                {
-                    player = p;
-                    break;
-                }
-            }
-
-            if (player != null)
-            {
-                renderer.material.color = player.Value.Color;
-            }
-            else
-            {
-                Debug.LogError($"Player with ID {playerId} not found.");
-            }
+            texture.color = player.Value.Color;
         }
         else
         {
-            Debug.LogError("Renderer component not found on FlagHandler.");
+            Debug.LogError($"Player with ID {playerId} not found.");
         }
     }
-    public void UpdateFlagInfo(PlayerProperty player)
+
+    public void CaptureFlag(int playerId)
+    {
+    }
+    public void UpdateFlagInfo(int playerId)
     {
 
     }

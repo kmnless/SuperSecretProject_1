@@ -27,8 +27,6 @@ public class GameManager : NetworkBehaviour
 
     public static List<Vector3> basePositions = new List<Vector3>();
 
-    [SerializeField] public List<FlagHandler> flagList;
-
     private Coroutine passiveIncomeCoroutine;
     private void Awake()
     {
@@ -122,27 +120,41 @@ public class GameManager : NetworkBehaviour
             Debug.Log($"Player {i} spawned at {spawnPosition}");
         }
     }
-    public void RegisterFlag(FlagHandler flag)
+    public void HandleFlagCapture(int flagId, int playerId)
     {
-        if (flagList == null) flagList = new List<FlagHandler>();
-        if (!flagList.Contains(flag))
+        FlagHandler flag = FindFlagById(flagId);
+        if (flag == null)
         {
-            Debug.Log($"{flag} init");
-            flagList.Add(flag);
-        }
-    }
-    public void CaptureFlag(int flagIndex, int playerId)
-    {
-        if (flagIndex < 0 || flagIndex >= flagList.Count)
-        {
-            Debug.LogError("Invalid flag index.");
+            Debug.LogError($"Flag with ID {flagId} not found.");
             return;
         }
-
-        var flag = flagList[flagIndex];
-        flag.ownerID = playerId;
-
-        clientRpcHandler.NotifyFlagCapturedClientRpc(flagIndex, playerId);
+        PlayerProperty? capturingPlayer = null;
+        foreach (var player in GlobalVariableHandler.Instance.Players)
+        {
+            if (player.Id == playerId)
+            {
+                capturingPlayer = player;
+                break;
+            }
+        }
+        if (capturingPlayer == null)
+        {
+            Debug.LogError($"Player with ID {playerId} not found.");
+            return;
+        }
+        clientRpcHandler.NotifyFlagCapturedClientRpc(flagId, playerId);
+    }
+    private FlagHandler FindFlagById(int flagId)
+    {
+        FlagHandler[] flags = FindObjectsOfType<FlagHandler>();
+        foreach (var flag in flags)
+        {
+            if (flag.flagId == flagId)
+            {
+                return flag;
+            }
+        }
+        return null;
     }
     public override void OnDestroy()
     {

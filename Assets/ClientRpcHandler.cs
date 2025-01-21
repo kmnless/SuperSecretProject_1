@@ -76,6 +76,19 @@ public class ClientRpcHandler : NetworkBehaviour
             mediator.NetworkObject.Spawn();
         }
     }
+    private FlagHandler FindFlagById(int flagId)
+    {
+        FlagHandler[] flags = FindObjectsOfType<FlagHandler>();
+        foreach (var flag in flags)
+        {
+            if (flag.flagId == flagId)
+            {
+                return flag;
+            }
+        }
+        return null;
+    }
+
     [ClientRpc]
     public void StartGameClientRpc()
     {
@@ -98,18 +111,26 @@ public class ClientRpcHandler : NetworkBehaviour
         }
     }
     [ClientRpc]
-    public void NotifyFlagCapturedClientRpc(int flagIndex, int playerId)
+    public void NotifyFlagCapturedClientRpc(int flagId, int playerId)
     {
-        var flagHandlers = FindObjectsOfType<FlagHandler>();
-        if (flagIndex < 0 || flagIndex >= flagHandlers.Length)
+        Debug.Log($"Flag {flagId} captured by Player {playerId} on all clients.");
+        FlagHandler flag = FindFlagById(flagId);
+        if (flag != null)
         {
-            Debug.LogError("Invalid flag index received in NotifyFlagCapturedClientRpc.");
-            return;
+            flag.UpdateFlagAppearance(playerId);
+            flag.UpdateFlagInfo(playerId);
         }
-
-        flagHandlers[flagIndex].UpdateFlagAppearance(playerId);
     }
 
+
+    [ServerRpc(RequireOwnership = false)]
+    public void RequestCaptureFlagServerRpc(int flagId, int playerId, ServerRpcParams rpcParams = default)
+    {
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.HandleFlagCapture(flagId, playerId);
+        }
+    }
 
     [ClientRpc]
     public void SetMyIndexClientRpc(int index, ClientRpcParams clientRpcParams = default)

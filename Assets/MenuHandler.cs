@@ -20,10 +20,12 @@ public class MenuHandler : MonoBehaviour
 
     public void Capture()
     {
-        if (currentFlag != null && GameManager.Instance != null)
+        int playerId = GlobalVariableHandler.Instance.MyIndex ?? -1;
+        int flagId = GetComponentInParent<FlagHandler>().flagId;
+
+        if (playerId >= 0)
         {
-            int flagIndex = GameManager.Instance.flagList.IndexOf(currentFlag);
-            GameManager.Instance.CaptureFlag(flagIndex, playerId);
+            CaptureHandler.SendRequestCaptureFlag(flagId, playerId);
         }
     }
 

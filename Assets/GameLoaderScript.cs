@@ -73,4 +73,6 @@ public class GameLoaderScript : MonoBehaviour
         navigator.BuildNavMeshAsync();
         navigator.UpdateNavMesh(navigator.navMeshData);
     }
+
+
 }
