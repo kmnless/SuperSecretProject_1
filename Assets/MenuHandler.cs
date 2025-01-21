@@ -5,8 +5,8 @@ public class MenuHandler : MonoBehaviour
 {
     [SerializeField] private GameObject menuUI;
     [SerializeField] private Button captureButton;
-    [SerializeField] private float captureRadius = 3.0f;
-    private Transform playerTransform;
+    [SerializeField] private float captureRadius = 7.0f;
+    private static Transform playerTransform;
     private Transform flagTransform;
     private FlagHandler currentFlag;
     private OutpostHandler currentOutpost;
@@ -18,9 +18,12 @@ public class MenuHandler : MonoBehaviour
     }
     private void Update()
     {
-        if (playerTransform == null || flagTransform == null)
+        if(playerTransform == null)
         {
-            playerTransform = FindObjectOfType<PlayerHandlerScript>()?.transform;
+            return;
+        }
+        if (flagTransform == null)
+        {
             flagTransform = transform;
         }
 
@@ -30,7 +33,10 @@ public class MenuHandler : MonoBehaviour
             captureButton.interactable = distance <= captureRadius;
         }
     }
-
+    public static void SetCurrentPlayer(Transform playerTransform)
+    {
+        MenuHandler.playerTransform = playerTransform;
+    }
     private void Start()
     {
         menuUI.SetActive(false);

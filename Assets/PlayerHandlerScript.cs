@@ -102,6 +102,8 @@ public class PlayerHandlerScript : NetworkBehaviour
         agent.updateRotation = false;
         agent.updateUpAxis = false;
 
+        MenuHandler.SetCurrentPlayer(this.transform);
+
         if (string.IsNullOrEmpty(playerName))
         {
             SetPlayerName($"Player{OwnerClientId}");
