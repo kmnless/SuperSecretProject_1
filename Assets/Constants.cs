@@ -4,14 +4,13 @@ using UnityEditor.Build;
 using UnityEngine;
 public class Constants : MonoBehaviour
 {
-    public enum Buildings 
+    public enum Buildings
     {
-        None=0,
-        Base=1,
-        Flag=2,
-        Outpost=3,
-        Road=4
-    
+        None = 0,
+        Base = 1,
+        Outpost = 2,
+        Flag = 3,
+        Road = 4
     }
     public const int MENU_SCENE_INDEX = 0;
     public const int GAME_SETTINGS_SCENE_INDEX = 1;
