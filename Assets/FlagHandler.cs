@@ -38,6 +38,7 @@ public class FlagHandler : MonoBehaviour
     }
     public void SetOwner(int playerId)
     {
+        Debug.Log("setowner");
         if (ownerID == playerId) return;
         ownerID = playerId;
     }

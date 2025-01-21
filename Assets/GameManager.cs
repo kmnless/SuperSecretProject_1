@@ -166,8 +166,10 @@ public class GameManager : NetworkBehaviour
     private IEnumerator StopPlayerMovementCoroutine(PlayerProperty player)
     {
         PlayerHandlerScript targetPlayer = FindPlayerHandler(player.Id);
+        Debug.Log(targetPlayer.playerName);
         if (targetPlayer != null) targetPlayer.IsAllowedToMove = false;
         yield return new WaitForSeconds(3f);
+        Debug.Log("ahah");
         if (targetPlayer != null) targetPlayer.IsAllowedToMove = true;
     }
     public void InitializeCaches()
@@ -240,9 +242,11 @@ public class GameManager : NetworkBehaviour
         var p = capturingPlayer.Value;
         if (p.Money >= flag.captureCost)
         {
+            Debug.Log("manager");
             flag.isBeingCaptured = true;
             StartCoroutine(StopPlayerMovementCoroutine(p));
             flag.isBeingCaptured = false;
+            Debug.Log("manager2");
             p.Money -= flag.captureCost;
             flag.SetOwner(playerId);
             for(int i = 0; i < GlobalVariableHandler.Instance.Players.Count; i++)

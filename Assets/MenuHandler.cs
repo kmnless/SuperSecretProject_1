@@ -50,6 +50,7 @@ public class MenuHandler : MonoBehaviour
 
         if (currentFlag != null && !currentFlag.isBeingCaptured)
         {
+            Debug.Log("capture");
             CaptureHandler.SendRequestCaptureFlag(currentFlag.flagId, playerId);
         }
         else if (currentOutpost != null && !currentOutpost.isBeingCaptured)

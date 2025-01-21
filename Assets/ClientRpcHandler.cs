@@ -150,6 +150,7 @@ public class ClientRpcHandler : NetworkBehaviour
     {
         if (GameManager.Instance != null)
         {
+            Debug.Log("rpc");
             GameManager.Instance.HandleFlagCapture(flagId, playerId);
         }
     }
