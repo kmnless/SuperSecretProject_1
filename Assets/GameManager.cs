@@ -42,8 +42,8 @@ public class GameManager : NetworkBehaviour
             Destroy(gameObject);
         }
     }
-    private void Start()
-    {
+    private void Start() 
+    {        
     }
     private void UpdateUIForAllPlayers()
     {
@@ -75,6 +75,12 @@ public class GameManager : NetworkBehaviour
     [ClientRpc]
     public void NotifyFlagCapturedClientRpc(int flagIndex, int playerId)
     {
+        if (flagIndex < 0 || flagIndex >= flagList.Count || flagList[flagIndex] == null)
+        {
+            Debug.LogError($"Invalid flagIndex: {flagIndex} or flag is null.");
+            return;
+        }
+
         Debug.Log($"Flag {flagIndex} captured by player {playerId}");
         if (flagIndex < flagList.Count && playerId < GlobalVariableHandler.Instance.Players.Count)
         {
