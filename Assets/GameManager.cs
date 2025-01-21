@@ -284,6 +284,7 @@ public class GameManager : NetworkBehaviour
         var p = capturingPlayer.Value;
         if (p.Money >= flag.captureCost)
         {
+            flag.StartCapture();
             StartCoroutine(CaptureFlagCoroutine(p, flag));
         }
     }
@@ -312,6 +313,7 @@ public class GameManager : NetworkBehaviour
         var p = capturingPlayer.Value;
         if (p.Money >= outpost.captureCost)
         {
+            outpost.StartCapture();
             StartCoroutine(CaptureOutpostCoroutine(p, outpost));
         }
     }

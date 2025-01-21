@@ -1,5 +1,7 @@
+using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class FlagHandler : MonoBehaviour
 {
@@ -10,6 +12,10 @@ public class FlagHandler : MonoBehaviour
     [SerializeField] public int captureCost = 50;
     public float moneyEarning = 5;
     public bool isBeingCaptured = false;
+
+    [SerializeField] private GameObject progressBarPrefab;
+    private GameObject progressBarInstance;
+    private Slider progressBarSlider;
     private void Start()
     {
         UpdateStatusText();
@@ -38,7 +44,6 @@ public class FlagHandler : MonoBehaviour
     }
     public void SetOwner(int playerId)
     {
-        Debug.Log("setowner");
         if (ownerID == playerId) return;
         ownerID = playerId;
     }
@@ -55,5 +60,43 @@ public class FlagHandler : MonoBehaviour
         }
 
         statusText.text = $"Owner: {ownerName}\nEarning: {moneyEarning}\nCapture Cost: {captureCost}";
+    }
+
+    public void StartCapture()
+    {
+        progressBarInstance = Instantiate(progressBarPrefab, transform.position, Quaternion.identity, transform);
+        progressBarSlider = progressBarInstance.GetComponentInChildren<Slider>();
+
+        StartCoroutine(CaptureFlagRoutine());
+    }
+
+    private IEnumerator CaptureFlagRoutine()
+    {
+        float captureTime = 3f;
+        float elapsed = 0f;
+
+        while (elapsed < captureTime)
+        {
+            elapsed += Time.deltaTime;
+            progressBarSlider.value = elapsed / captureTime; 
+
+            yield return null;
+        }
+        CompleteCapture();
+    }
+
+    private void CancelCapture()
+    {
+        Destroy(progressBarInstance);
+        progressBarInstance = null;
+    }
+
+    private void CompleteCapture()
+    {
+        if (progressBarInstance != null)
+        {
+            Destroy(progressBarInstance);
+            progressBarInstance = null;
+        }
     }
 }

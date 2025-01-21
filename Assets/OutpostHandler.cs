@@ -1,5 +1,7 @@
+using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class OutpostHandler : MonoBehaviour
 {
@@ -10,6 +12,10 @@ public class OutpostHandler : MonoBehaviour
     [SerializeField] public int captureCost = 50;
     public float DiamondEarning = 10;
     public bool isBeingCaptured = false;
+
+    [SerializeField] private GameObject progressBarPrefab;
+    private GameObject progressBarInstance;
+    private Slider progressBarSlider;
     private void Start()
     {
         UpdateStatusText();
@@ -54,5 +60,44 @@ public class OutpostHandler : MonoBehaviour
         }
 
         statusText.text = $"Owner: {ownerName}\nDiamond Earning: {DiamondEarning}\nCapture Cost: {captureCost}";
+    }
+
+
+    public void StartCapture()
+    {
+        progressBarInstance = Instantiate(progressBarPrefab, transform.position, Quaternion.identity, transform);
+        progressBarSlider = progressBarInstance.GetComponentInChildren<Slider>();
+
+        StartCoroutine(CaptureOutpostRoutine());
+    }
+
+    private IEnumerator CaptureOutpostRoutine()
+    {
+        float captureTime = 3f;
+        float elapsed = 0f;
+
+        while (elapsed < captureTime)
+        {
+            elapsed += Time.deltaTime;
+            progressBarSlider.value = elapsed / captureTime;
+
+            yield return null;
+        }
+        CompleteCapture();
+    }
+
+    private void CancelCapture()
+    {
+        Destroy(progressBarInstance);
+        progressBarInstance = null;
+    }
+
+    private void CompleteCapture()
+    {
+        if (progressBarInstance != null)
+        {
+            Destroy(progressBarInstance);
+            progressBarInstance = null;
+        }
     }
 }
