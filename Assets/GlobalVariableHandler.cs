@@ -204,7 +204,7 @@ public class GlobalVariableHandler : NetworkBehaviour, INetworkSerializable
 
         BasePrefab = Resources.Load<GameObject>("Prefabs/BasePrefab");
         FlagPrefab = Resources.Load<GameObject>("Prefabs/FlagPrefab");
-        OutpostPrefab = Resources.Load<GameObject>("Prefabs/FlagPrefab"); // !!
+        OutpostPrefab = Resources.Load<GameObject>("Prefabs/OutpostPrefab");
 
         if (RoadTexture == null || FlagTexture == null || BaseTexture == null)
             Debug.LogError("One or more textures failed to load.");
