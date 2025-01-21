@@ -950,8 +950,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   outpostId: 0
+  statusText: {fileID: 3716921195976607012}
   texture: {fileID: 9015352658563253747}
+  captureCost: 50
   DiamondEarning: 10
+  isBeingCaptured: 0
 --- !u!1 &8761258842249161850
 GameObject:
   m_ObjectHideFlags: 0

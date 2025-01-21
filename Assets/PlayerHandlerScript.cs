@@ -12,12 +12,13 @@ public class PlayerHandlerScript : NetworkBehaviour
     private FieldStates[,] field;
     public NavMeshAgent agent { get; private set; }
     public string playerName { get; private set; }
+    public int playerId { get; private set; }
     private List<Vector3> path;
     private Vector3 previousStep;
     public float animationSpeed = 0.1f;
 
     public static bool IsStarted = false;
-
+    public bool IsAllowedToMove = true;
     public void SetPlayerName(string name)
     {
         playerName = name;
@@ -58,14 +59,12 @@ public class PlayerHandlerScript : NetworkBehaviour
             agent.speed = 10;
             agent.updateRotation = false;
             agent.updateUpAxis = false;
-            Debug.Log($"NavMeshAgent initialized on server for {gameObject.name}");
         }
     }
     public override void OnNetworkSpawn()
     {
         if (IsServer)
         {
-            Debug.Log($"Server spawning player: {gameObject.name}");
             agent = GetComponent<NavMeshAgent>();
             if (agent == null)
             {
@@ -82,7 +81,6 @@ public class PlayerHandlerScript : NetworkBehaviour
             DisableRemotePlayerComponents();
         }
     }
-
     private void InitializeLocalPlayer()
     {
         agent = GetComponent<NavMeshAgent>();
@@ -109,7 +107,6 @@ public class PlayerHandlerScript : NetworkBehaviour
             SetPlayerName($"Player{OwnerClientId}");
         }
     }
-
     private void DisableRemotePlayerComponents()
     {
         if (TryGetComponent(out NavMeshAgent navAgent))
@@ -122,7 +119,6 @@ public class PlayerHandlerScript : NetworkBehaviour
             renderer.material.color = Color.gray;
         }
     }
-
     private void Update()
     {
         if (!IsOwner || agent == null)
@@ -130,7 +126,7 @@ public class PlayerHandlerScript : NetworkBehaviour
             return;
         }
 
-        if (Input.GetMouseButtonDown(1))
+        if (Input.GetMouseButtonDown(1) && IsAllowedToMove)
         {
             HandleMouseClick();
         }
@@ -221,8 +217,6 @@ public class PlayerHandlerScript : NetworkBehaviour
             //Debug.Log($"Target destination {destination} is not on NavMesh.");
         }
     }
-
-
     private bool IsPositionValid(Vector3 position)
     {
         return position.x > 0 && position.y > 0 &&

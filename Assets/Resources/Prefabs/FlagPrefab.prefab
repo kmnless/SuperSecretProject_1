@@ -802,8 +802,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   flagId: 0
+  statusText: {fileID: 6615566333071952624}
   texture: {fileID: 9015352658563253747}
-  MoneyEarning: 5
+  captureCost: 50
+  moneyEarning: 5
+  isBeingCaptured: 0
 --- !u!1 &8427216024441233231
 GameObject:
   m_ObjectHideFlags: 0

@@ -5,9 +5,11 @@ public class OutpostHandler : MonoBehaviour
 {
     public int outpostId;
     public int ownerID { get; set; } = -1;
+    [SerializeField] private TMP_Text statusText;
     [SerializeField] private SpriteRenderer texture;
     [SerializeField] public int captureCost = 50;
     public float DiamondEarning = 10;
+    public bool isBeingCaptured = false;
     private void Start()
     {
         
@@ -39,9 +41,18 @@ public class OutpostHandler : MonoBehaviour
         if (ownerID == playerId) return;
         ownerID = playerId;
     }
-    public void UpdateOutpostInfo(int playerId)
+    public void UpdateStatusText()
     {
-        var text = GetComponent<TMP_Text>();
-        text.text = playerId.ToString();
+        string ownerName = "None";
+        foreach (var player in GlobalVariableHandler.Instance.Players)
+        {
+            if (player.Id == ownerID)
+            {
+                ownerName = player.Name.ToString();
+                break;
+            }
+        }
+
+        statusText.text = $"Owner: {ownerName}\nDiamond Earning: {DiamondEarning}\nCapture Cost: {captureCost}";
     }
 }

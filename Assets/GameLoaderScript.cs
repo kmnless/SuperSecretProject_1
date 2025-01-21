@@ -60,7 +60,7 @@ public class GameLoaderScript : MonoBehaviour
         GameManager.Instance.outposts = this.outposts;
         GameManager.Instance.playerPrefab = this.playerPrefab;
         GameManager.Instance.navigator = this.navigator;
-        GameManager.Instance.InitUI();
+        //GameManager.Instance.InitUI();
         GameManager.Instance.InitializeCaches();
         StartCoroutine(GameManager.Instance.PreGameCountdown());
     }

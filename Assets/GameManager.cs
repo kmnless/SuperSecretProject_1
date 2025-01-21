@@ -6,6 +6,7 @@ using Unity.Netcode;
 using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using static UnityEditor.Rendering.CameraUI;
 
 public class GameManager : NetworkBehaviour
@@ -24,7 +25,10 @@ public class GameManager : NetworkBehaviour
     public GameObject playerPrefab;
     public NavMeshSurface navigator;
 
-    public bool isStarted = false;
+    public bool isStarted = false; 
+    private bool hasWinner = false;
+
+    private const int delayBeforeMenu = 5;
 
     public static List<Vector3> basePositions = new List<Vector3>();
     private Dictionary<int, FlagHandler> flagCache = new();
@@ -71,7 +75,7 @@ public class GameManager : NetworkBehaviour
                 {
                     if (flag.ownerID == player.Id)
                     {
-                        income += flag.MoneyEarning;
+                        income += flag.moneyEarning;
                     }
                 }
 
@@ -109,6 +113,63 @@ public class GameManager : NetworkBehaviour
 
     //    Debug.Log("Flags initialized and synchronized.");
     //}
+    private void CheckWinCondition()
+    {
+        foreach (var player in GlobalVariableHandler.Instance.Players)
+        {
+            if (player.Money >= winConditionPoints && !hasWinner)
+            {
+                hasWinner = true;
+                AnnounceWinner(player.Id);
+                break;                                          // first in list is winning. no draws
+            }
+        }
+    }
+    private void AnnounceWinner(int playerId)
+    {
+        foreach (var player in GlobalVariableHandler.Instance.Players)
+        {
+            if (player.Id == playerId)
+            {
+                Debug.Log($"Player {player.Name} has won the game!");
+                clientRpcHandler.NotifyGameEndedClientRpc(player.Name.ToString());
+                //StartCoroutine(EndGameAndReturnToMenu());
+                return;
+            }
+        }
+        Debug.LogError("Winner not found in players list.");
+    }
+    private IEnumerator EndGameAndReturnToMenu()
+    {
+        yield return new WaitForSeconds(delayBeforeMenu);
+
+        if (IsServer)
+        {
+            NetworkManager.Singleton.Shutdown();
+        }
+
+        SceneManager.LoadScene("Menu");
+    }
+    private PlayerHandlerScript FindPlayerHandler(int playerId)
+    {
+        var players = FindObjectsOfType<PlayerHandlerScript>();
+
+        foreach (var player in players)
+        {
+            if (player.OwnerClientId == (ulong)playerId)
+            {
+                return player;
+            }
+        }
+        return null;
+    }
+    private IEnumerator StopPlayerMovementCoroutine(PlayerProperty player)
+    {
+        PlayerHandlerScript targetPlayer = FindPlayerHandler(player.Id);
+        if (targetPlayer != null) targetPlayer.IsAllowedToMove = false;
+        yield return new WaitForSeconds(3f);
+        if (targetPlayer != null) targetPlayer.IsAllowedToMove = true;
+    }
     public void InitializeCaches()
     {
         foreach (var flag in FindObjectsOfType<FlagHandler>())
@@ -122,9 +183,6 @@ public class GameManager : NetworkBehaviour
         }
 
         Debug.Log("Flag and Outpost caches initialized.");
-    }
-    public void InitUI()
-    {
     }
     public IEnumerator PreGameCountdown()
     {
@@ -182,6 +240,9 @@ public class GameManager : NetworkBehaviour
         var p = capturingPlayer.Value;
         if (p.Money >= flag.captureCost)
         {
+            flag.isBeingCaptured = true;
+            StartCoroutine(StopPlayerMovementCoroutine(p));
+            flag.isBeingCaptured = false;
             p.Money -= flag.captureCost;
             flag.SetOwner(playerId);
             for(int i = 0; i < GlobalVariableHandler.Instance.Players.Count; i++)
@@ -192,7 +253,6 @@ public class GameManager : NetworkBehaviour
                     break;
                 }
             }
-
             clientRpcHandler.NotifyFlagCapturedClientRpc(flagId, playerId);
         }
     }
@@ -224,6 +284,9 @@ public class GameManager : NetworkBehaviour
         var p = capturingPlayer.Value;
         if (p.Money >= outpost.captureCost)
         {
+            outpost.isBeingCaptured = true;
+            StartCoroutine(StopPlayerMovementCoroutine(p));
+            outpost.isBeingCaptured = false;
             p.Money -= outpost.captureCost;
             outpost.SetOwner(playerId);
             for (int i = 0; i < GlobalVariableHandler.Instance.Players.Count; i++)
@@ -264,9 +327,5 @@ public class GameManager : NetworkBehaviour
     public override void OnDestroy()
     {
         base.OnDestroy();
-        if (GlobalVariableHandler.Instance.Players != null)
-        {
-        }
-        Debug.Log("GameManager destroyed.");
     }
 }

@@ -1,16 +1,18 @@
+using TMPro;
 using UnityEngine;
 
 public class FlagHandler : MonoBehaviour
 {
     public int flagId;
+    [SerializeField] private TMP_Text statusText;
     public int ownerID { get; set; } = -1;
     [SerializeField] private SpriteRenderer texture;
     [SerializeField] public int captureCost = 50;
-
-    public float MoneyEarning = 5;
+    public float moneyEarning = 5;
+    public bool isBeingCaptured = false;
     private void Start()
     {
-        
+        UpdateStatusText();
     }
 
     public void UpdateFlagAppearance(int playerId)
@@ -39,8 +41,18 @@ public class FlagHandler : MonoBehaviour
         if (ownerID == playerId) return;
         ownerID = playerId;
     }
-    public void UpdateFlagInfo(int playerId)
+    public void UpdateStatusText()
     {
+        string ownerName = "None";
+        foreach (var player in GlobalVariableHandler.Instance.Players)
+        {
+            if (player.Id == ownerID)
+            {
+                ownerName = player.Name.ToString();
+                break;
+            }
+        }
 
+        statusText.text = $"Owner: {ownerName}\nEarning: {moneyEarning}\nCapture Cost: {captureCost}";
     }
 }

@@ -130,7 +130,7 @@ public class ClientRpcHandler : NetworkBehaviour
         if (flag != null)
         {
             flag.UpdateFlagAppearance(playerId);
-            flag.UpdateFlagInfo(playerId);
+            flag.UpdateStatusText();
         }
     }
     [ClientRpc]
@@ -141,7 +141,7 @@ public class ClientRpcHandler : NetworkBehaviour
         if (outpost != null)
         {
             outpost.UpdateOutpostAppearance(playerId);
-            outpost.UpdateOutpostInfo(playerId);
+            outpost.UpdateStatusText();
         }
     }
 
@@ -161,6 +161,17 @@ public class ClientRpcHandler : NetworkBehaviour
             GameManager.Instance.HandleOutpostCapture(outpostId, playerId);
         }
     }
+
+    [ClientRpc]
+    public void NotifyGameEndedClientRpc(string winnerName)
+    {
+        Debug.Log($"Game Over! Winner: {winnerName}");
+        if (UIManager.Instance != null)
+        {
+            UIManager.Instance.DisplayVictoryScreen(winnerName);
+        }
+    }
+
 
     [ClientRpc]
     public void SetMyIndexClientRpc(int index, ClientRpcParams clientRpcParams = default)

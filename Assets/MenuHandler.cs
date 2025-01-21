@@ -48,11 +48,11 @@ public class MenuHandler : MonoBehaviour
     {
         int playerId = GlobalVariableHandler.Instance.MyIndex ?? -1;
 
-        if (currentFlag != null)
+        if (currentFlag != null && !currentFlag.isBeingCaptured)
         {
             CaptureHandler.SendRequestCaptureFlag(currentFlag.flagId, playerId);
         }
-        else if (currentOutpost != null)
+        else if (currentOutpost != null && !currentOutpost.isBeingCaptured)
         {
             CaptureHandler.SendRequestCaptureOutpost(currentOutpost.outpostId, playerId);
         }
