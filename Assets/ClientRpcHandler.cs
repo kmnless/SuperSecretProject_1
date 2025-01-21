@@ -97,7 +97,18 @@ public class ClientRpcHandler : NetworkBehaviour
             UIManager.Instance.UpdatePlayerStats();
         }
     }
+    [ClientRpc]
+    public void NotifyFlagCapturedClientRpc(int flagIndex, int playerId)
+    {
+        if (GameManager.Instance.flagList == null || flagIndex < 0 || flagIndex >= GameManager.Instance.flagList.Count)
+        {
+            Debug.LogError("Invalid flagList or flagIndex in NotifyFlagCapturedClientRpc.");
+            return;
+        }
 
+        var flag = GameManager.Instance.flagList[flagIndex];
+        flag.UpdateFlagAppearance(playerId);
+    }
 
     [ClientRpc]
     public void SetMyIndexClientRpc(int index, ClientRpcParams clientRpcParams = default)

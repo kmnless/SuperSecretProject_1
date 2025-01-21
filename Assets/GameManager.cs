@@ -72,25 +72,6 @@ public class GameManager : NetworkBehaviour
             UpdateUIForAllPlayers();
         }
     }
-    [ClientRpc]
-    public void NotifyFlagCapturedClientRpc(int flagIndex, int playerId)
-    {
-        if (flagIndex < 0 || flagIndex >= flagList.Count || flagList[flagIndex] == null)
-        {
-            Debug.LogError($"Invalid flagIndex: {flagIndex} or flag is null.");
-            return;
-        }
-
-        Debug.Log($"Flag {flagIndex} captured by player {playerId}");
-        if (flagIndex < flagList.Count && playerId < GlobalVariableHandler.Instance.Players.Count)
-        {
-            flagList[flagIndex].UpdateFlagInfo(GlobalVariableHandler.Instance.Players[playerId]);
-        }
-        else
-        {
-            Debug.LogError("Invalid flag or player index.");
-        }
-    }
     public void InitUI()
     {
     }
@@ -137,7 +118,7 @@ public class GameManager : NetworkBehaviour
         {
             flag.ownerID = playerId;
             flag.UpdateFlagAppearance(playerId);
-            NotifyFlagCapturedClientRpc(flagIndex, playerId);
+            clientRpcHandler.NotifyFlagCapturedClientRpc(flagIndex, playerId);
         }
     }
     public override void OnDestroy()
