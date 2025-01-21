@@ -16,8 +16,9 @@ public struct PlayerProperty : INetworkSerializable, IEquatable<PlayerProperty>
     public float MultiplierXP;                  // From items (might be deleted)
     public float StrengthMultiplierGain;        // From items
     public int Money;                           // Money == points. Money is target to win. Items purchased by money
-    public float PassiveIncome;                 // Money per minute
+    public float MoneyIncome;                   // Money per minute
     public int Diamonds;                        // Diamonds can be uptained from outposts
+    public float DiamondsIncome;                 // Diamonds per minute
     public Vector4 Color; // Vector4 instead of Color
 
     public PlayerProperty(string name, int id)
@@ -31,8 +32,9 @@ public struct PlayerProperty : INetworkSerializable, IEquatable<PlayerProperty>
         NeededXP = 50;
         MultiplierXP = 1.5f;
         Money = 50;
-        PassiveIncome = 50;
+        MoneyIncome = 50;
         Diamonds = 0;
+        DiamondsIncome = 0;
         //Color = color;
         Color = new Vector4(0, 0, 0, 1); // black
         StrengthMultiplierGain = 1.15f;
@@ -50,8 +52,9 @@ public struct PlayerProperty : INetworkSerializable, IEquatable<PlayerProperty>
         serializer.SerializeValue(ref MultiplierXP);
         serializer.SerializeValue(ref StrengthMultiplierGain);
         serializer.SerializeValue(ref Money);
-        serializer.SerializeValue(ref PassiveIncome);
+        serializer.SerializeValue(ref MoneyIncome);
         serializer.SerializeValue(ref Diamonds);
+        serializer.SerializeValue(ref DiamondsIncome);
         serializer.SerializeValue(ref Color);
     }
     public bool Equals(PlayerProperty other)

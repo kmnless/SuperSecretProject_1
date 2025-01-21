@@ -125,7 +125,6 @@ public class ClientRpcHandler : NetworkBehaviour
     [ClientRpc]
     public void NotifyFlagCapturedClientRpc(int flagId, int playerId)
     {
-        Debug.Log($"Flag {flagId} captured by Player {playerId} on all clients.");
         FlagHandler flag = FindFlagById(flagId);
         if (flag != null)
         {
@@ -136,7 +135,6 @@ public class ClientRpcHandler : NetworkBehaviour
     [ClientRpc]
     public void NotifyOutpostCapturedClientRpc(int outpostId, int playerId)
     {
-        Debug.Log($"Flag {outpostId} captured by Player {playerId} on all clients.");
         OutpostHandler outpost = FindOutpostById(outpostId);
         if (outpost != null)
         {
@@ -150,7 +148,6 @@ public class ClientRpcHandler : NetworkBehaviour
     {
         if (GameManager.Instance != null)
         {
-            Debug.Log("rpc");
             GameManager.Instance.HandleFlagCapture(flagId, playerId);
         }
     }

@@ -38,8 +38,8 @@ public class UIManager : MonoBehaviour
                 GameObject playerStats = Instantiate(playerStatsPrefab, playerStatsContainer);
                 TMP_Text[] textFields = playerStats.GetComponentsInChildren<TMP_Text>();
                 textFields[0].text = $"{myPlayer.Name} Lvl {myPlayer.Level}\t{myPlayer.CurrentXP}/{myPlayer.NeededXP}";
-                textFields[1].text = $"Money: {myPlayer.Money} ({myPlayer.PassiveIncome} money per minute)";
-                textFields[2].text = $"Diamonds: {myPlayer.Diamonds} ({myPlayer.Diamonds} diamonds per minute)";
+                textFields[1].text = $"Money: {myPlayer.Money} ({myPlayer.MoneyIncome} per minute)";
+                textFields[2].text = $"Diamonds: {myPlayer.Diamonds} ({myPlayer.DiamondsIncome} per minute)";
                 textFields[3].text = $"Strength: {myPlayer.Strength} x {Math.Round(myPlayer.StrengthMultiplier, 2)}";
                 break;
             }

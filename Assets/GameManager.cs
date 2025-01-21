@@ -7,6 +7,7 @@ using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using static UnityEditor.Experimental.GraphView.GraphView;
 using static UnityEditor.Rendering.CameraUI;
 
 public class GameManager : NetworkBehaviour
@@ -69,26 +70,23 @@ public class GameManager : NetworkBehaviour
             for (int i = 0; i < GlobalVariableHandler.Instance.Players.Count; i++)
             {
                 var player = GlobalVariableHandler.Instance.Players[i];
-                float income = 0;
-                float diamondIncome = 0;
-                foreach (var flag in flagCache.Values)
-                {
-                    if (flag.ownerID == player.Id)
-                    {
-                        income += flag.moneyEarning;
-                    }
-                }
+                //foreach (var flag in flagCache.Values)
+                //{
+                //    if (flag.ownerID == player.Id)
+                //    {
+                //        income += flag.moneyEarning;
+                //    }
+                //}
 
-                foreach (var outpost in outpostCache.Values)
-                {
-                    if (outpost.ownerID == player.Id)
-                    {
-                        diamondIncome += outpost.DiamondEarning;
-                    }
-                }
-                income += player.PassiveIncome;
-                player.Money += Convert.ToInt32(income / 60f);
-                player.Diamonds += Convert.ToInt32(diamondIncome / 60f);
+                //foreach (var outpost in outpostCache.Values)
+                //{
+                //    if (outpost.ownerID == player.Id)
+                //    {
+                //        diamondIncome += outpost.DiamondEarning;
+                //    }
+                //}
+                player.Money += Convert.ToInt32(player.MoneyIncome / 60f);
+                player.Diamonds += Convert.ToInt32(player.DiamondsIncome / 60f);
 
                 GlobalVariableHandler.Instance.Players[i] = player;
             }
@@ -163,14 +161,61 @@ public class GameManager : NetworkBehaviour
         }
         return null;
     }
-    private IEnumerator StopPlayerMovementCoroutine(PlayerProperty player)
+    private IEnumerator CaptureFlagCoroutine(PlayerProperty player, FlagHandler flag)
     {
+        flag.isBeingCaptured = true;
+
         PlayerHandlerScript targetPlayer = FindPlayerHandler(player.Id);
-        Debug.Log(targetPlayer.playerName);
+
         if (targetPlayer != null) targetPlayer.IsAllowedToMove = false;
         yield return new WaitForSeconds(3f);
-        Debug.Log("ahah");
+
+        player.Money -= flag.captureCost;
+        player.MoneyIncome += flag.moneyEarning;
+        flag.SetOwner(player.Id);
+
+        flag.isBeingCaptured = false;
+
+        for (int i = 0; i < GlobalVariableHandler.Instance.Players.Count; i++)
+        {
+            if (GlobalVariableHandler.Instance.Players[i].Id == player.Id)
+            {
+                GlobalVariableHandler.Instance.Players[i] = player;
+                break;
+            }
+        }
+
         if (targetPlayer != null) targetPlayer.IsAllowedToMove = true;
+
+        clientRpcHandler.NotifyFlagCapturedClientRpc(flag.flagId, player.Id);
+    }
+    private IEnumerator CaptureOutpostCoroutine(PlayerProperty player, OutpostHandler outpost)
+    {
+        outpost.isBeingCaptured = true;
+
+        PlayerHandlerScript targetPlayer = FindPlayerHandler(player.Id);
+
+        if (targetPlayer != null) targetPlayer.IsAllowedToMove = false;
+        yield return new WaitForSeconds(3f);
+
+        player.Money -= outpost.captureCost;
+        player.DiamondsIncome += outpost.DiamondEarning; 
+        outpost.SetOwner(player.Id);
+
+        outpost.isBeingCaptured = false;
+
+        for (int i = 0; i < GlobalVariableHandler.Instance.Players.Count; i++)
+        {
+            if (GlobalVariableHandler.Instance.Players[i].Id == player.Id)
+            {
+                GlobalVariableHandler.Instance.Players[i] = player;
+                break;
+            }
+        }
+
+        if (targetPlayer != null) targetPlayer.IsAllowedToMove = true;
+
+        clientRpcHandler.NotifyOutpostCapturedClientRpc(outpost.outpostId, player.Id);
     }
     public void InitializeCaches()
     {
@@ -242,22 +287,7 @@ public class GameManager : NetworkBehaviour
         var p = capturingPlayer.Value;
         if (p.Money >= flag.captureCost)
         {
-            Debug.Log("manager");
-            flag.isBeingCaptured = true;
-            StartCoroutine(StopPlayerMovementCoroutine(p));
-            flag.isBeingCaptured = false;
-            Debug.Log("manager2");
-            p.Money -= flag.captureCost;
-            flag.SetOwner(playerId);
-            for(int i = 0; i < GlobalVariableHandler.Instance.Players.Count; i++)
-            {
-                if (GlobalVariableHandler.Instance.Players[i].Id == playerId)
-                {
-                    GlobalVariableHandler.Instance.Players[i] = p;
-                    break;
-                }
-            }
-            clientRpcHandler.NotifyFlagCapturedClientRpc(flagId, playerId);
+            StartCoroutine(CaptureFlagCoroutine(p,flag));
         }
     }
     public void HandleOutpostCapture(int outpostId, int playerId)
@@ -288,20 +318,7 @@ public class GameManager : NetworkBehaviour
         var p = capturingPlayer.Value;
         if (p.Money >= outpost.captureCost)
         {
-            outpost.isBeingCaptured = true;
-            StartCoroutine(StopPlayerMovementCoroutine(p));
-            outpost.isBeingCaptured = false;
-            p.Money -= outpost.captureCost;
-            outpost.SetOwner(playerId);
-            for (int i = 0; i < GlobalVariableHandler.Instance.Players.Count; i++)
-            {
-                if (GlobalVariableHandler.Instance.Players[i].Id == playerId)
-                {
-                    GlobalVariableHandler.Instance.Players[i] = p;
-                    break;
-                }
-            }
-            clientRpcHandler.NotifyOutpostCapturedClientRpc(outpostId, playerId);
+            StartCoroutine(CaptureOutpostCoroutine(p, outpost));
         }
     }
     private FlagHandler FindFlagById(int flagId)
