@@ -68,7 +68,7 @@ public class GameManager : NetworkBehaviour
             for (int i = 0; i < GlobalVariableHandler.Instance.Players.Count; i++)
             {
                 var player = GlobalVariableHandler.Instance.Players[i];
-                float income = 0;
+                float income = 50;
                 float diamondIncome = 0;
                 foreach (var flag in FindObjectsOfType<FlagHandler>())
                 {
@@ -169,7 +169,7 @@ public class GameManager : NetworkBehaviour
         flag.isBeingCaptured = true;
 
         PlayerHandlerScript targetPlayer = FindPlayerHandler(player.Id);
-
+        flag.StartCapture();
         if (targetPlayer != null) targetPlayer.IsAllowedToMove = false;
         yield return new WaitForSeconds(3f);
 
@@ -196,7 +196,7 @@ public class GameManager : NetworkBehaviour
         outpost.isBeingCaptured = true;
 
         PlayerHandlerScript targetPlayer = FindPlayerHandler(player.Id);
-
+        outpost.StartCapture();
         if (targetPlayer != null) targetPlayer.IsAllowedToMove = false;
         yield return new WaitForSeconds(3f);
 
@@ -284,7 +284,6 @@ public class GameManager : NetworkBehaviour
         var p = capturingPlayer.Value;
         if (p.Money >= flag.captureCost)
         {
-            flag.StartCapture();
             StartCoroutine(CaptureFlagCoroutine(p, flag));
         }
     }
@@ -313,7 +312,6 @@ public class GameManager : NetworkBehaviour
         var p = capturingPlayer.Value;
         if (p.Money >= outpost.captureCost)
         {
-            outpost.StartCapture();
             StartCoroutine(CaptureOutpostCoroutine(p, outpost));
         }
     }
