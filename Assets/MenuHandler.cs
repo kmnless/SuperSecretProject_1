@@ -1,50 +1,37 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class MenuHandler : MonoBehaviour
 {
-    // Start is called before the first frame update
+    [SerializeField] private GameObject menuUI;
+    private FlagHandler currentFlag;
+    private int playerId;
 
-    GameObject player;
-    PlayerHandlerScript playerScript;
-    [SerializeField] private Button captureButton;
-    [SerializeField] private GameObject flagVisual;
-    [SerializeField] private FlagHandler handler;
-    void Start()
+    private void Start()
     {
-        player = GameObject.Find($"Player{GlobalVariableHandler.Instance.MyIndex}");
-        playerScript = player.GetComponent<PlayerHandlerScript>();
+        menuUI.SetActive(false);
+        playerId = GlobalVariableHandler.Instance.MyIndex.Value;
     }
-    public void Close()
+
+    public void Open(FlagHandler flag)
     {
-        transform.gameObject.SetActive(false);
+        currentFlag = flag;
+        menuUI.SetActive(true);
     }
-    public void Open()
-    {
-        transform.gameObject.SetActive(true);
-    }
+
     public void Capture()
     {
-    }
-    // Update is called once per frame
-    void FixedUpdate()
-    {
-        //Debug.Log(transform.position.x);
-        if(transform.gameObject.activeSelf&&(flagVisual.transform.position - player.transform.position- new Vector3(0f,0f,10f)).magnitude<GlobalVariableHandler.CaptureDistance * GlobalVariableHandler.Instance.CellSize /100f)
+        if (currentFlag != null && GameManager.Instance != null)
         {
-            captureButton.interactable = true;
-        }
-        else if (transform.gameObject.activeSelf)
-        {
-            captureButton.interactable = false;
-            //Debug.Log(GlobalVariableHandler.captureDistance*GlobalVariableHandler.cellSize/100f);
-            //Debug.Log((flagVisual.transform.position - player.transform.position- new Vector3(0f,0f,10f)).magnitude);
+            int flagIndex = GameManager.Instance.flagList.IndexOf(currentFlag);
+            if (flagIndex != -1)
+            {
+                GameManager.Instance.CaptureFlag(flagIndex, playerId);
+            }
         }
     }
-    void Update()
+
+    public void Close()
     {
-        
+        menuUI.SetActive(false);
     }
 }

@@ -73,8 +73,6 @@ public class ServerHandler : MonoBehaviour
     }
     private void OnConnectionApproval(NetworkManager.ConnectionApprovalRequest request, NetworkManager.ConnectionApprovalResponse response)
     {
-        Debug.Log("OnConnectionApproval called.");
-
         if (!NetworkManager.Singleton.IsServer)
         {
             Debug.LogError("OnConnectionApproval called on a non-server instance.");

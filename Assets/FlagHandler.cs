@@ -1,26 +1,29 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class FlagHandler : MonoBehaviour
 {
-    // Start is called before the first frame update
-    public int ownerID {get;set;}  = -1;
-    public int unitCount{get;set;} = 0;
-    public int XPyield{get;set;}
+    public int ownerID { get; set; } = -1;
     [SerializeField] private SpriteRenderer texture;
-    void Start()
+
+    private void Start()
     {
-        transform.GetComponentInChildren<Canvas>(true).worldCamera=GameObject.Find("Camera").GetComponent<Camera>();   
-    }
-    public void Capture(int id)
-    {
-        ownerID = id;
-        texture.color = GlobalVariableHandler.Instance.Colors[id];      // rework this
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.RegisterFlag(this);
+        }
+        else
+        {
+            Debug.LogError("GameManager is not initialized.");
+        }
     }
 
-    void Update()
+    public void UpdateFlagAppearance(int playerId)
     {
-        
+        ownerID = playerId;
+        texture.color = GlobalVariableHandler.Instance.Colors[playerId];
+    }
+    public void UpdateFlagInfo(PlayerProperty player)
+    {
+
     }
 }

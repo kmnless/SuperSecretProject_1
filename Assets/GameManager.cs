@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
 using Unity.VisualScripting;
+using UnityEditor;
 using UnityEngine;
 
 public class GameManager : NetworkBehaviour
@@ -25,6 +26,8 @@ public class GameManager : NetworkBehaviour
     public bool isStarted = false;
 
     public static List<Vector3> basePositions = new List<Vector3>();
+
+    [SerializeField] public List<FlagHandler> flagList;
 
     private Coroutine passiveIncomeCoroutine;
     private void Awake()
@@ -53,7 +56,6 @@ public class GameManager : NetworkBehaviour
     {
         passiveIncomeCoroutine = StartCoroutine(PassiveIncomeRoutine());
     }
-
     private IEnumerator PassiveIncomeRoutine()
     {
         while (true)
@@ -68,6 +70,19 @@ public class GameManager : NetworkBehaviour
             }
 
             UpdateUIForAllPlayers();
+        }
+    }
+    [ClientRpc]
+    public void NotifyFlagCapturedClientRpc(int flagIndex, int playerId)
+    {
+        Debug.Log($"Flag {flagIndex} captured by player {playerId}");
+        if (flagIndex < flagList.Count && playerId < GlobalVariableHandler.Instance.Players.Count)
+        {
+            flagList[flagIndex].UpdateFlagInfo(GlobalVariableHandler.Instance.Players[playerId]);
+        }
+        else
+        {
+            Debug.LogError("Invalid flag or player index.");
         }
     }
     public void InitUI()
@@ -87,7 +102,6 @@ public class GameManager : NetworkBehaviour
         }
         StartPassiveIncome();
     }
-
     public void SpawnPlayers()
     {
         for (int i = 0; i < basePositions.Count; i++)
@@ -100,6 +114,24 @@ public class GameManager : NetworkBehaviour
             networkObject.SpawnWithOwnership((ulong)i);
 
             Debug.Log($"Player {i} spawned at {spawnPosition}");
+        }
+    }
+    public void RegisterFlag(FlagHandler flag)
+    {
+        if (flagList == null) flagList = new List<FlagHandler>();
+        if (!flagList.Contains(flag))
+        {
+            flagList.Add(flag);
+        }
+    }
+    public void CaptureFlag(int flagIndex, int playerId)
+    {
+        FlagHandler flag = flagList[flagIndex];
+        if (flag.ownerID != playerId)
+        {
+            flag.ownerID = playerId;
+            flag.UpdateFlagAppearance(playerId);
+            NotifyFlagCapturedClientRpc(flagIndex, playerId);
         }
     }
     public override void OnDestroy()

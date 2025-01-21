@@ -246,8 +246,6 @@ public class GlobalVariableHandler : NetworkBehaviour, INetworkSerializable
 
         TerrainField = DeserializeFromString<double>(serializedTerrain);
         BuildingsField = DeserializeFromString<int>(serializedBuildings);
-
-        Debug.Log($"Fields synchronized successfully on client {clientId}.");
     }
 
 
