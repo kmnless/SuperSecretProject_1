@@ -540,6 +540,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   menuUI: {fileID: 3844924643546297466}
+  captureButton: {fileID: 8227367148985358334}
+  captureRadius: 3
 --- !u!1 &4808899598061070389
 GameObject:
   m_ObjectHideFlags: 0

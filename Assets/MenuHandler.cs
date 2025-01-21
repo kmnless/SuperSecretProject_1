@@ -1,11 +1,35 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MenuHandler : MonoBehaviour
 {
     [SerializeField] private GameObject menuUI;
+    [SerializeField] private Button captureButton;
+    [SerializeField] private float captureRadius = 3.0f;
+    private Transform playerTransform;
+    private Transform flagTransform;
     private FlagHandler currentFlag;
     private OutpostHandler currentOutpost;
     private int playerId;
+
+    private void Awake()
+    {
+        captureButton.interactable = false;
+    }
+    private void Update()
+    {
+        if (playerTransform == null || flagTransform == null)
+        {
+            playerTransform = FindObjectOfType<PlayerHandlerScript>()?.transform;
+            flagTransform = transform;
+        }
+
+        if (playerTransform != null && flagTransform != null)
+        {
+            float distance = Vector3.Distance(playerTransform.position, flagTransform.position);
+            captureButton.interactable = distance <= captureRadius;
+        }
+    }
 
     private void Start()
     {

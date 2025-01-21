@@ -1566,3 +1566,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   menuUI: {fileID: 8761258842249161850}
+  captureButton: {fileID: 8791729362303212805}
+  captureRadius: 3
