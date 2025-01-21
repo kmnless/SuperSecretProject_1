@@ -44,20 +44,24 @@ public class MenuHandler : MonoBehaviour
     //        CaptureHandler.SendRequestCaptureOutpost(outpostId, playerId);
     //    }
     //}
-    public void Capture()
+    public void CaptureFlag()
     {
         int playerId = GlobalVariableHandler.Instance.MyIndex ?? -1;
 
         if (currentFlag != null && !currentFlag.isBeingCaptured)
         {
-            Debug.Log("capture");
             CaptureHandler.SendRequestCaptureFlag(currentFlag.flagId, playerId);
         }
-        else if (currentOutpost != null && !currentOutpost.isBeingCaptured)
+        Close();
+    }
+    public void CaptureOutpost()
+    {
+        int playerId = GlobalVariableHandler.Instance.MyIndex ?? -1;
+
+        if (currentOutpost != null && !currentOutpost.isBeingCaptured)
         {
             CaptureHandler.SendRequestCaptureOutpost(currentOutpost.outpostId, playerId);
         }
-
         Close();
     }
     public void Close()

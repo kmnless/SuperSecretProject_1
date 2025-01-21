@@ -12,7 +12,7 @@ public class OutpostHandler : MonoBehaviour
     public bool isBeingCaptured = false;
     private void Start()
     {
-        
+        UpdateStatusText();
     }
 
     public void UpdateOutpostAppearance(int playerId)
