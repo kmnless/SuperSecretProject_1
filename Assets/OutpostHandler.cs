@@ -13,6 +13,7 @@ public class OutpostHandler : MonoBehaviour
     public float DiamondEarning = 10;
     public bool isBeingCaptured = false;
 
+    [SerializeField] GameObject sliderBox;
     [SerializeField] private Slider progressBarSlider;
     private void Start()
     {
@@ -65,7 +66,7 @@ public class OutpostHandler : MonoBehaviour
     }
     private IEnumerator CaptureFlagRoutine()
     {
-        progressBarSlider.enabled = true;
+        sliderBox.SetActive(true);
         float captureTime = 3f;
         float elapsed = 0f;
 
@@ -76,6 +77,6 @@ public class OutpostHandler : MonoBehaviour
 
             yield return null;
         }
-        progressBarSlider.enabled = false;
+        sliderBox.SetActive(false);
     }
 }

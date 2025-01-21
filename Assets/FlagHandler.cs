@@ -13,6 +13,7 @@ public class FlagHandler : MonoBehaviour
     public float moneyEarning = 5;
     public bool isBeingCaptured = false;
 
+    [SerializeField] GameObject sliderBox;
     [SerializeField] private Slider progressBarSlider;
     private void Start()
     {
@@ -67,17 +68,18 @@ public class FlagHandler : MonoBehaviour
 
     private IEnumerator CaptureFlagRoutine()
     {
-        progressBarSlider.enabled = true;
+        sliderBox.SetActive(true);
         float captureTime = 3f;
         float elapsed = 0f;
 
         while (elapsed < captureTime)
         {
             elapsed += Time.deltaTime;
-            progressBarSlider.value = elapsed / captureTime; 
+            progressBarSlider.value = elapsed / captureTime;
 
             yield return null;
         }
-        progressBarSlider.enabled = false;
+        sliderBox.SetActive(false);
     }
+
 }

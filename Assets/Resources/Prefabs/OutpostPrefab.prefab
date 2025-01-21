@@ -1445,6 +1445,7 @@ MonoBehaviour:
   captureCost: 50
   DiamondEarning: 10
   isBeingCaptured: 0
+  sliderBox: {fileID: 2290427944082032650}
   progressBarSlider: {fileID: 917386745028706515}
 --- !u!1 &8761258842249161850
 GameObject:
