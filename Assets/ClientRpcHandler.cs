@@ -154,11 +154,11 @@ public class ClientRpcHandler : NetworkBehaviour
         }
     }
     [ServerRpc(RequireOwnership = false)]
-    public void RequestCaptureOutpostServerRpc(int flagId, int playerId, ServerRpcParams rpcParams = default)
+    public void RequestCaptureOutpostServerRpc(int outpostId, int playerId, ServerRpcParams rpcParams = default)
     {
         if (GameManager.Instance != null)
         {
-            GameManager.Instance.HandleOutpostCapture(flagId, playerId);
+            GameManager.Instance.HandleOutpostCapture(outpostId, playerId);
         }
     }
 

@@ -37,11 +37,11 @@ public class MenuHandler : MonoBehaviour
     public void CaptureOutpost()
     {
         int playerId = GlobalVariableHandler.Instance.MyIndex ?? -1;
-        int flagId = GetComponentInParent<OutpostHandler>().outpostId;
+        int outpostId = GetComponentInParent<OutpostHandler>().outpostId;
 
         if (playerId >= 0)
         {
-            CaptureHandler.SendRequestCaptureFlag(flagId, playerId);
+            CaptureHandler.SendRequestCaptureOutpost(outpostId, playerId);
         }
     }
     public void Close()

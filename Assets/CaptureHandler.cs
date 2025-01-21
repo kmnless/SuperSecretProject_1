@@ -14,9 +14,9 @@ public class CaptureHandler : MonoBehaviour
     {
         clientRpcHandler.RequestCaptureFlagServerRpc(flagId, playerId);
     }
-    public static void SendRequestCaptureOutpost(int flagId, int playerId)
+    public static void SendRequestCaptureOutpost(int outpostId, int playerId)
     {
-        clientRpcHandler.RequestCaptureOutpostServerRpc(flagId, playerId);
+        clientRpcHandler.RequestCaptureOutpostServerRpc(outpostId, playerId);
     }
 }
 

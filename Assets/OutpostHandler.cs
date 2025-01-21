@@ -35,9 +35,6 @@ public class OutpostHandler : MonoBehaviour
         }
     }
 
-    public void CaptureFlag(int playerId)
-    {
-    }
     public void UpdateOutpostInfo(int playerId)
     {
         var text = GetComponentInChildren<TMP_Text>();
