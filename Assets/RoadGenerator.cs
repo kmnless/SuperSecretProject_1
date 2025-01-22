@@ -74,11 +74,11 @@ namespace Generation
             ConnectPoints(minDist.Item1, bonePoint);
         }
 
-        private void makeSureAllPointsAreReacheble() 
+        private void makeSureAllPointsAreReacheble()
         {
-            foreach(Tuple<int, int> pos1 in points)
+            foreach (Tuple<int, int> pos1 in points)
             {
-                foreach(Tuple<int,int> pos2 in points)
+                foreach (Tuple<int, int> pos2 in points)
                 {
                     if (!depend[pos1].Contains(pos2) && pos1 != pos2 && !canReach(pos1, pos2))
                     {
@@ -87,8 +87,8 @@ namespace Generation
                 }
             }
         }
-        
-        private bool canReach(Tuple<int,int> start, Tuple<int,int> end) 
+
+        private bool canReach(Tuple<int, int> start, Tuple<int, int> end)
         {
             bool[,] visited = new bool[matrixY, matrixX];
             Queue<Tuple<int, int>> possibleMoves = new Queue<Tuple<int, int>>();
@@ -98,7 +98,7 @@ namespace Generation
             {
                 int x = possibleMoves.Peek().Item2;
                 int y = possibleMoves.Peek().Item1;
-                if (y == end.Item1&&x==end.Item2) 
+                if (y == end.Item1 && x == end.Item2)
                 {
                     return true;
                 }
@@ -127,7 +127,46 @@ namespace Generation
             }
             makeSureAllPointsAreReacheble();
         }
+
         private void ConnectPoints(Tuple<int, int> start, Tuple<int, int> end)
+        {
+            int startX = start.Item1;
+            int startY = start.Item2;
+            int endX = end.Item1;
+            int endY = end.Item2;
+
+            if (startX < 0 || startY < 0 || endX < 0 || endY < 0) { return; }
+
+            int currentX = startX;
+            int currentY = startY;
+
+            while (currentX != endX || currentY != endY)
+            {
+                if (currentX != endX)
+                {
+                    currentX += currentX < endX ? 1 : -1;
+                }
+                else if (currentY != endY)
+                {
+                    currentY += currentY < endY ? 1 : -1;
+                }
+
+                if (currentX >= 0 && currentX < matrixX && currentY >= 0 && currentY < matrixY)
+                {
+                    if (matrix[currentY, currentX] == 0)
+                    {
+                        matrix[currentY, currentX] = Convert.ToInt32(Constants.Buildings.Road);
+                    }
+                }
+            }
+
+            depend[start].Add(end);
+            depend[end].Add(start);
+        }
+
+
+
+        /*private void ConnectPoints(Tuple<int, int> start, Tuple<int, int> end)
         {
 
             int startX = start.Item1;
@@ -221,7 +260,7 @@ namespace Generation
 
             depend[start].Add(end);
             depend[end].Add(start);
-        }
+        }*/
 
     }
 
