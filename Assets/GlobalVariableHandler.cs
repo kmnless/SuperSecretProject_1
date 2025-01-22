@@ -227,12 +227,33 @@ public class GlobalVariableHandler : NetworkBehaviour, INetworkSerializable
         GrassTexture = Resources.Load<Texture2D>("Textures/grass");
         WaterTexture = Resources.Load<Texture2D>("Textures/water");
         MountainTexture = Resources.Load<Texture2D>("Textures/mountain");
-        RoadTexture = Resources.Load<Texture2D>("Textures/road");
         FlagTexture = Resources.Load<Texture2D>("Textures/flag");
         BaseTexture = Resources.Load<Texture2D>("Textures/castle");
 
-
-
+        // Горизонтальная дорога
+        RoadHorizontalTexture = Resources.Load<Texture2D>("Textures/Road/horizontal");
+        // Вертикальная дорога
+        RoadVerticalTexture = Resources.Load<Texture2D>("Textures/Road/vertical");
+        // Поворот: нижний-левый
+        RoadCornerBLTexture = Resources.Load<Texture2D>("Textures/Road/left_bottom");
+        // Поворот: нижний-правый
+        RoadCornerBRTexture = Resources.Load<Texture2D>("Textures/Road/right_bottom");
+        // Поворот: верхний-левый
+        RoadCornerTLTexture = Resources.Load<Texture2D>("Textures/Road/left_top");
+        // Поворот: верхний-правый
+        RoadCornerTRTexture = Resources.Load<Texture2D>("Textures/Road/right_top");
+        // Т-образный перекресток: верх
+        RoadTUpTexture = Resources.Load<Texture2D>("Textures/Road/horizontal_top");
+        // Т-образный перекресток: низ
+        RoadTDownTexture = Resources.Load<Texture2D>("Textures/Road/horizontal_bottom");
+        // Т-образный перекресток: лево
+        RoadTLeftTexture = Resources.Load<Texture2D>("Textures/Road/vertical_left");
+        // Т-образный перекресток: право
+        RoadTRightTexture = Resources.Load<Texture2D>("Textures/Road/vertical_right");
+        // Перекресток
+        RoadCrossTexture = Resources.Load<Texture2D>("Textures/Road/intersect");
+        // Одиночная клетка дороги
+        RoadTexture = Resources.Load<Texture2D>("Textures/Road/road");
 
         BasePrefab = Resources.Load<GameObject>("Prefabs/BasePrefab");
         FlagPrefab = Resources.Load<GameObject>("Prefabs/FlagPrefab");
