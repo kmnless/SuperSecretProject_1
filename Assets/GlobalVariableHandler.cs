@@ -38,11 +38,11 @@ public class GlobalVariableHandler : NetworkBehaviour, INetworkSerializable
     public int OutpostCount { get; set; }
     public int MinRadius { get; set; }
     public int BanRadius { get; set; }
-    public double TerrainScale {  get; set; }
+    public double TerrainScale { get; set; }
     public int RANGE_DENOMINATOR { get; set; }
     public int ROAD_GENERATION_COPLEXITY_DENOMINATOR { get; set; }
     public float DAMPING { get; set; }
-    public float CONTRAST{ get; set; }
+    public float CONTRAST { get; set; }
     public float CLIP { get; set; }
 
 
@@ -237,12 +237,22 @@ public class GlobalVariableHandler : NetworkBehaviour, INetworkSerializable
             Waterline,
             MountainLine,
             Seed,
+            OutpostCount,
+            FlagCount,
+            MinRadius,
+            BanRadius,
+            TerrainScale,
+            RANGE_DENOMINATOR,
+            DAMPING,
+            CONTRAST,
+            CLIP,
+            ROAD_GENERATION_COPLEXITY_DENOMINATOR,
             rpcParams.Receive.SenderClientId
         );
     }
 
     [ClientRpc]
-    private void SyncAllFieldsClientRpc(int playerCount, float cellSize, int fieldSizeX, int fieldSizeY, int waterline, int mountainLine, int seed, ulong clientId)
+    private void SyncAllFieldsClientRpc(int playerCount, float cellSize, int fieldSizeX, int fieldSizeY, int waterline, int mountainLine, int seed, int outpostCount, int flagCount, int minRadius, int banRadius, double terrainScale, int rANGE_DENOMINATOR, float dAMPING, float cONTRAST, float cLIP, int rOAD_GENERATION_COPLEXITY_DENOMINATOR, ulong senderClientId)
     {
         PlayerCount = playerCount;
         CellSize = cellSize;
@@ -252,11 +262,10 @@ public class GlobalVariableHandler : NetworkBehaviour, INetworkSerializable
         MountainLine = mountainLine;
         Seed = seed;
 
-        var terrain = Combiner.generatePlayField(fieldSizeX, fieldSizeY, seed, playerCount, OutpostCount, FlagCount, MinRadius, BanRadius, TerrainScale, Math.Max(Math.Abs(fieldSizeX / RANGE_DENOMINATOR), Math.Abs(fieldSizeY / RANGE_DENOMINATOR)), DAMPING, CONTRAST, CLIP, ROAD_GENERATION_COPLEXITY_DENOMINATOR);
+        var terrain = Combiner.generatePlayField(fieldSizeX, fieldSizeY, seed, playerCount, outpostCount, flagCount, minRadius, banRadius, terrainScale, Math.Max(Math.Abs(fieldSizeX / rANGE_DENOMINATOR), Math.Abs(fieldSizeY / rANGE_DENOMINATOR)), dAMPING, cONTRAST, cLIP, rOAD_GENERATION_COPLEXITY_DENOMINATOR);
 
         TerrainField = terrain.Item1;
         BuildingsField = terrain.Item2;
     }
-
 
 }
