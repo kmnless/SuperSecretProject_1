@@ -45,8 +45,11 @@ public class GlobalVariableHandler : NetworkBehaviour, INetworkSerializable
     public Texture2D RoadTLeftTexture;
     public Texture2D RoadTRightTexture;
     public Texture2D RoadCrossTexture;
+    public Texture2D RoadEndDownTexture;
+    public Texture2D RoadEndUpTexture;
+    public Texture2D RoadEndLeftTexture;
+    public Texture2D RoadEndRightTexture;
 
-    
     public NetworkList<PlayerProperty> Players { get; set; } = new NetworkList<PlayerProperty>();
     public int? MyIndex { get; set; } = null;
     public int FlagCount { get; set; }
@@ -254,6 +257,11 @@ public class GlobalVariableHandler : NetworkBehaviour, INetworkSerializable
         RoadCrossTexture = Resources.Load<Texture2D>("Textures/Road/intersect");
         // Одиночная клетка дороги
         RoadTexture = Resources.Load<Texture2D>("Textures/Road/road");
+
+        RoadEndDownTexture = Resources.Load<Texture2D>("Textures/Road/bottom_end");
+        RoadEndUpTexture = Resources.Load<Texture2D>("Textures/Road/top_end");
+        RoadEndLeftTexture = Resources.Load<Texture2D>("Textures/Road/left_end");
+        RoadEndRightTexture = Resources.Load<Texture2D>("Textures/Road/right_end");
 
         BasePrefab = Resources.Load<GameObject>("Prefabs/BasePrefab");
         FlagPrefab = Resources.Load<GameObject>("Prefabs/FlagPrefab");

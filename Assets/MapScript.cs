@@ -25,17 +25,21 @@ public class MapScript : MonoBehaviour
         if (up && down && !left && !right) return 2;
 
         // Повороты
-        if (left && down && !right && !up) return 3; // Нижний-левый
-        if (right && down && !left && !up) return 4; // Нижний-правый
-        if (left && up && !right && !down) return 5; // Верхний-левый
-        if (right && up && !left && !down) return 6; // Верхний-правый
+        if (left && down && !right && !up) return 3; // right up
+        if (right && down && !left && !up) return 4; // left up
+        if (left && up && !right && !down) return 5; // right down
+        if (right && up && !left && !down) return 6; // left down
 
         // Т-образные перекрестки
         if (up && left && right && !down) return 7; // Верх
         if (down && left && right && !up) return 8; // Низ
         if (left && up && down && !right) return 9; // Лево
         if (right && up && down && !left) return 10; // Право
-
+        // Концы дорог
+        if (!up && down && !left && !right) return 12; // Конец: вниз
+        if (up && !down && !left && !right) return 13; // Конец: вверх
+        if (!up && !down && left && !right) return 14; // Конец: влево
+        if (!up && !down && !left && right) return 15; // Конец: вправо
         // Перекресток
         if (up && down && left && right) return 11;
 
@@ -49,56 +53,13 @@ public class MapScript : MonoBehaviour
         var walk = obj.GetComponent<NavMeshPlus.Components.NavMeshModifier>();
         walk.overrideArea = true;
 
-        if (buildingType == (int)Constants.Buildings.Road)
-        {
-            int roadType = GetRoadType(x, y, buldings);
-            walk.area = 0;
-            switch (roadType)
-            {
-                case 1: // Горизонтальная дорога
-                    spriteRenderer.sprite = Sprite.Create(GlobalVariableHandler.Instance.RoadHorizontalTexture, new Rect(0, 0, GlobalVariableHandler.Instance.RoadHorizontalTexture.width, GlobalVariableHandler.Instance.RoadHorizontalTexture.height), new Vector2(0.5f, 0.5f));
-                    break;
-                case 2: // Вертикальная дорога
-                    spriteRenderer.sprite = Sprite.Create(GlobalVariableHandler.Instance.RoadVerticalTexture, new Rect(0, 0, GlobalVariableHandler.Instance.RoadVerticalTexture.width, GlobalVariableHandler.Instance.RoadVerticalTexture.height), new Vector2(0.5f, 0.5f));
-                    break;
-                case 3: // Поворот: нижний-левый
-                    spriteRenderer.sprite = Sprite.Create(GlobalVariableHandler.Instance.RoadCornerBLTexture, new Rect(0, 0, GlobalVariableHandler.Instance.RoadCornerBLTexture.width, GlobalVariableHandler.Instance.RoadCornerBLTexture.height), new Vector2(0.5f, 0.5f));
-                    break;
-                case 4: // Поворот: нижний-правый
-                    spriteRenderer.sprite = Sprite.Create(GlobalVariableHandler.Instance.RoadCornerBRTexture, new Rect(0, 0, GlobalVariableHandler.Instance.RoadCornerBRTexture.width, GlobalVariableHandler.Instance.RoadCornerBRTexture.height), new Vector2(0.5f, 0.5f));
-                    break;
-                case 5: // Поворот: верхний-левый
-                    spriteRenderer.sprite = Sprite.Create(GlobalVariableHandler.Instance.RoadCornerTLTexture, new Rect(0, 0, GlobalVariableHandler.Instance.RoadCornerTLTexture.width, GlobalVariableHandler.Instance.RoadCornerTLTexture.height), new Vector2(0.5f, 0.5f));
-                    break;
-                case 6: // Поворот: верхний-правый
-                    spriteRenderer.sprite = Sprite.Create(GlobalVariableHandler.Instance.RoadCornerTRTexture, new Rect(0, 0, GlobalVariableHandler.Instance.RoadCornerTRTexture.width, GlobalVariableHandler.Instance.RoadCornerTRTexture.height), new Vector2(0.5f, 0.5f));
-                    break;
-                case 7: // Т-образный перекресток: верх
-                    spriteRenderer.sprite = Sprite.Create(GlobalVariableHandler.Instance.RoadTUpTexture, new Rect(0, 0, GlobalVariableHandler.Instance.RoadTUpTexture.width, GlobalVariableHandler.Instance.RoadTUpTexture.height), new Vector2(0.5f, 0.5f));
-                    break;
-                case 8: // Т-образный перекресток: низ
-                    spriteRenderer.sprite = Sprite.Create(GlobalVariableHandler.Instance.RoadTDownTexture, new Rect(0, 0, GlobalVariableHandler.Instance.RoadTDownTexture.width, GlobalVariableHandler.Instance.RoadTDownTexture.height), new Vector2(0.5f, 0.5f));
-                    break;
-                case 9: // Т-образный перекресток: лево
-                    spriteRenderer.sprite = Sprite.Create(GlobalVariableHandler.Instance.RoadTLeftTexture, new Rect(0, 0, GlobalVariableHandler.Instance.RoadTLeftTexture.width, GlobalVariableHandler.Instance.RoadTLeftTexture.height), new Vector2(0.5f, 0.5f));
-                    break;
-                case 10: // Т-образный перекресток: право
-                    spriteRenderer.sprite = Sprite.Create(GlobalVariableHandler.Instance.RoadTRightTexture, new Rect(0, 0, GlobalVariableHandler.Instance.RoadTRightTexture.width, GlobalVariableHandler.Instance.RoadTRightTexture.height), new Vector2(0.5f, 0.5f));
-                    break;
-                case 11: // Перекресток
-                    spriteRenderer.sprite = Sprite.Create(GlobalVariableHandler.Instance.RoadCrossTexture, new Rect(0, 0, GlobalVariableHandler.Instance.RoadCrossTexture.width, GlobalVariableHandler.Instance.RoadCrossTexture.height), new Vector2(0.5f, 0.5f));
-                    break;
-                default: // Одиночная клетка дороги
-                    spriteRenderer.sprite = Sprite.Create(GlobalVariableHandler.Instance.RoadTexture, new Rect(0, 0, GlobalVariableHandler.Instance.RoadTexture.width, GlobalVariableHandler.Instance.RoadTexture.height), new Vector2(0.5f, 0.5f));
-                    break;
-            }
-        }
+        
         //if (buildingType != Convert.ToInt32(Constants.Buildings.None)) 
         //{
         //    spriteRenderer.sprite = Sprite.Create(GlobalVariableHandler.Instance.RoadTexture, new(0, 0, GlobalVariableHandler.Instance.RoadTexture.width, GlobalVariableHandler.Instance.RoadTexture.height), new(0.0f, 0.0f));
         //    walk.area = 0;
         //}
-        else
+        if(buildingType != (int)Constants.Buildings.Road)
         {
             int height = Convert.ToInt32(255 * (perlinHeight + 1.0) / 2.0);
             if (height <= GlobalVariableHandler.Instance.Waterline)
@@ -128,6 +89,62 @@ public class MapScript : MonoBehaviour
             else 
             {
                 walk.area = 1;
+            }
+        }
+        else if (buildingType == (int)Constants.Buildings.Road)
+        {
+            int roadType = GetRoadType(x, y, buldings);
+            walk.area = 0;
+            switch (roadType)
+            {
+                case 1:
+                    spriteRenderer.sprite = Sprite.Create(GlobalVariableHandler.Instance.RoadHorizontalTexture, new Rect(0, 0, GlobalVariableHandler.Instance.RoadHorizontalTexture.width, GlobalVariableHandler.Instance.RoadHorizontalTexture.height), new(0.0f, 0.0f));
+                    break;
+                case 2:
+                    spriteRenderer.sprite = Sprite.Create(GlobalVariableHandler.Instance.RoadVerticalTexture, new Rect(0, 0, GlobalVariableHandler.Instance.RoadVerticalTexture.width, GlobalVariableHandler.Instance.RoadVerticalTexture.height), new(0.0f, 0.0f));
+                    break;
+                case 3:
+                    spriteRenderer.sprite = Sprite.Create(GlobalVariableHandler.Instance.RoadCornerTLTexture, new Rect(0, 0, GlobalVariableHandler.Instance.RoadCornerTLTexture.width, GlobalVariableHandler.Instance.RoadCornerTLTexture.height), new(0.0f, 0.0f));
+                    break;
+                case 4:
+                    spriteRenderer.sprite = Sprite.Create(GlobalVariableHandler.Instance.RoadCornerTRTexture, new Rect(0, 0, GlobalVariableHandler.Instance.RoadCornerTRTexture.width, GlobalVariableHandler.Instance.RoadCornerTRTexture.height), new(0.0f, 0.0f));
+                    break;
+                case 5:
+                    spriteRenderer.sprite = Sprite.Create(GlobalVariableHandler.Instance.RoadCornerBLTexture, new Rect(0, 0, GlobalVariableHandler.Instance.RoadCornerBLTexture.width, GlobalVariableHandler.Instance.RoadCornerBLTexture.height), new(0.0f, 0.0f));
+                    break;
+                case 6:
+                    spriteRenderer.sprite = Sprite.Create(GlobalVariableHandler.Instance.RoadCornerBRTexture, new Rect(0, 0, GlobalVariableHandler.Instance.RoadCornerBRTexture.width, GlobalVariableHandler.Instance.RoadCornerBRTexture.height), new(0.0f, 0.0f));
+                    break;
+                case 7:
+                    spriteRenderer.sprite = Sprite.Create(GlobalVariableHandler.Instance.RoadTDownTexture, new Rect(0, 0, GlobalVariableHandler.Instance.RoadTDownTexture.width, GlobalVariableHandler.Instance.RoadTDownTexture.height), new(0.0f, 0.0f));
+                    break;
+                case 8:
+                    spriteRenderer.sprite = Sprite.Create(GlobalVariableHandler.Instance.RoadTUpTexture, new Rect(0, 0, GlobalVariableHandler.Instance.RoadTUpTexture.width, GlobalVariableHandler.Instance.RoadTUpTexture.height), new(0.0f, 0.0f));
+                    break;
+                case 9:
+                    spriteRenderer.sprite = Sprite.Create(GlobalVariableHandler.Instance.RoadTLeftTexture, new Rect(0, 0, GlobalVariableHandler.Instance.RoadTLeftTexture.width, GlobalVariableHandler.Instance.RoadTLeftTexture.height), new(0.0f, 0.0f));
+                    break;
+                case 10:
+                    spriteRenderer.sprite = Sprite.Create(GlobalVariableHandler.Instance.RoadTRightTexture, new Rect(0, 0, GlobalVariableHandler.Instance.RoadTRightTexture.width, GlobalVariableHandler.Instance.RoadTRightTexture.height),  new(0.0f, 0.0f));
+                    break;
+                case 11:
+                    spriteRenderer.sprite = Sprite.Create(GlobalVariableHandler.Instance.RoadCrossTexture, new Rect(0, 0, GlobalVariableHandler.Instance.RoadCrossTexture.width, GlobalVariableHandler.Instance.RoadCrossTexture.height),  new(0.0f, 0.0f));
+                    break;
+                case 12:
+                    spriteRenderer.sprite = Sprite.Create(GlobalVariableHandler.Instance.RoadEndDownTexture, new Rect(0, 0, GlobalVariableHandler.Instance.RoadEndDownTexture.width, GlobalVariableHandler.Instance.RoadEndDownTexture.height), new(0.0f, 0.0f));
+                    break;
+                case 13:
+                    spriteRenderer.sprite = Sprite.Create(GlobalVariableHandler.Instance.RoadEndUpTexture, new Rect(0, 0, GlobalVariableHandler.Instance.RoadEndUpTexture.width, GlobalVariableHandler.Instance.RoadEndUpTexture.height), new(0.0f, 0.0f));
+                    break;
+                case 14:
+                    spriteRenderer.sprite = Sprite.Create(GlobalVariableHandler.Instance.RoadEndRightTexture, new Rect(0, 0, GlobalVariableHandler.Instance.RoadEndRightTexture.width, GlobalVariableHandler.Instance.RoadEndRightTexture.height), new(0.0f, 0.0f));
+                    break;
+                case 15:
+                    spriteRenderer.sprite = Sprite.Create(GlobalVariableHandler.Instance.RoadEndLeftTexture, new Rect(0, 0, GlobalVariableHandler.Instance.RoadEndLeftTexture.width, GlobalVariableHandler.Instance.RoadEndLeftTexture.height), new(0.0f, 0.0f));
+                    break;
+                default: 
+                    spriteRenderer.sprite = Sprite.Create(GlobalVariableHandler.Instance.RoadTexture, new Rect(0, 0, GlobalVariableHandler.Instance.RoadTexture.width, GlobalVariableHandler.Instance.RoadTexture.height),  new(0.0f, 0.0f));
+                    break;
             }
         }
     }
