@@ -13,7 +13,7 @@ public class BaseMenuHandler : MonoBehaviour
     private void Start()
     {
         handler = GetComponentInParent<BaseHandler>();
-        if (handler != null )
+        if (handler == null)
         {
             Debug.LogError("No Base Handler");
         }
