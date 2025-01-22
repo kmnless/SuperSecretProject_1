@@ -121,7 +121,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveAllowance: 0.1
-  animationSpeed: 1
+  animationSpeed: 0.1
   IsAllowedToMove: 1
 --- !u!1 &6274098991778366898
 GameObject:

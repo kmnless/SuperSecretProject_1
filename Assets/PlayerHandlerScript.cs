@@ -56,7 +56,14 @@ public class PlayerHandlerScript : NetworkBehaviour
 
             agent.enabled = true;
             agent.areaMask = NavMesh.AllAreas;
-            agent.speed = 10;
+            for (int i = 0; i < GlobalVariableHandler.Instance.Players.Count; i++)
+            {
+                if (GlobalVariableHandler.Instance.Players[i].Id == playerId)
+                {
+                    agent.speed = GlobalVariableHandler.Instance.Players[i].MoveSpeed;
+                    break;
+                }
+            }
             agent.updateRotation = false;
             agent.updateUpAxis = false;
         }
@@ -101,7 +108,14 @@ public class PlayerHandlerScript : NetworkBehaviour
 
         agent.updateRotation = false;
         agent.updateUpAxis = false;
-
+        for (int i = 0; i < GlobalVariableHandler.Instance.Players.Count; i++)
+        {
+            if (GlobalVariableHandler.Instance.Players[i].Id == playerId)
+            {
+                agent.speed = GlobalVariableHandler.Instance.Players[i].MoveSpeed;
+                break;
+            }
+        }
         MenuHandler.SetCurrentPlayer(this.transform);
 
         if (string.IsNullOrEmpty(playerName))

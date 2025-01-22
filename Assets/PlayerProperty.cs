@@ -36,7 +36,7 @@ public struct PlayerProperty : INetworkSerializable, IEquatable<PlayerProperty>
         MoneyIncome = 50;
         Diamonds = 0;
         DiamondsIncome = 0;
-        MoveSpeed = 0.1f;
+        MoveSpeed = 5;
         //Color = color;
         Color = new Vector4(0, 0, 0, 1); // black
         StrengthMultiplierGain = 1.15f;
