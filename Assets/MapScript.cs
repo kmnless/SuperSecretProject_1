@@ -79,10 +79,11 @@ public class MapScript : MonoBehaviour
 
             }
             int range = 255 - GlobalVariableHandler.Instance.Waterline - GlobalVariableHandler.Instance.MountainLine;
-            
-            // ??? ETO CHE VOOBSHE, MI POHODU POD NARCOTICAMI PISALI ETO
-            //int singleInterval = range / (textures.Count() - 2);
-            //spriteRenderer.sprite = Sprite.Create(textures[(height - GlobalVariableHandler.Instance.Waterline) / singleInterval + 1], new(0, 0, textures[(height - GlobalVariableHandler.Instance.Waterline) / singleInterval + 1].width, textures[(height - GlobalVariableHandler.Instance.Waterline) / singleInterval + 1].height), new(0.0f, 0.0f));
+
+            // ??? ETO CHE VOOBSHE, MI POHODU POD NARCOTICAMI PISALI ETO            
+            //Texture2D[] textures = new Texture2D[]{ GlobalVariableHandler.Instance.LowerGrassTexture, GlobalVariableHandler.Instance.GrassTexture, GlobalVariableHandler.Instance.HigherGrassTexture };
+            //int singleInterval = range / (textures.Count()-2);
+            //spriteRenderer.sprite = Sprite.Create(textures[(height - GlobalVariableHandler.Instance.Waterline) / singleInterval+2], new(0, 0, textures[(height - GlobalVariableHandler.Instance.Waterline) / singleInterval + 1].width, textures[(height - GlobalVariableHandler.Instance.Waterline) / singleInterval + 1].height), new(0.0f, 0.0f));
             
             spriteRenderer.sprite = Sprite.Create(GlobalVariableHandler.Instance.GrassTexture, new(0, 0, GlobalVariableHandler.Instance.GrassTexture.width, GlobalVariableHandler.Instance.GrassTexture.height), new(0.0f, 0.0f));
             if (near) 
