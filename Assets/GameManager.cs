@@ -339,6 +339,32 @@ public class GameManager : NetworkBehaviour
         }
         return null;
     }
+    public void HandleStrengthIncrease(int playerId, int strengthDelta)
+    {
+        for (int i = 0; i< GlobalVariableHandler.Instance.Players.Count; i++)
+        {
+            if (GlobalVariableHandler.Instance.Players[i].Id == playerId)
+            {
+                var p = GlobalVariableHandler.Instance.Players[i];
+                p.Strength += strengthDelta;
+                GlobalVariableHandler.Instance.Players[i] = p;
+                return;
+            }
+        }
+    }
+    public void HandleSpeedIncrease(int playerId, float speedDelta)
+    {
+        for (int i = 0; i < GlobalVariableHandler.Instance.Players.Count; i++)
+        {
+            if (GlobalVariableHandler.Instance.Players[i].Id == playerId)
+            {
+                var p = GlobalVariableHandler.Instance.Players[i];
+                p.MoveSpeed += speedDelta;
+                GlobalVariableHandler.Instance.Players[i] = p;
+                return;
+            }
+        }
+    }
     public override void OnDestroy()
     {
         base.OnDestroy();

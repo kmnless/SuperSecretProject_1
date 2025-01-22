@@ -11,6 +11,9 @@ public class MapScript : MonoBehaviour
 {
 
     static public GameObject[,] sprites;
+
+    private int baseWidth = 3;
+    private int baseHeight = 2;
     private static int GetRoadType(int x, int y, int[,] buildings)
     {
         bool up = y > 0 && buildings[y - 1, x] == (int)Constants.Buildings.Road;

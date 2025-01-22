@@ -1,49 +1,52 @@
-using System.Collections;
-using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class BaseMenuHandler : MonoBehaviour
 {
-    // Start is called before the first frame update
-    GameObject player;
-    PlayerHandlerScript playerScript;
- 
-    [SerializeField] private Button attackButton;
-    [SerializeField] private GameObject baseVisual;
-    [SerializeField] private GameObject grave;
-    [SerializeField] private BaseHandler handler;
-    private bool dead = false;
-    void Start()
+    [SerializeField] private Button upgradeStrengthButton;
+    [SerializeField] private Button upgradeSpeedButton;
+    [SerializeField] private GameObject menuUI;
+    private static Transform playerTransform;
+    [SerializeField] private float interactRadius = 2f;
+    private BaseHandler handler;
+    private void Start()
     {
-        player = GameObject.Find($"Player{GlobalVariableHandler.Instance.MyIndex}");
-        playerScript = player.GetComponent<PlayerHandlerScript>();
+        handler = GetComponentInParent<BaseHandler>();
+        if (handler != null )
+        {
+            Debug.LogError("No Base Handler");
+        }
+        if (handler.Id != GlobalVariableHandler.Instance.MyIndex)
+        {
+            Destroy(gameObject);
+        }
+        upgradeStrengthButton.onClick.AddListener(OnUpgradeStrengthClicked);
+        upgradeSpeedButton.onClick.AddListener(OnUpgradeSpeedClicked);
+    }
+
+    private void OnUpgradeStrengthClicked()
+    {
+        UpgradeHandler.UpgradeStrength(handler.OwnerId, handler.StrengthBonus);
+        handler.StrengthCost += handler.StrengthCostIncrease;
+    }
+
+    private void OnUpgradeSpeedClicked()
+    {
+        UpgradeHandler.UpgradeSpeed(handler.OwnerId, handler.SpeedBonus);
+        handler.SpeedCost += handler.SpeedCostIncrease;
+    }
+    public static void SetCurrentPlayer(Transform playerTransform)
+    {
+        BaseMenuHandler.playerTransform = playerTransform;
+    }
+
+    public void Open()
+    {
+        menuUI.SetActive(true);
     }
     public void Close()
     {
-        transform.gameObject.SetActive(false);
-    }
-    public void Open()
-    {
-        if(!dead)
-            transform.gameObject.SetActive(true);
-    }
-
-    void FixedUpdate()
-    {
-        //if(transform.gameObject.activeSelf&&(baseVisual.transform.position - player.transform.position- new Vector3(0f,0f,10f)).magnitude<GlobalVariableHandler.CaptureDistance*GlobalVariableHandler.Instance.CellSize /100f)
-        //{
-        //    attackButton.interactable = true;
-        //}
-        //else if (transform.gameObject.activeSelf)
-        //{
-        //    attackButton.interactable = false;
-        //    Debug.Log(GlobalVariableHandler.captureDistance*GlobalVariableHandler.cellSize/100f);
-        //    Debug.Log((flagVisual.transform.position - player.transform.position- new Vector3(0f,0f,10f)).magnitude);
-        //}
-    }
-    public void Attack()
-    {
-        
+        menuUI.SetActive(false);
     }
 }
