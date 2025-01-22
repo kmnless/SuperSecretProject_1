@@ -174,7 +174,6 @@ public class ClientRpcHandler : NetworkBehaviour
     [ClientRpc]
     public void NotifyGameEndedClientRpc(string winnerName)
     {
-        Debug.Log($"Game Over! Winner: {winnerName}");
         if (UIManager.Instance != null)
         {
             UIManager.Instance.DisplayVictoryScreen(winnerName);

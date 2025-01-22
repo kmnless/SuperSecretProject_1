@@ -93,6 +93,7 @@ public class GameManager : NetworkBehaviour
 
                 GlobalVariableHandler.Instance.Players[i] = player;
             }
+            CheckWinCondition();
             UpdateUIForAllPlayers();
         }
     }
@@ -132,7 +133,6 @@ public class GameManager : NetworkBehaviour
         {
             if (player.Id == playerId)
             {
-                Debug.Log($"Player {player.Name} has won the game!");
                 clientRpcHandler.NotifyGameEndedClientRpc(player.Name.ToString());
                 //StartCoroutine(EndGameAndReturnToMenu());
                 return;

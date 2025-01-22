@@ -5,7 +5,7 @@ public class MenuHandler : MonoBehaviour
 {
     [SerializeField] private GameObject menuUI;
     [SerializeField] private Button captureButton;
-    [SerializeField] private float captureRadius = 7.0f;
+    [SerializeField] private float captureRadius = 2f;
     private static Transform playerTransform;
     private Transform flagTransform;
     private FlagHandler currentFlag;
