@@ -28,13 +28,13 @@ public class BaseMenuHandler : MonoBehaviour
     private void OnUpgradeStrengthClicked()
     {
         UpgradeHandler.UpgradeStrength(handler.OwnerId, handler.StrengthBonus);
-        handler.StrengthCost += handler.StrengthCostIncrease;
+        //handler.StrengthCost += handler.StrengthCostIncrease;
     }
 
     private void OnUpgradeSpeedClicked()
     {
         UpgradeHandler.UpgradeSpeed(handler.OwnerId, handler.SpeedBonus);
-        handler.SpeedCost += handler.SpeedCostIncrease;
+        //handler.SpeedCost += handler.SpeedCostIncrease;
     }
     public static void SetCurrentPlayer(Transform playerTransform)
     {

@@ -45,7 +45,14 @@ public class BaseHandler : MonoBehaviour
         }
 
     }
-
+    public void UpgradeStrength()
+    {
+        StrengthCost += StrengthCostIncrease;
+    }
+    public void UpgradeSpeed()
+    {
+        SpeedCost += SpeedCostIncrease;
+    }
     void Update()
     {
         
