@@ -21,7 +21,7 @@ namespace Generation
         private int matrixSizeX;
         private int matrixSizeY;
         private int amountOfBases;
-        
+
         public static int LOW_PRIORITY_FLAG_INDEX = Convert.ToInt32(Constants.Buildings.Outpost);
         public static int HIGH_PRIORITY_FLAG_INDEX = Convert.ToInt32(Constants.Buildings.Flag);
         public static int BASE_INDEX = Convert.ToInt32(Constants.Buildings.Base);
@@ -103,11 +103,11 @@ namespace Generation
             else
             {
                 depth++;
-                if (placeBase(depth))
-                    return true;
-                return false;
+                return placeBase(depth);
+
             }
         }
+
         public void placeBases(int depth = 0)
         {
             if (depth > MAX_DEPTH)

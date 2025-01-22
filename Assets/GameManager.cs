@@ -315,6 +315,19 @@ public class GameManager : NetworkBehaviour
             StartCoroutine(CaptureOutpostCoroutine(p, outpost));
         }
     }
+    private BaseHandler FindBaseByOwner(int ownerId)
+    {
+        BaseHandler[] bases = FindObjectsOfType<BaseHandler>();
+        foreach (var b in bases)
+        {
+            if (b.OwnerId == ownerId)
+            {
+                return b;
+            }
+        }
+        return null;
+    }
+
     private FlagHandler FindFlagById(int flagId)
     {
         FlagHandler[] flags = FindObjectsOfType<FlagHandler>();
@@ -338,6 +351,45 @@ public class GameManager : NetworkBehaviour
             }
         }
         return null;
+    }
+    public void HandleStrengthIncrease(int playerId, int strengthDelta)
+    {
+        var b = FindBaseByOwner(playerId);
+        for (int i = 0; i< GlobalVariableHandler.Instance.Players.Count; i++)
+        {
+            if (GlobalVariableHandler.Instance.Players[i].Id == playerId)
+            {
+                var p = GlobalVariableHandler.Instance.Players[i];
+                if (p.Diamonds >= b.StrengthCost)
+                {
+                    p.Strength += strengthDelta;
+                    p.Diamonds -= b.StrengthCost;
+                    b.UpgradeStrength();
+                }
+                GlobalVariableHandler.Instance.Players[i] = p;
+                return;
+            }
+        }
+    }
+    public void HandleSpeedIncrease(int playerId, float speedDelta)
+    {
+        var b = FindBaseByOwner(playerId);
+
+        for (int i = 0; i < GlobalVariableHandler.Instance.Players.Count; i++)
+        {
+            if (GlobalVariableHandler.Instance.Players[i].Id == playerId)
+            {
+                var p = GlobalVariableHandler.Instance.Players[i];
+                if (p.Diamonds >= b.SpeedCost)
+                {
+                    p.MoveSpeed += speedDelta;
+                    p.Diamonds -= b.SpeedCost;
+                    b.UpgradeSpeed();
+                }
+                GlobalVariableHandler.Instance.Players[i] = p;
+                return;
+            }
+        }
     }
     public override void OnDestroy()
     {

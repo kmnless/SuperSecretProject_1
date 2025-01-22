@@ -25,7 +25,9 @@ public class GlobalVariableHandler : NetworkBehaviour, INetworkSerializable
     public Color[] Colors { get; set; }
 
     // Textures
+    public Texture2D LowerGrassTexture { get; set; }
     public Texture2D GrassTexture { get; set; }
+    public Texture2D HigherGrassTexture { get; set; }
     public Texture2D WaterTexture { get; set; }
     public Texture2D MountainTexture { get; set; }
     public Texture2D RoadTexture { get; set; }
@@ -227,7 +229,9 @@ public class GlobalVariableHandler : NetworkBehaviour, INetworkSerializable
     }
     public void LoadResources()
     {
+        LowerGrassTexture = Resources.Load<Texture2D>("Textures/lower_grass");
         GrassTexture = Resources.Load<Texture2D>("Textures/grass");
+        HigherGrassTexture = Resources.Load<Texture2D>("Textures/higher_grass");
         WaterTexture = Resources.Load<Texture2D>("Textures/water");
         MountainTexture = Resources.Load<Texture2D>("Textures/mountain");
         FlagTexture = Resources.Load<Texture2D>("Textures/flag");

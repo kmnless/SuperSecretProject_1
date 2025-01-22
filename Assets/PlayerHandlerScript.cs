@@ -119,7 +119,7 @@ public class PlayerHandlerScript : NetworkBehaviour
             }
         }
         MenuHandler.SetCurrentPlayer(this.transform);
-
+        BaseMenuHandler.SetCurrentPlayer(this.transform);
         if (string.IsNullOrEmpty(playerName))
         {
             SetPlayerName($"Player{OwnerClientId}");

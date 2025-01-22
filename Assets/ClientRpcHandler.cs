@@ -170,6 +170,22 @@ public class ClientRpcHandler : NetworkBehaviour
             GameManager.Instance.HandleOutpostCapture(outpostId, playerId);
         }
     }
+    [ServerRpc(RequireOwnership = false)]
+    public void RequestStrengthIncreaseServerRpc(int playerId, int strengthDelta, ServerRpcParams rpcParams = default)
+    {
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.HandleStrengthIncrease(playerId, strengthDelta);
+        }
+    }
+    [ServerRpc(RequireOwnership = false)]
+    public void RequestSpeedIncreaseServerRpc(int playerId, float speedDelta, ServerRpcParams rpcParams = default)
+    {
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.HandleSpeedIncrease(playerId, speedDelta);
+        }
+    }
 
     [ClientRpc]
     public void NotifyGameEndedClientRpc(string winnerName)
