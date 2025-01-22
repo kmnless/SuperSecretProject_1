@@ -220,13 +220,6 @@ public class MapGeneratorScript : MonoBehaviour
     {
         if (generated)
         {
-            //GlobalVariableHandler.Instance.Textures = textures;
-            //GlobalVariableHandler.Instance.FlagTexture = flagTexture;
-            //GlobalVariableHandler.Instance.BaseTexture = baseTexture;
-            //GlobalVariableHandler.Instance.RoadTexture = roadTexture;
-            //GlobalVariableHandler.Instance.BasePrefab = basePrefab;
-            //GlobalVariableHandler.Instance.FlagPrefab = flagPrefab;
-            //GlobalVariableHandler.Instance.OutpostPrefab = outpostPrefab;
             GlobalVariableHandler.Instance.BuildingsField = terrain.Item2;
             GlobalVariableHandler.Instance.TerrainField = terrain.Item1;
             GlobalVariableHandler.Instance.CellSize = textures[0].width;
@@ -236,6 +229,17 @@ public class MapGeneratorScript : MonoBehaviour
             GlobalVariableHandler.Instance.MountainLine = mountainLine;
             GlobalVariableHandler.Instance.Colors = colors;
             GlobalVariableHandler.Instance.Seed = seed;
+            GlobalVariableHandler.Instance.FlagCount = flagCount;
+            GlobalVariableHandler.Instance.OutpostCount = middleFlagCount;
+            GlobalVariableHandler.Instance.MinRadius = minRadius;
+            GlobalVariableHandler.Instance.BanRadius = banRadius;
+            GlobalVariableHandler.Instance.TerrainScale = terrainScale;
+            GlobalVariableHandler.Instance.RANGE_DENOMINATOR = RANGE_DENOMINATOR;
+            GlobalVariableHandler.Instance.ROAD_GENERATION_COPLEXITY_DENOMINATOR = ROAD_GENERATION_COPLEXITY_DENOMINATOR;
+            GlobalVariableHandler.Instance.DAMPING = DAMPING;
+            GlobalVariableHandler.Instance.CONTRAST = CONTRAST;
+            GlobalVariableHandler.Instance.CLIP = CLIP;
+
 
             GlobalVariableHandler.Instance.LoadResources();
 

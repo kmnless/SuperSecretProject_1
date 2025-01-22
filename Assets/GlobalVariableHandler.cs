@@ -1,7 +1,10 @@
+using Generation;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Net;
 using Unity.Netcode;
+using UnityEditor.U2D.Aseprite;
 using UnityEngine;
 
 public class GlobalVariableHandler : NetworkBehaviour, INetworkSerializable
@@ -31,6 +34,17 @@ public class GlobalVariableHandler : NetworkBehaviour, INetworkSerializable
     public GameObject OutpostPrefab { get; set; }
     public NetworkList<PlayerProperty> Players { get; set; } = new NetworkList<PlayerProperty>();
     public int? MyIndex { get; set; } = null;
+    public int FlagCount { get; set; }
+    public int OutpostCount { get; set; }
+    public int MinRadius { get; set; }
+    public int BanRadius { get; set; }
+    public double TerrainScale {  get; set; }
+    public int RANGE_DENOMINATOR { get; set; }
+    public int ROAD_GENERATION_COPLEXITY_DENOMINATOR { get; set; }
+    public float DAMPING { get; set; }
+    public float CONTRAST{ get; set; }
+    public float CLIP { get; set; }
+
 
     // Syncing fields
     public int PlayerCount;
@@ -127,7 +141,7 @@ public class GlobalVariableHandler : NetworkBehaviour, INetworkSerializable
             }
         }
     }
-    private string SerializeToString<T>(T[,] array)
+    /*private string SerializeToString<T>(T[,] array)
     {
         int rows = array.GetLength(0);
         int cols = array.GetLength(1);
@@ -153,7 +167,7 @@ public class GlobalVariableHandler : NetworkBehaviour, INetworkSerializable
             }
         }
         return array;
-    }
+    }*/
     public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
     {
         // fields
@@ -215,9 +229,6 @@ public class GlobalVariableHandler : NetworkBehaviour, INetworkSerializable
     [ServerRpc(RequireOwnership = false)]
     public void SyncAllFieldsServerRpc(ServerRpcParams rpcParams = default)
     {
-        string serializedTerrain = SerializeToString(TerrainField);
-        string serializedBuildings = SerializeToString(BuildingsField);
-
         SyncAllFieldsClientRpc(
             PlayerCount,
             CellSize,
@@ -226,15 +237,12 @@ public class GlobalVariableHandler : NetworkBehaviour, INetworkSerializable
             Waterline,
             MountainLine,
             Seed,
-            serializedTerrain,
-            serializedBuildings,
             rpcParams.Receive.SenderClientId
         );
     }
 
     [ClientRpc]
-    private void SyncAllFieldsClientRpc(int playerCount, float cellSize, int fieldSizeX, int fieldSizeY, int waterline, int mountainLine, int seed,
-    string serializedTerrain, string serializedBuildings, ulong clientId)
+    private void SyncAllFieldsClientRpc(int playerCount, float cellSize, int fieldSizeX, int fieldSizeY, int waterline, int mountainLine, int seed, ulong clientId)
     {
         PlayerCount = playerCount;
         CellSize = cellSize;
@@ -244,8 +252,10 @@ public class GlobalVariableHandler : NetworkBehaviour, INetworkSerializable
         MountainLine = mountainLine;
         Seed = seed;
 
-        TerrainField = DeserializeFromString<double>(serializedTerrain);
-        BuildingsField = DeserializeFromString<int>(serializedBuildings);
+        var terrain = Combiner.generatePlayField(fieldSizeX, fieldSizeY, seed, playerCount, OutpostCount, FlagCount, MinRadius, BanRadius, TerrainScale, Math.Max(Math.Abs(fieldSizeX / RANGE_DENOMINATOR), Math.Abs(fieldSizeY / RANGE_DENOMINATOR)), DAMPING, CONTRAST, CLIP, ROAD_GENERATION_COPLEXITY_DENOMINATOR);
+
+        TerrainField = terrain.Item1;
+        BuildingsField = terrain.Item2;
     }
 
 
