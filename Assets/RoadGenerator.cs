@@ -130,44 +130,6 @@ namespace Generation
 
         private void ConnectPoints(Tuple<int, int> start, Tuple<int, int> end)
         {
-            int startX = start.Item1;
-            int startY = start.Item2;
-            int endX = end.Item1;
-            int endY = end.Item2;
-
-            if (startX < 0 || startY < 0 || endX < 0 || endY < 0) { return; }
-
-            int currentX = startX;
-            int currentY = startY;
-
-            while (currentX != endX || currentY != endY)
-            {
-                if (currentX != endX)
-                {
-                    currentX += currentX < endX ? 1 : -1;
-                }
-                else if (currentY != endY)
-                {
-                    currentY += currentY < endY ? 1 : -1;
-                }
-
-                if (currentX >= 0 && currentX < matrixX && currentY >= 0 && currentY < matrixY)
-                {
-                    if (matrix[currentY, currentX] == 0)
-                    {
-                        matrix[currentY, currentX] = Convert.ToInt32(Constants.Buildings.Road);
-                    }
-                }
-            }
-
-            depend[start].Add(end);
-            depend[end].Add(start);
-        }
-
-
-
-        /*private void ConnectPoints(Tuple<int, int> start, Tuple<int, int> end)
-        {
 
             int startX = start.Item1;
             int startY = start.Item2;
@@ -188,27 +150,31 @@ namespace Generation
                 int nextX = currentX;
                 int nextY = currentY;
 
-                // Рандомный выбор следующей точки
-                if (currentX < endX)
-                {
-                    nextX += random.Next(0, 2);
-                }
-                else if (currentX > endX)
-                {
-                    nextX -= random.Next(0, 2);
-                }
-                //else{nextX -= random.Next(-6, 7) / 6;}
+                //// Рандомный выбор следующей точки
+                //if (currentX < endX)
+                //{
+                //    nextX += random.Next(0, 2);
+                //}
+                //else if (currentX > endX)
+                //{
+                //    nextX -= random.Next(0, 2);
+                //}
+                ////else{nextX -= random.Next(-6, 7) / 6;}
 
-                if (currentY < endY)
-                {
-                    nextY += random.Next(0, 2);
-                }
-                else if (currentY > endY)
-                {
-                    nextY -= random.Next(0, 2);
-                }
-                //else { nextY -= random.Next(-6, 7) / 6; }
+                //if (currentY < endY)
+                //{
+                //    nextY += random.Next(0, 2);
+                //}
+                //else if (currentY > endY)
+                //{
+                //    nextY -= random.Next(0, 2);
+                //}
+                ////else { nextY -= random.Next(-6, 7) / 6; }
+                if (currentX < endX) nextX = currentX + 1;
+                else if (currentX > endX) nextX = currentX - 1;
 
+                if (currentY < endY) nextY = currentY + 1;
+                else if (currentY > endY) nextY = currentY - 1;
                 // Обновление текущих координат
                 currentX = nextX;
                 currentY = nextY;
@@ -244,7 +210,7 @@ namespace Generation
                 roundedPath.Add(nextPoint); // Добавить точку
             }
 
-            foreach (int[] point in path)
+            foreach (int[] point in roundedPath)
             {
                 int y = point[0];
                 int x = point[1];
@@ -260,7 +226,7 @@ namespace Generation
 
             depend[start].Add(end);
             depend[end].Add(start);
-        }*/
+        }
 
     }
 

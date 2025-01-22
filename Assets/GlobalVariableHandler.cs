@@ -23,6 +23,8 @@ public class GlobalVariableHandler : NetworkBehaviour, INetworkSerializable
     public const string DefaultGameName = "GameName";
     public ushort GamePort = 2282;
     public Color[] Colors { get; set; }
+
+    // Textures
     public Texture2D GrassTexture { get; set; }
     public Texture2D WaterTexture { get; set; }
     public Texture2D MountainTexture { get; set; }
@@ -32,6 +34,19 @@ public class GlobalVariableHandler : NetworkBehaviour, INetworkSerializable
     public GameObject BasePrefab { get; set; }
     public GameObject FlagPrefab { get; set; }
     public GameObject OutpostPrefab { get; set; }
+    public Texture2D RoadHorizontalTexture;
+    public Texture2D RoadVerticalTexture;
+    public Texture2D RoadCornerTLTexture;
+    public Texture2D RoadCornerTRTexture;
+    public Texture2D RoadCornerBLTexture;
+    public Texture2D RoadCornerBRTexture;
+    public Texture2D RoadTUpTexture;
+    public Texture2D RoadTDownTexture;
+    public Texture2D RoadTLeftTexture;
+    public Texture2D RoadTRightTexture;
+    public Texture2D RoadCrossTexture;
+
+    
     public NetworkList<PlayerProperty> Players { get; set; } = new NetworkList<PlayerProperty>();
     public int? MyIndex { get; set; } = null;
     public int FlagCount { get; set; }
@@ -215,6 +230,9 @@ public class GlobalVariableHandler : NetworkBehaviour, INetworkSerializable
         RoadTexture = Resources.Load<Texture2D>("Textures/road");
         FlagTexture = Resources.Load<Texture2D>("Textures/flag");
         BaseTexture = Resources.Load<Texture2D>("Textures/castle");
+
+
+
 
         BasePrefab = Resources.Load<GameObject>("Prefabs/BasePrefab");
         FlagPrefab = Resources.Load<GameObject>("Prefabs/FlagPrefab");
