@@ -4,6 +4,7 @@ using Unity.Netcode;
 using UnityEngine.AI;
 using UnityEngine;
 using System.Collections;
+using Unity.VisualScripting;
 
 public class PlayerHandlerScript : NetworkBehaviour
 {
@@ -11,6 +12,7 @@ public class PlayerHandlerScript : NetworkBehaviour
     private Camera cam;
     private FieldStates[,] field;
     public NavMeshAgent agent { get; private set; }
+    private Animator animator;
     public string playerName { get; private set; }
     public int playerId { get; private set; }
     private List<Vector3> path;
@@ -146,10 +148,26 @@ public class PlayerHandlerScript : NetworkBehaviour
         {
             HandleMouseClick();
         }
+
+        Vector2 movement = agent.velocity.normalized;
+
+        animator.SetFloat("Horizontal", movement.x);
+        animator.SetFloat("Vertical", movement.y);
+
+        if (movement == Vector2.zero)
+        {
+            animator.SetBool("IsMoving", false);
+        }
+        else
+        {
+            animator.SetBool("IsMoving", true);
+        }
     }
     private void Start()
     {
         AssignCamera(Camera.main);
+        animator = GetComponent<Animator>();
+
     }
     private void HandleMouseClick()
     {

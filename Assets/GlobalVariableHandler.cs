@@ -23,6 +23,8 @@ public class GlobalVariableHandler : NetworkBehaviour, INetworkSerializable
     public const string DefaultGameName = "GameName";
     public ushort GamePort = 2282;
     public Color[] Colors { get; set; }
+
+    // Textures
     public Texture2D GrassTexture { get; set; }
     public Texture2D WaterTexture { get; set; }
     public Texture2D MountainTexture { get; set; }
@@ -32,6 +34,22 @@ public class GlobalVariableHandler : NetworkBehaviour, INetworkSerializable
     public GameObject BasePrefab { get; set; }
     public GameObject FlagPrefab { get; set; }
     public GameObject OutpostPrefab { get; set; }
+    public Texture2D RoadHorizontalTexture;
+    public Texture2D RoadVerticalTexture;
+    public Texture2D RoadCornerTLTexture;
+    public Texture2D RoadCornerTRTexture;
+    public Texture2D RoadCornerBLTexture;
+    public Texture2D RoadCornerBRTexture;
+    public Texture2D RoadTUpTexture;
+    public Texture2D RoadTDownTexture;
+    public Texture2D RoadTLeftTexture;
+    public Texture2D RoadTRightTexture;
+    public Texture2D RoadCrossTexture;
+    public Texture2D RoadEndDownTexture;
+    public Texture2D RoadEndUpTexture;
+    public Texture2D RoadEndLeftTexture;
+    public Texture2D RoadEndRightTexture;
+
     public NetworkList<PlayerProperty> Players { get; set; } = new NetworkList<PlayerProperty>();
     public int? MyIndex { get; set; } = null;
     public int FlagCount { get; set; }
@@ -212,9 +230,38 @@ public class GlobalVariableHandler : NetworkBehaviour, INetworkSerializable
         GrassTexture = Resources.Load<Texture2D>("Textures/grass");
         WaterTexture = Resources.Load<Texture2D>("Textures/water");
         MountainTexture = Resources.Load<Texture2D>("Textures/mountain");
-        RoadTexture = Resources.Load<Texture2D>("Textures/road");
         FlagTexture = Resources.Load<Texture2D>("Textures/flag");
         BaseTexture = Resources.Load<Texture2D>("Textures/castle");
+
+        // Горизонтальная дорога
+        RoadHorizontalTexture = Resources.Load<Texture2D>("Textures/Road/horizontal");
+        // Вертикальная дорога
+        RoadVerticalTexture = Resources.Load<Texture2D>("Textures/Road/vertical");
+        // Поворот: нижний-левый
+        RoadCornerBLTexture = Resources.Load<Texture2D>("Textures/Road/left_bottom");
+        // Поворот: нижний-правый
+        RoadCornerBRTexture = Resources.Load<Texture2D>("Textures/Road/right_bottom");
+        // Поворот: верхний-левый
+        RoadCornerTLTexture = Resources.Load<Texture2D>("Textures/Road/left_top");
+        // Поворот: верхний-правый
+        RoadCornerTRTexture = Resources.Load<Texture2D>("Textures/Road/right_top");
+        // Т-образный перекресток: верх
+        RoadTUpTexture = Resources.Load<Texture2D>("Textures/Road/horizontal_top");
+        // Т-образный перекресток: низ
+        RoadTDownTexture = Resources.Load<Texture2D>("Textures/Road/horizontal_bottom");
+        // Т-образный перекресток: лево
+        RoadTLeftTexture = Resources.Load<Texture2D>("Textures/Road/vertical_left");
+        // Т-образный перекресток: право
+        RoadTRightTexture = Resources.Load<Texture2D>("Textures/Road/vertical_right");
+        // Перекресток
+        RoadCrossTexture = Resources.Load<Texture2D>("Textures/Road/intersect");
+        // Одиночная клетка дороги
+        RoadTexture = Resources.Load<Texture2D>("Textures/Road/road");
+
+        RoadEndDownTexture = Resources.Load<Texture2D>("Textures/Road/bottom_end");
+        RoadEndUpTexture = Resources.Load<Texture2D>("Textures/Road/top_end");
+        RoadEndLeftTexture = Resources.Load<Texture2D>("Textures/Road/left_end");
+        RoadEndRightTexture = Resources.Load<Texture2D>("Textures/Road/right_end");
 
         BasePrefab = Resources.Load<GameObject>("Prefabs/BasePrefab");
         FlagPrefab = Resources.Load<GameObject>("Prefabs/FlagPrefab");
