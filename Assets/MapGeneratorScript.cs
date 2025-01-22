@@ -50,7 +50,7 @@ public class MapGeneratorScript : MonoBehaviour
     private static int BASE_INDEX = Generation.BuildingsGenerator.BASE_INDEX;
     [SerializeField] private int RANGE_DENOMINATOR = 20;
     [SerializeField] private int ROAD_GENERATION_COPLEXITY_DENOMINATOR = 80;
-    [SerializeField] private int CELLS_PER_PLAYER = 10;
+    [SerializeField] private int CELLS_PER_PLAYER = 50;
     [SerializeField] private float DAMPING = 0.6f;
     [SerializeField] private float CONTRAST = 4.0f;
     [SerializeField] private float CLIP = 1.0f;
