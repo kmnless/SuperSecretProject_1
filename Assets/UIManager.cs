@@ -1,6 +1,8 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class UIManager : MonoBehaviour
@@ -10,6 +12,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] private GameObject playerStatsPrefab;
     [SerializeField] private GameObject otherPlayerStatsPrefab;
     [SerializeField] private Transform playerStatsContainer;
+    [SerializeField] private GameObject messagePrefab;
 
     private void Awake()
     {
@@ -76,7 +79,17 @@ public class UIManager : MonoBehaviour
     {
         FindOutpostById(outpostId).StartCapture();
     }
-
+    public void ShowMessage(string message)
+    {
+        GameObject messageBox = Instantiate(messagePrefab);
+        messageBox.GetComponent<TMP_Text>().text = message;
+        StartCoroutine(ClearMessageAfterDelay(3, messageBox));
+    }
+    private IEnumerator ClearMessageAfterDelay(float delay, GameObject message)
+    {
+        yield return new WaitForSeconds(delay);
+        Destroy(message);
+    }
     private FlagHandler FindFlagById(int flagId)
     {
         FlagHandler[] flags = FindObjectsOfType<FlagHandler>();

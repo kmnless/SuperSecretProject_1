@@ -5,6 +5,7 @@ using UnityEngine.AI;
 using UnityEngine;
 using System.Collections;
 using Unity.VisualScripting;
+using System.Linq;
 
 public class PlayerHandlerScript : NetworkBehaviour
 {
@@ -18,9 +19,10 @@ public class PlayerHandlerScript : NetworkBehaviour
     private List<Vector3> path;
     private Vector3 previousStep;
     public float animationSpeed = 0.1f;
-
+    public PlayerProperty thisPlayer;
     public static bool IsStarted = false;
     public bool IsAllowedToMove = true;
+    public Vector3 SpawnPoint;
     public void SetPlayerName(string name)
     {
         playerName = name;
@@ -256,6 +258,30 @@ public class PlayerHandlerScript : NetworkBehaviour
         return position.x > 0 && position.y > 0 &&
                position.x * 100 < MapScript.sprites.GetLength(1) * GameManager.spriteSize &&
                position.y * 100 < MapScript.sprites.GetLength(0) * GameManager.spriteSize;
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Player") && IsOwner && IsStarted)
+        {
+            var otherPlayer = other.GetComponent<PlayerHandlerScript>();
+            if (otherPlayer != null)
+            {
+                RequestCombatServerRpc(OwnerClientId, otherPlayer.OwnerClientId);
+            }
+        }
+    }
+
+    [ServerRpc]
+    private void RequestCombatServerRpc(ulong player1Id, ulong player2Id)
+    {
+        GameManager.Instance?.StartCombat(player1Id, player2Id);
+    }
+    public void Respawn()
+    {
+        Vector3 respawnPosition = this.SpawnPoint;
+        this.transform.position = respawnPosition;
+        this.IsAllowedToMove = true;
     }
 
 }

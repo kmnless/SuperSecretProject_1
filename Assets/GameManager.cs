@@ -2,6 +2,7 @@ using NavMeshPlus.Components;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.Netcode;
 using Unity.VisualScripting;
 using UnityEditor;
@@ -251,6 +252,7 @@ public class GameManager : NetworkBehaviour
         {
             Vector3 spawnPosition = basePositions[i];
             GameObject playerObject = Instantiate(playerPrefab, spawnPosition, Quaternion.identity);
+            playerObject.GetComponent<PlayerHandlerScript>().SpawnPoint = spawnPosition;
             playerObject.name = $"Player{i}";
 
             NetworkObject networkObject = playerObject.GetComponent<NetworkObject>();
@@ -327,7 +329,17 @@ public class GameManager : NetworkBehaviour
         }
         return null;
     }
-
+    private PlayerProperty? FindPlayerProperty(int playerId)
+    {
+        for (int i = 0; i < GlobalVariableHandler.Instance.Players.Count; i++)
+        {
+            if (GlobalVariableHandler.Instance.Players[i].Id == playerId)
+            {
+                return GlobalVariableHandler.Instance.Players[i];
+            }
+        }
+        return null;
+    }
     private FlagHandler FindFlagById(int flagId)
     {
         FlagHandler[] flags = FindObjectsOfType<FlagHandler>();
@@ -391,6 +403,71 @@ public class GameManager : NetworkBehaviour
             }
         }
     }
+    public void StartCombat(ulong player1Id, ulong player2Id)
+    {
+        var player1 = GetPlayerById(player1Id);
+        var player2 = GetPlayerById(player2Id);
+
+        if (player1 != null && player2 != null)
+        {
+            ResolveCombat(player1, player2);
+        }
+    }
+
+    private void ResolveCombat(PlayerHandlerScript player1, PlayerHandlerScript player2)
+    {
+        var p1 = FindPlayerProperty((int)player1.OwnerClientId).Value;
+        var p2 = FindPlayerProperty((int)player2.OwnerClientId).Value;
+
+        if (p1.Strength > p2.Strength)
+        {
+            DeclareWinner(player1, player2);
+        }
+        else if (p2.Strength > p1.Strength)
+        {
+            DeclareWinner(player2, player1);
+        }
+        else
+        {
+            DrawCombat(player1, player2);
+        }
+    }
+
+    private void DeclareWinner(PlayerHandlerScript winner, PlayerHandlerScript loser)
+    {
+        //winner.AddResources(10);
+        loser.Respawn();
+
+        NotifyCombatResultClientRpc(winner.OwnerClientId, loser.OwnerClientId, false);
+    }
+
+    private void DrawCombat(PlayerHandlerScript player1, PlayerHandlerScript player2)
+    {
+        NotifyCombatResultClientRpc(player1.OwnerClientId, player2.OwnerClientId, true);
+    }
+
+    [ClientRpc]
+    private void NotifyCombatResultClientRpc(ulong winnerId, ulong loserId, bool isDraw)
+    {
+        if (isDraw)
+        {
+            UIManager.Instance?.ShowMessage("Draw");
+        }
+        else
+        {
+            var winner = GetPlayerById(winnerId);
+            var loser = GetPlayerById(loserId);
+
+            UIManager.Instance?.ShowMessage($"{winner.playerName} has won {loser.playerName}!");
+        }
+    }
+
+    private PlayerHandlerScript GetPlayerById(ulong playerId)
+    {
+        return FindObjectsOfType<PlayerHandlerScript>().FirstOrDefault(p => p.OwnerClientId == playerId);
+    }
+
+
     public override void OnDestroy()
     {
         base.OnDestroy();
