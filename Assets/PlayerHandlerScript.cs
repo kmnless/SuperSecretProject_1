@@ -11,6 +11,7 @@ public class PlayerHandlerScript : NetworkBehaviour
 {
     [SerializeField] private float moveAllowance = 0.1f;
     private Camera cam;
+    private Vector3 lastPosition;
     private FieldStates[,] field;
     public NavMeshAgent agent { get; private set; }
     private Animator animator;
@@ -154,18 +155,15 @@ public class PlayerHandlerScript : NetworkBehaviour
             HandleMouseClick();
         }
 
-        Vector2 movement = agent.velocity.normalized;
-        bool isMoving = movement != Vector2.zero;
+        Vector3 movement = transform.position - lastPosition;
+        lastPosition = transform.position;
 
+        bool isMoving = movement.magnitude > 0.01f; // Минимальное движение
 
-        animator.SetFloat("Horizontal", movement.x);
-        animator.SetFloat("Vertical", movement.y);
-        animator.SetBool("IsMoving", isMoving);
+        float horizontal = movement.x;
+        float vertical = movement.y;
 
-        if (IsServer)
-        {
-            UpdateAnimationClientRpc(movement.x, movement.y, isMoving);
-        }
+        UpdateAnimationServerRpc(horizontal, vertical, isMoving);
     }
     private void Start()
     {
@@ -242,11 +240,15 @@ public class PlayerHandlerScript : NetworkBehaviour
                position.x * 100 < MapScript.sprites.GetLength(1) * GameManager.spriteSize &&
                position.y * 100 < MapScript.sprites.GetLength(0) * GameManager.spriteSize;
     }
+    [ServerRpc]
+    public void UpdateAnimationServerRpc(float horizontal, float vertical, bool isMoving, ServerRpcParams rpcParams = default)
+    {
+        UpdateAnimationClientRpc(horizontal, vertical, isMoving);
+    }
+
     [ClientRpc]
     public void UpdateAnimationClientRpc(float horizontal, float vertical, bool isMoving)
     {
-        Debug.Log($"[Client] UpdateAnimationClientRpc received: H={horizontal}, V={vertical}, Moving={isMoving}");
-
         if (animator == null)
         {
             animator = GetComponent<Animator>();
@@ -257,13 +259,10 @@ public class PlayerHandlerScript : NetworkBehaviour
             }
         }
 
-        Debug.Log($"[Client] Animator parameters before update: H={animator.GetFloat("Horizontal")}, V={animator.GetFloat("Vertical")}, Moving={animator.GetBool("IsMoving")}");
-
         animator.SetFloat("Horizontal", horizontal);
         animator.SetFloat("Vertical", vertical);
         animator.SetBool("IsMoving", isMoving);
 
-        Debug.Log($"[Client] Animator parameters after update: H={animator.GetFloat("Horizontal")}, V={animator.GetFloat("Vertical")}, Moving={animator.GetBool("IsMoving")}");
     }
 
 
