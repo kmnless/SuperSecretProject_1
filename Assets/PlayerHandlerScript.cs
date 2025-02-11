@@ -153,17 +153,16 @@ public class PlayerHandlerScript : NetworkBehaviour
         }
 
         Vector2 movement = agent.velocity.normalized;
+        bool isMoving = movement != Vector2.zero;
+
 
         animator.SetFloat("Horizontal", movement.x);
         animator.SetFloat("Vertical", movement.y);
+        animator.SetBool("IsMoving", isMoving);
 
-        if (movement == Vector2.zero)
+        if (IsServer)
         {
-            animator.SetBool("IsMoving", false);
-        }
-        else
-        {
-            animator.SetBool("IsMoving", true);
+            UpdateAnimationClientRpc(movement.x, movement.y, isMoving);
         }
     }
     private void Start()
@@ -241,6 +240,14 @@ public class PlayerHandlerScript : NetworkBehaviour
                position.x * 100 < MapScript.sprites.GetLength(1) * GameManager.spriteSize &&
                position.y * 100 < MapScript.sprites.GetLength(0) * GameManager.spriteSize;
     }
+    [ClientRpc]
+    public void UpdateAnimationClientRpc(float horizontal, float vertical, bool isMoving)
+    {
+        animator.SetFloat("Horizontal", horizontal);
+        animator.SetFloat("Vertical", vertical);
+        animator.SetBool("IsMoving", isMoving);
+    }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (!IsOwner) return;
