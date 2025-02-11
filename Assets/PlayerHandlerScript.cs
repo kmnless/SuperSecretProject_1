@@ -18,6 +18,7 @@ public class PlayerHandlerScript : NetworkBehaviour
     public int playerId { get; private set; }
     private List<Vector3> path;
     private Vector3 previousStep;
+    private int respawnTime = 10;
     public float animationSpeed = 0.1f;
     public PlayerProperty thisPlayer;
     public static bool IsStarted = false;
@@ -55,7 +56,7 @@ public class PlayerHandlerScript : NetworkBehaviour
     {
         if (IsServer)
         {
-            if(agent == null)
+            if (agent == null)
                 agent = gameObject.AddComponent<NavMeshAgent>();
 
             agent.enabled = true;
@@ -206,28 +207,9 @@ public class PlayerHandlerScript : NetworkBehaviour
             Vector3 destination = new Vector3((targetX + 0.5f) * GameManager.spriteSize / 100f,
                                               (targetY + 0.5f) * GameManager.spriteSize / 100f, 0);
 
-            //Debug.Log($"{gameObject.name}, position: {transform.position}");
             MoveToDestinationServerRpc(destination);
         }
 
-        /*if (IsPositionValid(worldPosition))
-        {
-            int targetX = (int)(worldPosition.x * 100 / GameLoaderScript.spriteSize);
-            int targetY = (int)(worldPosition.y * 100 / GameLoaderScript.spriteSize);
-
-            Vector3 destination = new Vector3((targetX + 0.5f) * GameLoaderScript.spriteSize / 100f,
-                                              (targetY + 0.5f) * GameLoaderScript.spriteSize / 100f, 0);
-
-            if (NavMesh.SamplePosition(destination, out NavMeshHit hit, 1.0f, NavMesh.AllAreas))
-            {
-                agent.SetDestination(hit.position);
-                Debug.Log($"Moving to: {hit.position}");
-            }
-            else
-            {
-                Debug.LogError($"Target destination {destination} is not on NavMesh.");
-            }
-        }*/
     }
 
     [ServerRpc]
@@ -259,144 +241,34 @@ public class PlayerHandlerScript : NetworkBehaviour
                position.x * 100 < MapScript.sprites.GetLength(1) * GameManager.spriteSize &&
                position.y * 100 < MapScript.sprites.GetLength(0) * GameManager.spriteSize;
     }
-
-    private void OnTriggerEnter(Collider other)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (other.CompareTag("Player") && IsOwner && IsStarted)
+        if (!IsOwner || !IsServer) return;
+
+        PlayerHandlerScript enemy = collision.GetComponent<PlayerHandlerScript>();
+        if (enemy != null && enemy != this)
         {
-            var otherPlayer = other.GetComponent<PlayerHandlerScript>();
-            if (otherPlayer != null)
-            {
-                RequestCombatServerRpc(OwnerClientId, otherPlayer.OwnerClientId);
-            }
+            RequestBattleServerRpc(enemy.OwnerClientId);
         }
     }
 
-    [ServerRpc]
-    private void RequestCombatServerRpc(ulong player1Id, ulong player2Id)
+    [ServerRpc(RequireOwnership = false)]
+    private void RequestBattleServerRpc(ulong enemyId)
     {
-        GameManager.Instance?.StartCombat(player1Id, player2Id);
+        GameManager.Instance.StartBattleServerRpc(OwnerClientId, enemyId);
     }
+    public void Die()
+    {
+        gameObject.SetActive(false);
+        GameManager.Instance.StartRespawnTimerServerRpc(playerId, respawnTime);
+    }
+
     public void Respawn()
     {
         Vector3 respawnPosition = this.SpawnPoint;
         this.transform.position = respawnPosition;
         this.IsAllowedToMove = true;
+        gameObject.SetActive(true);
     }
 
 }
-
-
-/*public class PlayerHandlerScript : MonoBehaviour
-{
-    [SerializeField] float moveAllowance;
-    [SerializeField] GameObject playerPrefab;
-    [SerializeField] private new Camera camera;
-    private FieldStates[,] field;
-    public static NavMeshAgent agent = null;
-    private List<Vector3> path;
-    public static GameObject player;
-    private Vector3 previousStep;
-    private float animationCounter = 0;
-    private int counter = 1;
-    private bool allowMove = false;
-    public float animationSpeed = 0.1f;
-    public PlayerProperty properties;
-    public int id;
-
-    public void addXP(int XP)
-    {
-        properties.CurrentXP += XP;
-        if (properties.CurrentXP >= properties.NeededXP)
-        {
-            properties.Level++;
-            properties.CurrentXP -= properties.NeededXP;
-            properties.NeededXP = (int)(properties.NeededXP * properties.MultiplierXP);
-            properties.StrengthMultiplier *= properties.StrengthMultiplierGain;
-        }
-    }
-
-    public void addMoney(int money)
-    {
-        properties.Money += money;
-    }
-    public void Awake()
-    {
-        id = GlobalVariableHandler.Instance.MyIndex.Value;
-        field = new FieldStates[GlobalVariableHandler.Instance.FieldSizeY, GlobalVariableHandler.Instance.FieldSizeX];
-        for (int y = 0; y < GlobalVariableHandler.Instance.FieldSizeY; y++)
-        {
-            for (int x = 0; x < GlobalVariableHandler.Instance.FieldSizeX; x++)
-            {
-                if (GlobalVariableHandler.Instance.TerrainField[y, x] >= -moveAllowance && GlobalVariableHandler.Instance.TerrainField[y, x] <= moveAllowance)
-                {
-                    field[y, x] = FieldStates.Empty;
-                }
-                else
-                {
-                    field[y, x] = FieldStates.Wall;
-                }
-            }
-        }
-    }
-    public void Start()
-    {
-        if (player == null)
-            player = GameObject.Find($"Player{id}");
-        agent = player.GetComponent<NavMeshAgent>();
-        agent.updateRotation = false;
-        agent.updateUpAxis = false;
-    }
-
-    public void FixedUpdate()
-    {
-        Vector3 intermediate = new Vector3();
-
-
-        if (path != null && path.Count > counter && allowMove)
-        {
-            intermediate = path[counter] - previousStep;
-
-            player.transform.position = previousStep + intermediate * animationCounter;
-            animationCounter += animationSpeed;
-            if (animationCounter > 1f)
-            {
-                previousStep = path[counter];
-                animationCounter = 0;
-                counter++;
-            }
-
-        }
-        else
-        {
-            counter = 1;
-            animationCounter = 0;
-            path = null;
-        }
-    }
-    void Update()
-    {
-        if (Input.GetMouseButtonDown(1))
-        {
-            Vector3 mousePosition = Input.mousePosition;
-
-            Vector3 worldPosition = camera.ScreenToWorldPoint(mousePosition);
-
-            if (worldPosition.x > 0 && worldPosition.y > 0 && worldPosition.x * 100 < MapScript.sprites.GetLength(1) * GameLoaderScript.spriteSize && worldPosition.y * 100 < MapScript.sprites.GetLength(0) * GameLoaderScript.spriteSize)
-            {
-                //Debug.Log("Mouse Clicked at: " + worldPosition);
-                if (MapScript.sprites != null)
-                {
-                    int targetX = (int)(worldPosition.x * 100 / GameLoaderScript.spriteSize);
-                    int targetY = (int)(worldPosition.y * 100 / GameLoaderScript.spriteSize);
-                    if (GlobalVariableHandler.Instance.BuildingsField[targetY, targetX] != Convert.ToInt32(Constants.Buildings.None))
-                    {
-                        Vector3 pos = new Vector3((targetX + 0.5f) * GameLoaderScript.spriteSize / 100f, (targetY + 0.5f) * GameLoaderScript.spriteSize / 100f, 10f);
-                        //Debug.Log("Destination: " + pos );
-                        agent.SetDestination(pos);
-                    }
-                }
-            }
-        }
-    }
-}*/

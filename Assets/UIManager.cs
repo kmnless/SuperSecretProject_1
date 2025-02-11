@@ -13,6 +13,8 @@ public class UIManager : MonoBehaviour
     [SerializeField] private GameObject otherPlayerStatsPrefab;
     [SerializeField] private Transform playerStatsContainer;
     [SerializeField] private GameObject messagePrefab;
+    [SerializeField] private GameObject battleResultPrefab;
+    [SerializeField] private TMP_Text respawnTimerText;
 
     private void Awake()
     {
@@ -90,6 +92,25 @@ public class UIManager : MonoBehaviour
         yield return new WaitForSeconds(delay);
         Destroy(message);
     }
+    public void ShowBattleResult(string message, Transform playerTransform)
+    {
+        GameObject battleText = Instantiate(battleResultPrefab, playerTransform.position, Quaternion.identity);
+        battleText.GetComponentInChildren<TMP_Text>().text = message;
+        Destroy(battleText, 3f);
+    }
+    public void UpdateRespawnTimer(int seconds)
+    {
+        if (seconds > 0)
+        {
+            respawnTimerText.gameObject.SetActive(true);
+            respawnTimerText.text = $"Respawning in {seconds}s...";
+        }
+        else
+        {
+            respawnTimerText.gameObject.SetActive(false);
+        }
+    }
+
     private FlagHandler FindFlagById(int flagId)
     {
         FlagHandler[] flags = FindObjectsOfType<FlagHandler>();

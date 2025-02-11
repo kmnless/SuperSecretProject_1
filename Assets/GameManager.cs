@@ -27,7 +27,7 @@ public class GameManager : NetworkBehaviour
     public GameObject playerPrefab;
     public NavMeshSurface navigator;
 
-    public bool isStarted = false; 
+    public bool isStarted = false;
     private bool hasWinner = false;
 
     private const int delayBeforeMenu = 5;
@@ -47,8 +47,8 @@ public class GameManager : NetworkBehaviour
             Destroy(gameObject);
         }
     }
-    private void Start() 
-    {        
+    private void Start()
+    {
     }
     private void UpdateUIForAllPlayers()
     {
@@ -98,24 +98,6 @@ public class GameManager : NetworkBehaviour
             UpdateUIForAllPlayers();
         }
     }
-    //private void InitializeFlags()
-    //{
-    //    flagList.Clear();
-
-    //    var flagHandlers = FindObjectsOfType<FlagHandler>();
-    //    for (int i = 0; i < flagHandlers.Length; i++)
-    //    {
-    //        flagHandlers[i].Initialize(i);
-    //        flagList.Add(new Flag
-    //        {
-    //            Index = i,
-    //            OwnerId = -1,
-    //            Income = flagHandlers[i].Income
-    //        });
-    //    }
-
-    //    Debug.Log("Flags initialized and synchronized.");
-    //}
     private void CheckWinCondition()
     {
         foreach (var player in GlobalVariableHandler.Instance.Players)
@@ -367,7 +349,7 @@ public class GameManager : NetworkBehaviour
     public void HandleStrengthIncrease(int playerId, int strengthDelta)
     {
         var b = FindBaseByOwner(playerId);
-        for (int i = 0; i< GlobalVariableHandler.Instance.Players.Count; i++)
+        for (int i = 0; i < GlobalVariableHandler.Instance.Players.Count; i++)
         {
             if (GlobalVariableHandler.Instance.Players[i].Id == playerId)
             {
@@ -403,62 +385,122 @@ public class GameManager : NetworkBehaviour
             }
         }
     }
-    public void StartCombat(ulong player1Id, ulong player2Id)
+
+    [ServerRpc(RequireOwnership = false)]
+    public void StartBattleServerRpc(ulong attackerId, ulong defenderId)
     {
-        var player1 = GetPlayerById(player1Id);
-        var player2 = GetPlayerById(player2Id);
+        PlayerHandlerScript attacker = GetPlayerById(attackerId);
+        PlayerHandlerScript defender = GetPlayerById(defenderId);
 
-        if (player1 != null && player2 != null)
+        if (attacker == null || defender == null)
         {
-            ResolveCombat(player1, player2);
+            Debug.LogError("Players not found");
+            return;
         }
-    }
 
-    private void ResolveCombat(PlayerHandlerScript player1, PlayerHandlerScript player2)
-    {
-        var p1 = FindPlayerProperty((int)player1.OwnerClientId).Value;
-        var p2 = FindPlayerProperty((int)player2.OwnerClientId).Value;
+        var p1 = FindPlayerProperty((int)attacker.OwnerClientId).Value;
+        var p2 = FindPlayerProperty((int)defender.OwnerClientId).Value;
 
-        if (p1.Strength > p2.Strength)
-        {
-            DeclareWinner(player1, player2);
-        }
-        else if (p2.Strength > p1.Strength)
-        {
-            DeclareWinner(player2, player1);
-        }
+        int attackerStrength = (int)Math.Round(p1.Strength * p1.StrengthMultiplier);
+        int defenderStrength = (int)Math.Round(p2.Strength * p2.StrengthMultiplier);
+
+        int attackerDiceRolls = attackerStrength > defenderStrength ? 2 : 1;
+        int defenderDiceRolls = defenderStrength > attackerStrength ? 2 : 1;
+
+        int attackerRoll = RollDice(attackerDiceRolls);
+        int defenderRoll = RollDice(defenderDiceRolls);
+
+
+        Debug.Log($"Battle: {attacker.playerName} ({attackerRoll}) vs {defender.playerName} ({defenderRoll})");
+
+        if (attackerRoll > defenderRoll)
+            HandleVictory(attacker, defender, attackerRoll, defenderRoll);
+        else if (defenderRoll > attackerRoll)
+            HandleVictory(defender, attacker, defenderRoll, attackerRoll);
         else
+            HandleDraw(attacker, defender);
+    }
+
+    private int RollDice(int diceCount)
+    {
+        int total = 0;
+        for (int i = 0; i < diceCount; i++)
         {
-            DrawCombat(player1, player2);
+            total += UnityEngine.Random.Range(1, 7);
+        }
+        return total;
+    }
+
+    private void HandleVictory(PlayerHandlerScript winner, PlayerHandlerScript loser, int winnerTotal, int loserTotal)
+    {
+        loser.Respawn();
+        NotifyBattleResultClientRpc(winner.OwnerClientId, loser.OwnerClientId, winnerTotal, loserTotal);
+    }
+
+    private void HandleDraw(PlayerHandlerScript p1, PlayerHandlerScript p2)
+    {
+        p1.Respawn();
+        p2.Respawn();
+        NotifyBattleResultClientRpc(p1.OwnerClientId, p2.OwnerClientId, 0, 0);
+    }
+
+
+    [ClientRpc]
+    private void NotifyBattleResultClientRpc(ulong winnerId, ulong loserId, int winnerTotal, int loserTotal)
+    {
+        PlayerHandlerScript winner = GetPlayerById(winnerId);
+        PlayerHandlerScript loser = GetPlayerById(loserId);
+
+        if (OwnerClientId == loserId)
+        {
+            UIManager.Instance.ShowBattleResult($"You lose! ({winnerTotal} vs {loserTotal})", loser.transform);
+            if (loser != null)
+            {
+                loser.Die();
+            }
+            else
+            {
+                Debug.LogError("Loser is null");
+            }
+        }
+        else if (OwnerClientId == winnerId)
+        {
+            UIManager.Instance.ShowBattleResult($"You won! ({winnerTotal} vs {loserTotal})", winner.transform);
         }
     }
-
-    private void DeclareWinner(PlayerHandlerScript winner, PlayerHandlerScript loser)
+    [ServerRpc]
+    public void StartRespawnTimerServerRpc(int playerId, int respawnTime)
     {
-        //winner.AddResources(10);
-        loser.Respawn();
-
-        NotifyCombatResultClientRpc(winner.OwnerClientId, loser.OwnerClientId, false);
+        StartCoroutine(RespawnTimerCoroutine(playerId, respawnTime));
     }
 
-    private void DrawCombat(PlayerHandlerScript player1, PlayerHandlerScript player2)
+    private IEnumerator RespawnTimerCoroutine(int playerId, int respawnTime)
     {
-        NotifyCombatResultClientRpc(player1.OwnerClientId, player2.OwnerClientId, true);
+        for (int i = respawnTime; i > 0; i--)
+        {
+            NotifyRespawnTimerClientRpc(playerId, i);
+            yield return new WaitForSeconds(1f);
+        }
+
+        RespawnPlayerServerRpc(playerId);
     }
 
     [ClientRpc]
-    private void NotifyCombatResultClientRpc(ulong winnerId, ulong loserId, bool isDraw)
+    private void NotifyRespawnTimerClientRpc(int playerId, int seconds)
     {
-        if (isDraw)
+        if (GlobalVariableHandler.Instance.MyIndex == playerId)
         {
-            UIManager.Instance?.ShowMessage("Draw");
+            UIManager.Instance.UpdateRespawnTimer(seconds);
         }
-        else
-        {
-            var winner = GetPlayerById(winnerId);
-            var loser = GetPlayerById(loserId);
+    }
 
-            UIManager.Instance?.ShowMessage($"{winner.playerName} has won {loser.playerName}!");
+    [ServerRpc]
+    private void RespawnPlayerServerRpc(int playerId)
+    {
+        PlayerHandlerScript player = GetPlayerById((ulong)playerId);
+        if (player != null)
+        {
+            player.Respawn();
         }
     }
 
