@@ -245,9 +245,10 @@ public class PlayerHandlerScript : NetworkBehaviour
     [ClientRpc]
     public void UpdateAnimationClientRpc(float horizontal, float vertical, bool isMoving)
     {
+        Debug.Log($"[Client] UpdateAnimationClientRpc received: H={horizontal}, V={vertical}, Moving={isMoving}");
+
         if (animator == null)
         {
-            Debug.LogError("Animator is null on client! Trying to find it...");
             animator = GetComponent<Animator>();
             if (animator == null)
             {
@@ -256,10 +257,15 @@ public class PlayerHandlerScript : NetworkBehaviour
             }
         }
 
+        Debug.Log($"[Client] Animator parameters before update: H={animator.GetFloat("Horizontal")}, V={animator.GetFloat("Vertical")}, Moving={animator.GetBool("IsMoving")}");
+
         animator.SetFloat("Horizontal", horizontal);
         animator.SetFloat("Vertical", vertical);
         animator.SetBool("IsMoving", isMoving);
+
+        Debug.Log($"[Client] Animator parameters after update: H={animator.GetFloat("Horizontal")}, V={animator.GetFloat("Vertical")}, Moving={animator.GetBool("IsMoving")}");
     }
+
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
