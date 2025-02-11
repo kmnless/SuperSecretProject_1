@@ -11,7 +11,6 @@ public class PlayerHandlerScript : NetworkBehaviour
 {
     [SerializeField] private float moveAllowance = 0.1f;
     private Camera cam;
-    private Vector3 lastPosition;
     private FieldStates[,] field;
     public NavMeshAgent agent { get; private set; }
     private Animator animator;
@@ -155,10 +154,9 @@ public class PlayerHandlerScript : NetworkBehaviour
             HandleMouseClick();
         }
 
-        Vector3 movement = transform.position - lastPosition;
-        lastPosition = transform.position;
+        Vector2 movement = agent.velocity.normalized;
 
-        bool isMoving = movement.magnitude > 0.01f; // Минимальное движение
+        bool isMoving = movement != Vector2.zero;
 
         float horizontal = movement.x;
         float vertical = movement.y;
