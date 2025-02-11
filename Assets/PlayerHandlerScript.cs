@@ -243,7 +243,7 @@ public class PlayerHandlerScript : NetworkBehaviour
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (!IsOwner || !IsServer) return;
+        if (!IsOwner) return;
 
         PlayerHandlerScript enemy = collision.GetComponent<PlayerHandlerScript>();
         if (enemy != null && enemy != this)
