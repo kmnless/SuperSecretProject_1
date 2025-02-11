@@ -75,6 +75,7 @@ public class PlayerHandlerScript : NetworkBehaviour
     }
     public override void OnNetworkSpawn()
     {
+        base.OnNetworkSpawn();
         if (IsServer)
         {
             agent = GetComponent<NavMeshAgent>();
@@ -121,6 +122,7 @@ public class PlayerHandlerScript : NetworkBehaviour
                 break;
             }
         }
+        animator = GetComponent<Animator>();
         MenuHandler.SetCurrentPlayer(this.transform);
         BaseMenuHandler.SetCurrentPlayer(this.transform);
         if (string.IsNullOrEmpty(playerName))
@@ -243,6 +245,17 @@ public class PlayerHandlerScript : NetworkBehaviour
     [ClientRpc]
     public void UpdateAnimationClientRpc(float horizontal, float vertical, bool isMoving)
     {
+        if (animator == null)
+        {
+            Debug.LogError("Animator is null on client! Trying to find it...");
+            animator = GetComponent<Animator>();
+            if (animator == null)
+            {
+                Debug.LogError("Failed to find animator.");
+                return;
+            }
+        }
+
         animator.SetFloat("Horizontal", horizontal);
         animator.SetFloat("Vertical", vertical);
         animator.SetBool("IsMoving", isMoving);
