@@ -12,7 +12,6 @@ public class PlayerHandlerScript : NetworkBehaviour
     [SerializeField] private float moveAllowance = 0.1f;
     private Camera cam;
     private Vector3 lastPosition;
-    private Vector2 lastDirection = Vector2.down;
     private FieldStates[,] field;
     public NavMeshAgent agent { get; private set; }
     private Animator animator;
@@ -125,6 +124,8 @@ public class PlayerHandlerScript : NetworkBehaviour
             }
         }
         animator = GetComponent<Animator>();
+        InvokeRepeating(nameof(RequestAnimationUpdateServerRpc), 0f, 0.1f);
+
         MenuHandler.SetCurrentPlayer(this.transform);
         BaseMenuHandler.SetCurrentPlayer(this.transform);
         if (string.IsNullOrEmpty(playerName))
@@ -156,19 +157,6 @@ public class PlayerHandlerScript : NetworkBehaviour
             HandleMouseClick();
         }
 
-        Vector3 movement = transform.position - lastPosition;
-        lastPosition = transform.position;
-
-        bool isMoving = movement.magnitude > 0.02f;
-
-        Vector2 direction = isMoving ? new Vector2(movement.x, movement.y).normalized : lastDirection;
-
-        if (isMoving)
-        {
-            lastDirection = direction;
-        }
-
-        UpdateAnimationServerRpc(direction.x, direction.y, isMoving);
     }
     private void Start()
     {
@@ -246,18 +234,13 @@ public class PlayerHandlerScript : NetworkBehaviour
                position.y * 100 < MapScript.sprites.GetLength(0) * GameManager.spriteSize;
     }
     [ServerRpc]
-    public void UpdateAnimationServerRpc(float horizontal, float vertical, bool isMoving, ServerRpcParams rpcParams = default)
+    public void RequestAnimationUpdateServerRpc(ServerRpcParams rpcParams = default)
     {
-        if (Mathf.Abs(horizontal) < 0.01f && Mathf.Abs(vertical) < 0.01f)
-        {
-            horizontal = 0;
-            vertical = 0;
-            isMoving = false;
-        }
+        Vector2 movement = new Vector2(agent.velocity.x, agent.velocity.y).normalized;
+        bool isMoving = movement.magnitude > 0.5f;
 
-        UpdateAnimationClientRpc(horizontal, vertical, isMoving);
+        UpdateAnimationClientRpc(movement.x, movement.y, isMoving);
     }
-
 
     [ClientRpc]
     public void UpdateAnimationClientRpc(float horizontal, float vertical, bool isMoving)
@@ -275,7 +258,6 @@ public class PlayerHandlerScript : NetworkBehaviour
         animator.SetFloat("Horizontal", horizontal);
         animator.SetFloat("Vertical", vertical);
         animator.SetBool("IsMoving", isMoving);
-
     }
 
 
