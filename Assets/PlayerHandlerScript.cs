@@ -13,6 +13,7 @@ public class PlayerHandlerScript : NetworkBehaviour
     private Camera cam;
     private Vector3 lastPosition;
     private bool lastMovingState = false;
+    private float lastAnimationUpdateTime = 0;
     private FieldStates[,] field;
     public NavMeshAgent agent { get; private set; }
     private Animator animator;
@@ -157,12 +158,14 @@ public class PlayerHandlerScript : NetworkBehaviour
             HandleMouseClick();
         }
 
-        Vector2 movement = new Vector2(agent.velocity.x, agent.velocity.y).normalized;
-        bool isMoving = movement.magnitude > 0.02f;
-
-        if (isMoving != lastMovingState)
+        // Раз в 0.1 сек отправляем данные о движении
+        if (Time.time - lastAnimationUpdateTime > 0.1f)
         {
-            lastMovingState = isMoving;
+            lastAnimationUpdateTime = Time.time;
+
+            Vector2 movement = new Vector2(agent.velocity.x, agent.velocity.y).normalized;
+            bool isMoving = movement.magnitude > 0.02f;
+
             RequestAnimationUpdateServerRpc(movement.x, movement.y, isMoving);
             Debug.Log($"[Client] Sent animation update: H={movement.x}, V={movement.y}, Moving={isMoving}");
         }
@@ -245,9 +248,7 @@ public class PlayerHandlerScript : NetworkBehaviour
     [ServerRpc]
     public void RequestAnimationUpdateServerRpc(float horizontal, float vertical, bool isMoving, ServerRpcParams rpcParams = default)
     {
-        if (!IsOwner) return;
-
-        Debug.Log($"[Server] Animation Update Received: H={horizontal}, V={vertical}, Moving={isMoving}");
+        Debug.Log($"[Server] Received animation update: H={horizontal}, V={vertical}, Moving={isMoving} from {rpcParams.Receive.SenderClientId}");
 
         UpdateAnimationClientRpc(horizontal, vertical, isMoving);
     }
