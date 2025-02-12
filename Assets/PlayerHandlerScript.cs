@@ -124,7 +124,6 @@ public class PlayerHandlerScript : NetworkBehaviour
             }
         }
         animator = GetComponent<Animator>();
-        InvokeRepeating(nameof(RequestAnimationUpdateServerRpc), 0f, 0.1f);
 
         MenuHandler.SetCurrentPlayer(this.transform);
         BaseMenuHandler.SetCurrentPlayer(this.transform);
@@ -156,7 +155,10 @@ public class PlayerHandlerScript : NetworkBehaviour
         {
             HandleMouseClick();
         }
-
+        if (IsOwner && IsStarted)
+        {
+            RequestAnimationUpdateServerRpc(agent.velocity.x, agent.velocity.y);
+        }
     }
     private void Start()
     {
@@ -234,15 +236,13 @@ public class PlayerHandlerScript : NetworkBehaviour
                position.y * 100 < MapScript.sprites.GetLength(0) * GameManager.spriteSize;
     }
     [ServerRpc]
-    public void RequestAnimationUpdateServerRpc(ServerRpcParams rpcParams = default)
+    public void RequestAnimationUpdateServerRpc(float horizontal, float vertical, ServerRpcParams rpcParams = default)
     {
-        if (!IsOwner) return;
+        bool isMoving = Mathf.Abs(horizontal) > 0.02f || Mathf.Abs(vertical) > 0.02f;
 
-        Vector2 movement = new Vector2(agent.velocity.x, agent.velocity.y).normalized;
-        bool isMoving = movement.magnitude > 0.02f;
-
-        UpdateAnimationClientRpc(movement.x, movement.y, isMoving);
+        UpdateAnimationClientRpc(horizontal, vertical, isMoving);
     }
+
 
 
     [ClientRpc]
@@ -253,7 +253,7 @@ public class PlayerHandlerScript : NetworkBehaviour
             animator = GetComponent<Animator>();
             if (animator == null)
             {
-                Debug.LogError("Failed to find animator.");
+                Debug.LogError("Animator is NULL! Failed to update animation.");
                 return;
             }
         }
@@ -262,6 +262,7 @@ public class PlayerHandlerScript : NetworkBehaviour
         animator.SetFloat("Vertical", vertical);
         animator.SetBool("IsMoving", isMoving);
     }
+
 
 
     private void OnTriggerEnter2D(Collider2D collision)
