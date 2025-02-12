@@ -124,6 +124,7 @@ public class PlayerHandlerScript : NetworkBehaviour
             }
         }
         animator = GetComponent<Animator>();
+        InvokeRepeating(nameof(RequestAnimationUpdateClient), 0f, 0.1f);
 
         MenuHandler.SetCurrentPlayer(this.transform);
         BaseMenuHandler.SetCurrentPlayer(this.transform);
@@ -154,11 +155,6 @@ public class PlayerHandlerScript : NetworkBehaviour
         if (Input.GetMouseButtonDown(1) && IsAllowedToMove)
         {
             HandleMouseClick();
-        }
-
-        if (IsStarted)
-        {
-            RequestAnimationUpdateServerRpc(agent.velocity.x, agent.velocity.y);
         }
     }
     private void Start()
@@ -237,13 +233,16 @@ public class PlayerHandlerScript : NetworkBehaviour
                position.y * 100 < MapScript.sprites.GetLength(0) * GameManager.spriteSize;
     }
     [ServerRpc(RequireOwnership = false)]
-    public void RequestAnimationUpdateServerRpc(float horizontal, float vertical, ServerRpcParams rpcParams = default)
+    public void RequestAnimationUpdateServerRpc(ServerRpcParams rpcParams = default)
     {
-        Debug.Log($"[Server] RequestAnimationUpdateServerRpc received from {rpcParams.Receive.SenderClientId}: H={horizontal}, V={vertical}");
+        if (!IsOwner) return;
 
-        bool isMoving = Mathf.Abs(horizontal) > 0.02f || Mathf.Abs(vertical) > 0.02f;
+        Vector2 movement = new Vector2(agent.velocity.x, agent.velocity.y).normalized;
+        bool isMoving = movement.magnitude > 0.02f;
 
-        UpdateAnimationClientRpc(horizontal, vertical, isMoving);
+        Debug.Log($"[Server] Animation Update: H={movement.x}, V={movement.y}, Moving={isMoving}");
+
+        UpdateAnimationClientRpc(movement.x, movement.y, isMoving);
     }
 
 
@@ -266,9 +265,17 @@ public class PlayerHandlerScript : NetworkBehaviour
         animator.SetFloat("Vertical", vertical);
         animator.SetBool("IsMoving", isMoving);
     }
+    private void RequestAnimationUpdateClient()
+    {
+        if (!IsOwner) return;
 
+        Vector2 movement = new Vector2(agent.velocity.x, agent.velocity.y).normalized;
+        bool isMoving = movement.magnitude > 0.02f;
 
+        Debug.Log($"[Client] Sending Animation Update: H={movement.x}, V={movement.y}, Moving={isMoving}");
 
+        RequestAnimationUpdateServerRpc();
+    }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
