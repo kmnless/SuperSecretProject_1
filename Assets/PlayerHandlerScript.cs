@@ -12,6 +12,7 @@ public class PlayerHandlerScript : NetworkBehaviour
     [SerializeField] private float moveAllowance = 0.1f;
     private Camera cam;
     private Vector3 lastPosition;
+    private bool lastMovingState = false;
     private FieldStates[,] field;
     public NavMeshAgent agent { get; private set; }
     private Animator animator;
@@ -124,7 +125,6 @@ public class PlayerHandlerScript : NetworkBehaviour
             }
         }
         animator = GetComponent<Animator>();
-        InvokeRepeating(nameof(RequestAnimationUpdateClient), 0f, 0.1f);
 
         MenuHandler.SetCurrentPlayer(this.transform);
         BaseMenuHandler.SetCurrentPlayer(this.transform);
@@ -155,6 +155,15 @@ public class PlayerHandlerScript : NetworkBehaviour
         if (Input.GetMouseButtonDown(1) && IsAllowedToMove)
         {
             HandleMouseClick();
+        }
+
+        Vector2 movement = new Vector2(agent.velocity.x, agent.velocity.y).normalized;
+        bool isMoving = movement.magnitude > 0.02f;
+
+        if (isMoving != lastMovingState)
+        {
+            lastMovingState = isMoving;
+            RequestAnimationUpdateServerRpc(movement.x, movement.y, isMoving);
         }
     }
     private void Start()
@@ -232,25 +241,19 @@ public class PlayerHandlerScript : NetworkBehaviour
                position.x * 100 < MapScript.sprites.GetLength(1) * GameManager.spriteSize &&
                position.y * 100 < MapScript.sprites.GetLength(0) * GameManager.spriteSize;
     }
-    [ServerRpc(RequireOwnership = false)]
-    public void RequestAnimationUpdateServerRpc(ServerRpcParams rpcParams = default)
+    [ServerRpc]
+    public void RequestAnimationUpdateServerRpc(float horizontal, float vertical, bool isMoving, ServerRpcParams rpcParams = default)
     {
         if (!IsOwner) return;
 
-        Vector2 movement = new Vector2(agent.velocity.x, agent.velocity.y).normalized;
-        bool isMoving = movement.magnitude > 0.02f;
+        Debug.Log($"[Server] Animation Update Received: H={horizontal}, V={vertical}, Moving={isMoving}");
 
-        Debug.Log($"[Server] Animation Update: H={movement.x}, V={movement.y}, Moving={isMoving}");
-
-        UpdateAnimationClientRpc(movement.x, movement.y, isMoving);
+        UpdateAnimationClientRpc(horizontal, vertical, isMoving);
     }
-
 
     [ClientRpc]
     public void UpdateAnimationClientRpc(float horizontal, float vertical, bool isMoving)
     {
-        Debug.Log($"[Client] UpdateAnimationClientRpc received: H={horizontal}, V={vertical}, Moving={isMoving}");
-
         if (animator == null)
         {
             animator = GetComponent<Animator>();
@@ -261,21 +264,14 @@ public class PlayerHandlerScript : NetworkBehaviour
             }
         }
 
+        Debug.Log($"[Client] Updating Animation: H={horizontal}, V={vertical}, Moving={isMoving}");
+
+        // Обновляем анимацию
         animator.SetFloat("Horizontal", horizontal);
         animator.SetFloat("Vertical", vertical);
         animator.SetBool("IsMoving", isMoving);
     }
-    private void RequestAnimationUpdateClient()
-    {
-        if (!IsOwner) return;
 
-        Vector2 movement = new Vector2(agent.velocity.x, agent.velocity.y).normalized;
-        bool isMoving = movement.magnitude > 0.02f;
-
-        Debug.Log($"[Client] Sending Animation Update: H={movement.x}, V={movement.y}, Moving={isMoving}");
-
-        RequestAnimationUpdateServerRpc();
-    }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
