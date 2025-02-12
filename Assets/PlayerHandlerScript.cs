@@ -236,23 +236,28 @@ public class PlayerHandlerScript : NetworkBehaviour
                position.x * 100 < MapScript.sprites.GetLength(1) * GameManager.spriteSize &&
                position.y * 100 < MapScript.sprites.GetLength(0) * GameManager.spriteSize;
     }
-    [ServerRpc]
+    [ServerRpc(RequireOwnership = false)]
     public void RequestAnimationUpdateServerRpc(float horizontal, float vertical, ServerRpcParams rpcParams = default)
     {
+        Debug.Log($"[Server] RequestAnimationUpdateServerRpc received from {rpcParams.Receive.SenderClientId}: H={horizontal}, V={vertical}");
+
         bool isMoving = Mathf.Abs(horizontal) > 0.02f || Mathf.Abs(vertical) > 0.02f;
 
         UpdateAnimationClientRpc(horizontal, vertical, isMoving);
     }
 
+
     [ClientRpc]
     public void UpdateAnimationClientRpc(float horizontal, float vertical, bool isMoving)
     {
+        Debug.Log($"[Client] UpdateAnimationClientRpc received: H={horizontal}, V={vertical}, Moving={isMoving}");
+
         if (animator == null)
         {
             animator = GetComponent<Animator>();
             if (animator == null)
             {
-                Debug.LogError("Animator is NULL! Failed to update animation.");
+                Debug.LogError("[Client] Animator is NULL! Failed to update animation.");
                 return;
             }
         }
@@ -261,6 +266,7 @@ public class PlayerHandlerScript : NetworkBehaviour
         animator.SetFloat("Vertical", vertical);
         animator.SetBool("IsMoving", isMoving);
     }
+
 
 
 
