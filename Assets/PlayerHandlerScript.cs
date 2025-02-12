@@ -223,10 +223,8 @@ public class PlayerHandlerScript : NetworkBehaviour
                           hit.position.y - transform.position.y).normalized;
             bool isMoving = movement.magnitude > 0.02f;
 
-            if (isMoving)
-            {
-                UpdateAnimationClientRpc(movement.x, movement.y, isMoving);
-            }
+            UpdateAnimationClientRpc(movement.x, movement.y, isMoving);
+            
             agent.SetDestination(hit.position);
 
         }
