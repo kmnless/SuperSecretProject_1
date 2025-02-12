@@ -156,17 +156,6 @@ public class PlayerHandlerScript : NetworkBehaviour
         {
             HandleMouseClick();
         }
-
-        Vector2 movement = new Vector2(agent.destination.x - transform.position.x,
-                                   agent.destination.y - transform.position.y).normalized;
-        bool isMoving = movement.magnitude > 0.02f;
-
-        if (isMoving != lastMovingState)
-        {
-            lastMovingState = isMoving;
-            RequestAnimationUpdateServerRpc(movement.x, movement.y, isMoving);
-            Debug.Log($"[Client] Sent animation update: H={movement.x}, V={movement.y}, Moving={isMoving}");
-        }
     }
     private void Start()
     {
@@ -230,7 +219,16 @@ public class PlayerHandlerScript : NetworkBehaviour
 
         if (NavMesh.SamplePosition(destination, out NavMeshHit hit, 1.0f, NavMesh.AllAreas))
         {
+            Vector2 movement = new Vector2(hit.position.x - transform.position.x,
+                          hit.position.y - transform.position.y).normalized;
+            bool isMoving = movement.magnitude > 0.02f;
+
+            if (isMoving)
+            {
+                UpdateAnimationClientRpc(movement.x, movement.y, isMoving);
+            }
             agent.SetDestination(hit.position);
+
         }
         else
         {
@@ -248,8 +246,6 @@ public class PlayerHandlerScript : NetworkBehaviour
     {
         if (!IsOwner) return;
 
-        Debug.Log($"[Server] Animation Update Received: H={horizontal}, V={vertical}, Moving={isMoving}");
-
         UpdateAnimationClientRpc(horizontal, vertical, isMoving);
     }
 
@@ -265,8 +261,6 @@ public class PlayerHandlerScript : NetworkBehaviour
                 return;
             }
         }
-
-        Debug.Log($"[Client] Updating Animation: H={horizontal}, V={vertical}, Moving={isMoving}");
 
         animator.SetFloat("Horizontal", horizontal);
         animator.SetFloat("Vertical", vertical);
