@@ -236,11 +236,14 @@ public class PlayerHandlerScript : NetworkBehaviour
     [ServerRpc]
     public void RequestAnimationUpdateServerRpc(ServerRpcParams rpcParams = default)
     {
+        if (!IsOwner) return;
+
         Vector2 movement = new Vector2(agent.velocity.x, agent.velocity.y).normalized;
-        bool isMoving = movement.magnitude > 0.5f;
+        bool isMoving = movement.magnitude > 0.02f;
 
         UpdateAnimationClientRpc(movement.x, movement.y, isMoving);
     }
+
 
     [ClientRpc]
     public void UpdateAnimationClientRpc(float horizontal, float vertical, bool isMoving)
