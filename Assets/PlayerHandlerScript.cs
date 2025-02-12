@@ -12,6 +12,7 @@ public class PlayerHandlerScript : NetworkBehaviour
     [SerializeField] private float moveAllowance = 0.1f;
     private Camera cam;
     private Vector3 lastPosition;
+    private Vector2 lastDirection = Vector2.down;
     private FieldStates[,] field;
     public NavMeshAgent agent { get; private set; }
     private Animator animator;
@@ -158,12 +159,16 @@ public class PlayerHandlerScript : NetworkBehaviour
         Vector3 movement = transform.position - lastPosition;
         lastPosition = transform.position;
 
-        bool isMoving = movement.magnitude > 0.05f;
+        bool isMoving = movement.magnitude > 0.02f;
 
-        float horizontal = movement.x;
-        float vertical = movement.y;
+        Vector2 direction = isMoving ? new Vector2(movement.x, movement.y).normalized : lastDirection;
 
-        UpdateAnimationServerRpc(horizontal, vertical, isMoving);
+        if (isMoving)
+        {
+            lastDirection = direction;
+        }
+
+        UpdateAnimationServerRpc(direction.x, direction.y, isMoving);
     }
     private void Start()
     {
@@ -243,8 +248,16 @@ public class PlayerHandlerScript : NetworkBehaviour
     [ServerRpc]
     public void UpdateAnimationServerRpc(float horizontal, float vertical, bool isMoving, ServerRpcParams rpcParams = default)
     {
+        if (Mathf.Abs(horizontal) < 0.01f && Mathf.Abs(vertical) < 0.01f)
+        {
+            horizontal = 0;
+            vertical = 0;
+            isMoving = false;
+        }
+
         UpdateAnimationClientRpc(horizontal, vertical, isMoving);
     }
+
 
     [ClientRpc]
     public void UpdateAnimationClientRpc(float horizontal, float vertical, bool isMoving)
