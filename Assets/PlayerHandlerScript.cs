@@ -224,7 +224,7 @@ public class PlayerHandlerScript : NetworkBehaviour
             bool isMoving = movement.magnitude > 0.02f;
 
             UpdateAnimationClientRpc(movement.x, movement.y, isMoving);
-            
+            StartCoroutine(CheckForStop());
             agent.SetDestination(hit.position);
 
         }
@@ -233,6 +233,13 @@ public class PlayerHandlerScript : NetworkBehaviour
             //Debug.Log($"Target destination {destination} is not on NavMesh.");
         }
     }
+    private IEnumerator CheckForStop()
+    {
+        yield return new WaitUntil(() => agent.remainingDistance <= agent.stoppingDistance && agent.velocity.magnitude < 0.1f);
+
+        UpdateAnimationClientRpc(0, 0, false);
+    }
+
     private bool IsPositionValid(Vector3 position)
     {
         return position.x > 0 && position.y > 0 &&
