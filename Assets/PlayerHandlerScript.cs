@@ -155,7 +155,8 @@ public class PlayerHandlerScript : NetworkBehaviour
         {
             HandleMouseClick();
         }
-        if (IsOwner && IsStarted)
+
+        if (IsStarted)
         {
             RequestAnimationUpdateServerRpc(agent.velocity.x, agent.velocity.y);
         }
@@ -242,8 +243,6 @@ public class PlayerHandlerScript : NetworkBehaviour
 
         UpdateAnimationClientRpc(horizontal, vertical, isMoving);
     }
-
-
 
     [ClientRpc]
     public void UpdateAnimationClientRpc(float horizontal, float vertical, bool isMoving)
