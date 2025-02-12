@@ -164,6 +164,7 @@ public class PlayerHandlerScript : NetworkBehaviour
         {
             lastMovingState = isMoving;
             RequestAnimationUpdateServerRpc(movement.x, movement.y, isMoving);
+            Debug.Log($"[Client] Sent animation update: H={movement.x}, V={movement.y}, Moving={isMoving}");
         }
     }
     private void Start()
@@ -266,7 +267,6 @@ public class PlayerHandlerScript : NetworkBehaviour
 
         Debug.Log($"[Client] Updating Animation: H={horizontal}, V={vertical}, Moving={isMoving}");
 
-        // Обновляем анимацию
         animator.SetFloat("Horizontal", horizontal);
         animator.SetFloat("Vertical", vertical);
         animator.SetBool("IsMoving", isMoving);
