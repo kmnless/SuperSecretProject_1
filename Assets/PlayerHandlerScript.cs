@@ -219,17 +219,12 @@ public class PlayerHandlerScript : NetworkBehaviour
 
         if (NavMesh.SamplePosition(destination, out NavMeshHit hit, 1.0f, NavMesh.AllAreas))
         {
-            Vector2 movement = new Vector2(hit.position.x - transform.position.x,
-                          hit.position.y - transform.position.y).normalized;
-            bool isMoving = movement.magnitude > 0.02f;
-
-            StartCoroutine(UpdateAnimationWhileMoving());
             agent.SetDestination(hit.position);
 
-        }
-        else
-        {
-            //Debug.Log($"Target destination {destination} is not on NavMesh.");
+            Vector2 direction = (destination - transform.position).normalized;
+            UpdateAnimationClientRpc(direction.x, direction.y, true);
+
+            StartCoroutine(UpdateAnimationWhileMoving());
         }
     }
     private IEnumerator UpdateAnimationWhileMoving()
@@ -249,6 +244,7 @@ public class PlayerHandlerScript : NetworkBehaviour
 
         UpdateAnimationClientRpc(0, 0, false);
     }
+
 
     private bool IsPositionValid(Vector3 position)
     {
