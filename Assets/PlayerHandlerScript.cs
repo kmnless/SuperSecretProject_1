@@ -221,9 +221,6 @@ public class PlayerHandlerScript : NetworkBehaviour
         {
             agent.SetDestination(hit.position);
 
-            Vector2 direction = (destination - transform.position).normalized;
-            UpdateAnimationClientRpc(direction.x, direction.y, true);
-
             StartCoroutine(UpdateAnimationWhileMoving());
         }
     }
@@ -231,7 +228,7 @@ public class PlayerHandlerScript : NetworkBehaviour
     {
         while (agent.pathPending || agent.remainingDistance > agent.stoppingDistance)
         {
-            Vector2 movement = new Vector2(agent.velocity.x, agent.velocity.y).normalized;
+            Vector2 movement = agent.velocity.normalized;
             bool isMoving = movement.magnitude > 0.05f;
 
             UpdateAnimationClientRpc(movement.x, movement.y, isMoving);
@@ -239,8 +236,11 @@ public class PlayerHandlerScript : NetworkBehaviour
             yield return null;
         }
 
+        yield return new WaitForSeconds(0.1f);
+
         UpdateAnimationClientRpc(0, 0, false);
     }
+
 
 
 
@@ -279,8 +279,6 @@ public class PlayerHandlerScript : NetworkBehaviour
 
         animator.SetBool("IsMoving", isMoving);
     }
-
-
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
