@@ -232,24 +232,15 @@ public class PlayerHandlerScript : NetworkBehaviour
         while (agent.pathPending || agent.remainingDistance > agent.stoppingDistance)
         {
             Vector2 movement = new Vector2(agent.velocity.x, agent.velocity.y).normalized;
-            bool isMoving = movement.magnitude > 0.02f;
+            bool isMoving = movement.magnitude > 0.05f;
 
-            if (isMoving)
-            {
-                UpdateAnimationClientRpc(movement.x, movement.y, isMoving);
-            }
+            UpdateAnimationClientRpc(movement.x, movement.y, isMoving);
 
             yield return null;
         }
 
-        yield return new WaitForSeconds(0.1f);
-
-        if (agent.velocity.magnitude < 0.01f)
-        {
-            UpdateAnimationClientRpc(0, 0, false);
-        }
+        UpdateAnimationClientRpc(0, 0, false);
     }
-
 
 
 
@@ -285,12 +276,9 @@ public class PlayerHandlerScript : NetworkBehaviour
             animator.SetFloat("Horizontal", horizontal);
             animator.SetFloat("Vertical", vertical);
         }
-        if (animator.GetBool("IsMoving") != isMoving)
-        {
-            animator.SetBool("IsMoving", isMoving);
-        }
-    }
 
+        animator.SetBool("IsMoving", isMoving);
+    }
 
 
 
