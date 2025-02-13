@@ -231,17 +231,18 @@ public class PlayerHandlerScript : NetworkBehaviour
             Vector2 movement = agent.velocity.normalized;
             bool isMoving = movement.magnitude > 0.05f;
 
-            UpdateAnimationClientRpc(movement.x, movement.y, isMoving);
+            if (isMoving)
+            {
+                UpdateAnimationClientRpc(movement.x, movement.y, true);
+            }
 
             yield return null;
         }
 
-        yield return new WaitForSeconds(0.1f);
+        yield return new WaitForSeconds(0.05f);
 
         UpdateAnimationClientRpc(0, 0, false);
     }
-
-
 
 
     private bool IsPositionValid(Vector3 position)
@@ -276,9 +277,15 @@ public class PlayerHandlerScript : NetworkBehaviour
             animator.SetFloat("Horizontal", horizontal);
             animator.SetFloat("Vertical", vertical);
         }
+        else
+        {
+            animator.SetFloat("Horizontal", 0);
+            animator.SetFloat("Vertical", 0);
+        }
 
         animator.SetBool("IsMoving", isMoving);
     }
+
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
