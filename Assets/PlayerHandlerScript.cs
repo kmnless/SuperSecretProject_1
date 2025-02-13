@@ -234,13 +234,22 @@ public class PlayerHandlerScript : NetworkBehaviour
             Vector2 movement = new Vector2(agent.velocity.x, agent.velocity.y).normalized;
             bool isMoving = movement.magnitude > 0.02f;
 
-            UpdateAnimationClientRpc(movement.x, movement.y, isMoving);
+            if (isMoving)
+            {
+                UpdateAnimationClientRpc(movement.x, movement.y, isMoving);
+            }
 
             yield return null;
         }
 
-        UpdateAnimationClientRpc(0, 0, false);
+        yield return new WaitForSeconds(0.1f);
+
+        if (agent.velocity.magnitude < 0.01f)
+        {
+            UpdateAnimationClientRpc(0, 0, false);
+        }
     }
+
 
 
 
@@ -276,9 +285,12 @@ public class PlayerHandlerScript : NetworkBehaviour
             animator.SetFloat("Horizontal", horizontal);
             animator.SetFloat("Vertical", vertical);
         }
-
-        animator.SetBool("IsMoving", isMoving);
+        if (animator.GetBool("IsMoving") != isMoving)
+        {
+            animator.SetBool("IsMoving", isMoving);
+        }
     }
+
 
 
 
